@@ -2,11 +2,15 @@
 
 namespace App.DbAccess.Entities.Identity
 {
-    public class User : IdentityUser<Guid>
+    public class User : User<string>
     {
         public User()
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
         }
+    }
+    public class User<TKey> : IdentityUser<TKey>
+        where TKey : IEquatable<TKey>
+    {
     }
 }

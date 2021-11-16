@@ -2,7 +2,11 @@
 
 namespace App.DbAccess.Entities.Identity
 {
-    public class UserClaim : IdentityUserClaim<Guid>
+    public class UserClaim : UserClaim<string>
+    {
+    }
+    public class UserClaim<TKey> : IdentityUserClaim<TKey>
+        where TKey : IEquatable<TKey>
     {
     }
 }
