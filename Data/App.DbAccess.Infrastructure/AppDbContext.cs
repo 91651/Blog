@@ -22,7 +22,12 @@ namespace App.DbAccess.Infrastructure
             base.OnModelCreating(modelBuilder);
         }
     }
-    public class AppDbContext<TUser, TRole, TKey> : IdentityDbContext<TUser, TRole, TKey, UserClaim<TKey>, UserRole<TKey>, UserLogin<TKey>, RoleClaim<TKey>, UserToken<TKey>>
+
+
+
+
+
+    public class AppDbContext<TUser, TRole, TKey> : IdentityDbContext<TUser, TRole, TKey>
         where TUser : User<TKey>
         where TRole : Role<TKey>
         where TKey : IEquatable<TKey>
@@ -32,14 +37,13 @@ namespace App.DbAccess.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // Identity 中定义的实体
-            modelBuilder.Entity<User<TKey>>().ToTable("User");//必须指定表名，才能改变数据库中对应表名
-            modelBuilder.Entity<Role<TKey>>().ToTable("Role");
-            modelBuilder.Entity<UserClaim<TKey>>().ToTable("UserClaim");
-            modelBuilder.Entity<UserRole<TKey>>().ToTable("UserRole");
-            modelBuilder.Entity<UserLogin<TKey>>().ToTable("UserLogin");
-            modelBuilder.Entity<RoleClaim<TKey>>().ToTable("RoleClaim");
-            modelBuilder.Entity<UserToken<TKey>>().ToTable("UserToken");
+            //modelBuilder.Entity<User<TKey>>().ToTable(nameof(User));
+            //modelBuilder.Entity<Role<TKey>>().ToTable(nameof(Role));
+            //modelBuilder.Entity<IdentityUserClaim<TKey>>().ToTable(nameof(UserClaim));
+            //modelBuilder.Entity<IdentityUserRole<TKey>>().ToTable(nameof(UserRole));
+            //modelBuilder.Entity<IdentityUserLogin<TKey>>().ToTable(nameof(UserLogin));
+            //modelBuilder.Entity<IdentityRoleClaim<TKey>>().ToTable(nameof(RoleClaim));
+            //modelBuilder.Entity<IdentityUserToken<TKey>>().ToTable(nameof(UserToken));
         }
     }
 }

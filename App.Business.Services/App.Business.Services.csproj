@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\App.DbAccess.Infrastructure\App.DbAccess.Infrastructure.csproj" />
+    <ProjectReference Include="..\Data\App.DbAccess.Repositories\App.DbAccess.Repositories.csproj" />
   </ItemGroup>
 
 </Project>
