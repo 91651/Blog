@@ -2,7 +2,7 @@
 
 namespace App.DbAccess.Entities.Identity
 {
-    public class User : IdentityUser<string>
+    public class User : IdentityUser
     {
         public User()
         {

@@ -7,7 +7,7 @@ namespace App.DbAccess.Infrastructure
 {
     public static class InitDb
     {
-        public static void UseInitDb(this IApplicationBuilder app)
+        public static async Task UseInitDb(this IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
@@ -15,11 +15,11 @@ namespace App.DbAccess.Infrastructure
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 if (dbContext.Database.EnsureCreated())
                 {
-                    InitUser(userManager);
+                    await InitUser(userManager);
                 }
             }
         }
-        public static void InitUser(UserManager<User> userManager)
+        public static async Task InitUser(UserManager<User> userManager)
         {
             if (!userManager.Users.Any())
             {
@@ -28,7 +28,7 @@ namespace App.DbAccess.Infrastructure
                     Email = "mail@521.org.cn",
                     UserName = "admin"
                 };
-                userManager.CreateAsync(user);
+                var result = await userManager.CreateAsync(user, "Qwer1234!");
             }
         }
     }

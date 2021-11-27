@@ -10,10 +10,14 @@
     <PackageReference Include="AntDesign" Version="0.10.2" />
     <PackageReference Include="Delegate.LessBuilder" Version="1.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.14.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\App.Blazor.Admin\App.Blazor.Admin.csproj" />
+    <ProjectReference Include="..\App.Business.Services\App.Business.Services.csproj" />
   </ItemGroup>
 
 </Project>

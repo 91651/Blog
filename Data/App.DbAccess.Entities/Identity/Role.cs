@@ -2,7 +2,7 @@
 
 namespace App.DbAccess.Entities.Identity
 {
-    public class Role : IdentityRole<string>
+    public class Role : IdentityRole
     {
         public Role()
         {
