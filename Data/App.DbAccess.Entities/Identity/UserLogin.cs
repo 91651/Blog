@@ -2,11 +2,7 @@
 
 namespace App.DbAccess.Entities.Identity
 {
-    public class UserLogin : UserLogin<string>
-    {
-    }
-    public class UserLogin<TKey> : IdentityUserLogin<TKey>
-        where TKey : IEquatable<TKey>
+    public class UserLogin : IdentityUserLogin<string>
     {
     }
 }

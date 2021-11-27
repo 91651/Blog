@@ -2,15 +2,11 @@
 
 namespace App.DbAccess.Entities.Identity
 {
-    public class Role : Role<string>
+    public class Role : IdentityRole<string>
     {
         public Role()
         {
             Id = Guid.NewGuid().ToString();
         }
-    }
-    public class Role<TKey> : IdentityRole<TKey>
-        where TKey : IEquatable<TKey>
-    {
     }
 }

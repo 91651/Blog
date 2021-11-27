@@ -41,7 +41,7 @@ namespace App.DbAccess.Entities
         public int State { get; set; }
 
         [ForeignKey("UserId")]
-        public User<string> User { get; set; }
+        public User User { get; set; }
 
         [ForeignKey("ChannelId")]
         public Channel Channel { get; set; }
