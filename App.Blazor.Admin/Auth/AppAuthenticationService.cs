@@ -19,18 +19,25 @@ namespace App.Blazor.Admin.Auth
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var identity = new ClaimsIdentity();
-            if (true)
+            if (IsAuthenticated)
             {
                 var claims = await GetCurrentUser();
                 foreach (var claim in claims)
                 {
                     identity.AddClaim(new Claim(claim.Key, claim.Value));
                 }
+                identity = new ClaimsIdentity(identity.Claims, "Claims");
             }
-            var state = new AuthenticationState(new ClaimsPrincipal(identity));
-            return await Task.FromResult(state);
+            var state = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
+            NotifyAuthenticationStateChanged(state);
+            return await state;
         }
-
+        public Task<bool> SignIn()
+        {
+            IsAuthenticated = true;
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            return Task.FromResult(true);
+        }
         private async Task<IEnumerable<KeyValuePair<string, string>>> GetCurrentUser()
         {
             var httpClient = _serviceProvider.GetService<HttpClient>();

@@ -57,7 +57,7 @@
         var result = await Http.PostAsJsonAsync<SignInModel>("/api/admin/auth/signin", model);
         if (result.IsSuccessStatusCode)
         {
-            authenticationService.IsAuthenticated = true;
+            await authenticationService.SignIn();
             Navigation.NavigateTo("/admin");
         }
     }

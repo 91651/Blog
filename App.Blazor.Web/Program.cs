@@ -10,7 +10,7 @@ var configuration = builder.Configuration;
 var services = builder.Services;
 
 services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]));
-services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>();
+services.AddDefaultIdentity<User>().AddEntityFrameworkStores<AppDbContext>();
 services.Configure<IdentityOptions>(options =>
 {
     //≈‰÷√”√ªß√‹¬Î≤ﬂ¬‘

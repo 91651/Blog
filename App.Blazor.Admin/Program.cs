@@ -12,7 +12,7 @@ builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = new U
 builder.Services.AddTransient<AppAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ServerAPI"));
 builder.Services.AddScoped<AppAuthenticationService>();
-builder.Services.AddScoped<AuthenticationStateProvider, AppAuthenticationService>();
+builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetService<AppAuthenticationService>());
 
 builder.Services.AddAuthorizationCore();
 
