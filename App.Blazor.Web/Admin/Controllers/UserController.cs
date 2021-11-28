@@ -8,7 +8,7 @@ namespace App.Blazor.Web.Admin.Controllers
     [ApiController]
     [Area("admin")]
     [Route("api/[area]/[controller]")]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;

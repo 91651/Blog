@@ -1,4 +1,5 @@
 using App.Blazor.Web.Data;
+using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +30,7 @@ services.AddAuthentication();
 services.AddEndpointsApiExplorer();
 services.AddRouting(options => options.LowercaseUrls = true);
 services.AddOpenApiDocument();
+services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();

@@ -1,4 +1,4 @@
-using App.Blazor.Admin.Model;
+using App.Business.Services.Models;
 using App.DbAccess.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +10,7 @@ namespace App.Blazor.Web.Admin.Controllers
     [ApiController]
     [Area("admin")]
     [Route("api/[area]/[controller]")]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;

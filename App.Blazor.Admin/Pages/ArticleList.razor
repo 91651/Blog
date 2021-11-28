@@ -2,8 +2,9 @@
 @attribute [Authorize]
 @using System.ComponentModel
 @using AntDesign.TableModels
+@using App.Business.Services.Models
 @using Microsoft.AspNetCore.Authorization
-@using App.Blazor.Admin.Model
+@inject HttpClient Http
 
 <PageTitle>Index</PageTitle>
 
@@ -65,6 +66,12 @@
 
 @code {
     private ArticleQueryModel query = new ArticleQueryModel();
+
+
+    private async Task GetArticles()
+    {
+        // var result = await Http.GetFromJsonAsync<>();
+    }
     Data[] data = new Data[]
     {
         new()
