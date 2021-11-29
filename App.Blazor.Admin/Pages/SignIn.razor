@@ -51,7 +51,7 @@
   </div>
 
 @code {
-    private SignInModel model = new SignInModel();
+    private SignInModel model = new ();
     private async Task OnFinish(EditContext editContext)
     {
         var result = await Http.PostAsJsonAsync<SignInModel>("/api/admin/auth/signin", model);

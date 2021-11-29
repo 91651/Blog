@@ -1,5 +1,5 @@
-using App.Business.Services;
 using App.Business.Model;
+using App.Business.Services;
 using App.DbAccess.Entities.Identity;
 using App.EFCore.DynamicLinq;
 using Microsoft.AspNetCore.Identity;
@@ -49,7 +49,7 @@ namespace App.Blazor.Web.Admin.Controllers
             return _articleService.GetArticleAsync(id);
         }
 
-        [HttpGet]
+        [HttpPost("query")]
         public Task<PageResult<List<ArticleListModel>>> GetArticles([FromQuery] ArticleQueryModel model)
         {
             return _articleService.GetArticlesAsync(model);

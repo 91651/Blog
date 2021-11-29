@@ -2,6 +2,8 @@ using App.Blazor.Web.Data;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
+using App.DbAccess.Repositories;
+using BC.Microsoft.DependencyInjection.Plus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,8 @@ services.AddEndpointsApiExplorer();
 services.AddRouting(options => options.LowercaseUrls = true);
 services.AddOpenApiDocument();
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
+services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();

@@ -6,7 +6,6 @@ namespace App.Blazor.Admin.Auth
 {
     public class AppAuthenticationService : AuthenticationStateProvider
     {
-        public bool IsAuthenticated = false;
         private readonly ILogger _logger;
         public readonly IServiceProvider _serviceProvider;
 
@@ -19,9 +18,9 @@ namespace App.Blazor.Admin.Auth
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var identity = new ClaimsIdentity();
-            if (IsAuthenticated)
+            var claims = await GetCurrentUser();
+            if (claims.Any())
             {
-                var claims = await GetCurrentUser();
                 foreach (var claim in claims)
                 {
                     identity.AddClaim(new Claim(claim.Key, claim.Value));
@@ -34,7 +33,6 @@ namespace App.Blazor.Admin.Auth
         }
         public Task<bool> SignIn()
         {
-            IsAuthenticated = true;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return Task.FromResult(true);
         }

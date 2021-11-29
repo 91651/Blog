@@ -19,7 +19,6 @@ namespace App.Blazor.Admin.Auth
             var httpResponseMessage = await base.SendAsync(request, cancellationToken);
             if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                _appAuthenticationService.IsAuthenticated = false;
                 _navigation.NavigateTo("/admin/signin");
             }
             return httpResponseMessage;
