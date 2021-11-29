@@ -1,6 +1,6 @@
 ﻿using App.EFCore.DynamicLinq;
 
-namespace App.Business.Services.Models
+namespace App.Business.Model
 {
     public class ArticleQueryModel : Query
     {

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\App.Business.Model\App.Business.Model.csproj" />
     <ProjectReference Include="..\Data\App.DbAccess.Repositories\App.DbAccess.Repositories.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿using App.Business.Services.Models;
+﻿using App.Business.Model;
 using App.DbAccess.Entities;
 using App.DbAccess.Repositories;
 using AutoMapper;

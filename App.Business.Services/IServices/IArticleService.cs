@@ -1,4 +1,4 @@
-﻿using App.Business.Services.Models;
+﻿using App.Business.Model;
 using App.EFCore.DynamicLinq;
 
 namespace App.Business.Services

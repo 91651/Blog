@@ -1,4 +1,4 @@
-﻿using App.Business.Services.Models;
+﻿using App.Business.Model;
 
 namespace App.Business.Services
 {

@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using App.Business.Services.Models;
+using App.Business.Model;
 using App.DbAccess.Entities;
 using App.DbAccess.Repositories;
 using App.EFCore.DynamicLinq;

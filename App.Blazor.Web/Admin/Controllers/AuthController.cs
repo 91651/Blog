@@ -1,4 +1,4 @@
-using App.Business.Services.Models;
+using App.Business.Model;
 using App.DbAccess.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace App.Business.Services.Models
+namespace App.Business.Model
 {
     public class CommentModel
     {

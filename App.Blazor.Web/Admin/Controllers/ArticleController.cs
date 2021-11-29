@@ -1,5 +1,5 @@
 using App.Business.Services;
-using App.Business.Services.Models;
+using App.Business.Model;
 using App.DbAccess.Entities.Identity;
 using App.EFCore.DynamicLinq;
 using Microsoft.AspNetCore.Identity;

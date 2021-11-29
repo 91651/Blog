@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using App.Business.Services;
-using App.Business.Services.Models;
+using App.Business.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Admin.Controllers
