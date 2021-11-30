@@ -5,7 +5,7 @@ namespace App.EFCore.DynamicLinq
 {
     public static class QueryableExtensions
     {
-        public static DataSourceResult ToDataSourceResult<T>(this IQueryable<T> queryable, int skip, int take, IEnumerable<Sort> sorts, IEnumerable<Filter> filters)
+        public static DataSourceResult ToDataSourceResult<T>(this IQueryable<T> queryable, int pageIndex, int pageSize, IEnumerable<Sort> sorts, IEnumerable<Filter> filters)
         {
             var result = new DataSourceResult();
             if (filters != null && filters.Any())
@@ -20,23 +20,23 @@ namespace App.EFCore.DynamicLinq
                 queryable = queryable.OrderBy(sortStr);
             }
             result.Total = queryable.Count();
-            if (skip > 0)
+            if (pageIndex > 0)
             {
-                queryable = queryable.Skip(skip);
+                queryable = queryable.Skip(pageSize * (pageIndex - 1));
             }
-            if (take > 0)
+            if (pageSize > 0)
             {
-                queryable = queryable.Take(take);
+                queryable = queryable.Take(pageSize);
             }
             result.Data = queryable.ToList();
             return result;
         }
         public static DataSourceResult ToDataSourceResult<T>(this IQueryable<T> queryable, Query query)
         {
-            return queryable.ToDataSourceResult(query.Skip, query.Take, query.Sort, query.Filter);
+            return queryable.ToDataSourceResult(query.PageIndex, query.PageSize, query.Sort, query.Filter);
         }
 
-        public static async Task<DataSourceResult> ToDataSourceResultAsync<T>(this IQueryable<T> queryable, int skip, int take, IEnumerable<Sort> sorts, IEnumerable<Filter> filters)
+        public static async Task<DataSourceResult> ToDataSourceResultAsync<T>(this IQueryable<T> queryable, int pageIndex, int pageSize, IEnumerable<Sort> sorts, IEnumerable<Filter> filters)
         {
             var result = new DataSourceResult();
             if (filters != null && filters.Any())
@@ -51,20 +51,20 @@ namespace App.EFCore.DynamicLinq
                 queryable = queryable.OrderBy(sortStr);
             }
             result.Total = queryable.Count();
-            if (skip > 0)
+            if (pageIndex > 0)
             {
-                queryable = queryable.Skip(skip);
+                queryable = queryable.Skip(pageSize * (pageIndex - 1));
             }
-            if (take > 0)
+            if (pageSize > 0)
             {
-                queryable = queryable.Take(take);
+                queryable = queryable.Take(pageSize);
             }
             result.Data = await queryable.ToListAsync();
             return result;
         }
         public static async Task<DataSourceResult> ToDataSourceResultAsync<T>(this IQueryable<T> queryable, Query query)
         {
-            return await queryable.ToDataSourceResultAsync(query.Skip, query.Take, query.Sort, query.Filter);
+            return await queryable.ToDataSourceResultAsync(query.PageIndex, query.PageSize, query.Sort, query.Filter);
         }
     }
 }

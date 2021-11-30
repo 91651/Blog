@@ -1,5 +1,6 @@
 using App.Blazor.Admin;
 using App.Blazor.Admin.Auth;
+using Blazorise;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -17,5 +18,6 @@ builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetService<AppAut
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddAntDesign();
+builder.Services.AddBlazorise();
 
 await builder.Build().RunAsync();

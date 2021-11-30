@@ -50,7 +50,7 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpPost("query")]
-        public Task<PageResult<List<ArticleListModel>>> GetArticles([FromQuery] ArticleQueryModel model)
+        public Task<PageResult<List<ArticleListModel>>> GetArticles(ArticleQueryModel model)
         {
             return _articleService.GetArticlesAsync(model);
         }

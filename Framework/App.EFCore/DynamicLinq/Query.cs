@@ -2,8 +2,8 @@
 {
     public class Query
     {
-        public int Take { get; set; } = 10;
-        public int Skip { get; set; } = 0;
+        public int PageIndex { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
         public IEnumerable<Sort> Sort { get; set; } = new List<Sort>();
         public IEnumerable<Filter> Filter { get; set; } = new List<Filter>();
     }

@@ -1,0 +1,65 @@
+﻿@page "/admin/article/add"
+@attribute [Authorize]
+@using System.ComponentModel
+@using AntDesign.TableModels
+@using Blazorise.Markdown
+@using Microsoft.AspNetCore.Authorization
+@using App.Business.Model
+@inject IJSRuntime _jsRuntime
+
+<link href="https://unpkg.com/easymde/dist/easymde.min.css" rel="stylesheet" />
+
+<PageTitle>Index</PageTitle>
+
+<Card Hoverable>
+    <Form Model="@model"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <FormItem Label="标题">
+            <Input @bind-Value="@context.Title" />
+        </FormItem>
+        <FormItem Label="副标题">
+            <Input @bind-Value="@context.SubTitle" />
+        </FormItem>
+        <FormItem Label="栏目">
+        </FormItem>
+        <FormItem Label="来源">
+            <Input @bind-Value="@context.Author" />
+        </FormItem>
+        <FormItem Label="简介">
+            <Input @bind-Value="@context.Summary" />
+        </FormItem>
+        <FormItem Label="内容">
+            <Markdown Value="@context.Content" />
+        </FormItem>
+    </Form>
+</Card>
+
+@code {
+    private ArticleModel model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var easymde = "https://unpkg.com/easymde/dist/easymde.min.js";
+        var highlight = "https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js";
+        await _jsRuntime.InvokeVoidAsync("appLoadJS", easymde);
+        await _jsRuntime.InvokeVoidAsync("appLoadJS", highlight);
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    private async Task OnFinish()
+    {
+        
+    }
+
+    private async Task OnFinishFailed()
+    {
+
+    }
+
+}
