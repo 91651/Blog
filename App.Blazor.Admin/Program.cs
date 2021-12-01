@@ -1,6 +1,7 @@
 using App.Blazor.Admin;
 using App.Blazor.Admin.Auth;
 using Blazorise;
+using Blazorise.Markdown;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

@@ -90,8 +90,6 @@
 
     public async Task OnChange(QueryModel<ArticleListModel> queryModel)
     {
-        Console.WriteLine(queryModel.PageIndex);
-        Console.WriteLine(query.PageIndex);
         await GetArticles();
     }
 }

@@ -2,12 +2,12 @@
 @attribute [Authorize]
 @using System.ComponentModel
 @using AntDesign.TableModels
-@using Blazorise.Markdown
 @using Microsoft.AspNetCore.Authorization
+@using Vditor.Models
 @using App.Business.Model
 @inject IJSRuntime _jsRuntime
 
-<link href="https://unpkg.com/easymde/dist/easymde.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.7/dist/index.css" />
 
 <PageTitle>Index</PageTitle>
 
@@ -32,26 +32,39 @@
             <Input @bind-Value="@context.Summary" />
         </FormItem>
         <FormItem Label="内容">
-            <Markdown Value="@context.Content" />
+            @encodedModeItems
         </FormItem>
     </Form>
 </Card>
 
 @code {
+    private Toolbar Toolbar = new ();
     private ArticleModel model = new();
-
     protected override async Task OnInitializedAsync()
     {
-        var easymde = "https://unpkg.com/easymde/dist/easymde.min.js";
-        var highlight = "https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js";
-        await _jsRuntime.InvokeVoidAsync("appLoadJS", easymde);
-        await _jsRuntime.InvokeVoidAsync("appLoadJS", highlight);
+        Console.WriteLine("------------------------------------OnInitializedAsync");
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        
+        Console.WriteLine("------------------------------------OnAfterRenderAsync");
+        var vditor = "https://cdn.jsdelivr.net/npm/vditor@3.4.7/dist/index.min.js";
+        var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
+        await _jsRuntime.InvokeVoidAsync("appLoadJS", vditor);
+        await _jsRuntime.InvokeVoidAsync("appLoadJS", vditorBlazor);
+
+        encodedModeItems =
+        @<Template>
+            <Vditor.Editor Mode="wysiwyg" Height="500" MinHeight="500" />
+        </Template>;
+
         await base.OnAfterRenderAsync(firstRender);
     }
+
+    RenderFragment encodedModeItems =
+    @<Template>
+    </Template>;
+
+
     private async Task OnFinish()
     {
         
