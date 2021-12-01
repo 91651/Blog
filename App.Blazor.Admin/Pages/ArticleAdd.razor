@@ -43,20 +43,21 @@
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("------------------------------------OnInitializedAsync");
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        Console.WriteLine("------------------------------------OnAfterRenderAsync");
         var vditor = "https://cdn.jsdelivr.net/npm/vditor@3.4.7/dist/index.min.js";
         var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
         await _jsRuntime.InvokeVoidAsync("appLoadJS", vditor);
         await _jsRuntime.InvokeVoidAsync("appLoadJS", vditorBlazor);
 
+        
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("------------------------------------OnAfterRenderAsync");
         encodedModeItems =
         @<Template>
-            <Vditor.Editor Mode="wysiwyg" Height="500" MinHeight="500" />
+            <Vditor.Editor Mode="wysiwyg" />
         </Template>;
-
         await base.OnAfterRenderAsync(firstRender);
     }
 
