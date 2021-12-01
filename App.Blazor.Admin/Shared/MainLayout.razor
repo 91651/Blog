@@ -1,62 +1,73 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="main-layout">
-    <Layout Style="height:100vh;">
-        <Header Class="header">
-            <div class="logo" />
-            @if (collapsed)
-                {
-                    <Icon Type="menu-unfold" Theme="outline" Class="trigger" OnClick="toggle" />
-                }
-                else
-                {
-                    <Icon Type="menu-fold" Theme="outline" Class="trigger" OnClick="toggle" />
-                }
-        </Header>
-        <Layout>
-            <Sider Width="200" Class="main-layout-background" Breakpoint="@BreakpointType.Lg"
-               CollapsedWidth="64" OnBreakpoint="@(broken => {
-                Console.WriteLine($"OnBreakpoint:{broken}");
-                })"
-                Collapsed=@collapsed NoTrigger OnCollapse="OnCollapse">
-                <Menu Mode="MenuMode.Inline"
-                      DefaultSelectedKeys=@(new[] {"1"})
-                      DefaultOpenKeys=@(new[] {"sub1"})
-                      Style="height: 100%; border-right: 0;">
-                    @{ RenderFragment sub1Title =
-                            @<span>
-                                <Icon Type="experiment" Theme="outline" />
-                                <span class="nav-text">文章管理</span>
-                            </span>; }
-                        <SubMenu Key="sub1" Title="文章管理" TitleTemplate=sub1Title>
-                            <NavLink class="nav-link" href="/admin/article" Match="NavLinkMatch.Prefix">
-                                <MenuItem Key="sub1m1">列表</MenuItem>
-                            </NavLink>
-                            <NavLink class="nav-link" href="/admin/article/add" Match="NavLinkMatch.Prefix">
-                                <MenuItem Key="sub1m2">添加</MenuItem>
-                            </NavLink>
-                        </SubMenu>
-                </Menu>
-            </Sider>
-            <Layout Style=" padding: 0 10px 10px;">
-                <Content Class="site-layout-background" Style=" padding: 10px; margin: 0; min-height: 280px;">
-                    @Body
-                </Content>
-            </Layout>
-        </Layout>
-    </Layout>
-</div>
+<BasicLayout
+    Logo="@("https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg")"
+    MenuData="MenuData"
+    Theme="MenuTheme.Light">
+    <RightContentRender>
+        <RightContent />
+    </RightContentRender>
+    <MenuExtraRender>
+        <Select
+            TItem="string"
+            TItemValue="string"
+            DefaultValue="@("product")"
+            Size="small"
+            Style="width: 100%;">
+            <SelectOptions>
+                <SelectOption TItem="string" TItemValue="string" Value="@("product")" Label="Product" />
+            </SelectOptions>
+        </Select>
+    </MenuExtraRender>
+    <FooterRender>
+        <AntDesign.ProLayout.Footer />
+    </FooterRender>
+    <ChildContent>
+        @Body
+    </ChildContent>
+</BasicLayout>
+<SettingDrawer />
 
 @code
 {
-    bool collapsed;
+    private MenuDataItem[] MenuData { get; set; } = {};
 
-    void toggle()
+    protected override async Task OnInitializedAsync()
     {
-        collapsed = !collapsed;
-    }
-    void OnCollapse(bool isCollapsed)
-    {
-        collapsed = !collapsed;
+        await base.OnInitializedAsync();
+        MenuData = new MenuDataItem[]
+            {
+                new ()
+                {
+                    Path = "/admin",
+                    Name = "首页",
+                    Key = "home",
+                    Icon = "smile"
+                },
+                new ()
+                {
+                    Path = "/admin/article",
+                    Name = "文章管理",
+                    Key = "article",
+                    Icon = "book",
+                    Children = new MenuDataItem[]
+                    {
+                        new ()
+                        {
+                            Path = "/admin/article",
+                            Name = "列表",
+                            Key = "article",
+                            Icon = "crown",
+                        },
+                        new ()
+                        {
+                            Path = "/admin/article/add",
+                            Name = "添加",
+                            Key = "article-add",
+                            Icon = "crown",
+                        }
+                    }
+                }
+            };
     }
 }

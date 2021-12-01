@@ -1,3 +1,4 @@
+using AntDesign.ProLayout;
 using App.Blazor.Admin;
 using App.Blazor.Admin.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -16,5 +17,14 @@ builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetService<AppAut
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddAntDesign();
+builder.Services.Configure<ProSettings>(x =>
+{
+    x.Title = "Ant Design Pro";
+    x.NavTheme = "light";
+    x.Layout = "mix";
+    x.PrimaryColor = "daybreak";
+    x.ContentWidth = "Fluid";
+    x.HeaderHeight = 64;
+});
 
 await builder.Build().RunAsync();
