@@ -32,7 +32,7 @@
             <Input @bind-Value="@context.Summary" />
         </FormItem>
         <FormItem Label="内容">
-            @encodedModeItems
+            @markdown
         </FormItem>
     </Form>
 </Card>
@@ -42,33 +42,44 @@
     private ArticleModel model = new();
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("------------------------------------OnInitializedAsync");
-        var vditor = "https://cdn.jsdelivr.net/npm/vditor@3.4.7/dist/index.min.js";
-        var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
-        await _jsRuntime.InvokeVoidAsync("appLoadJS", vditor);
-        await _jsRuntime.InvokeVoidAsync("appLoadJS", vditorBlazor);
-
-        
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine("------------------------------------OnAfterRenderAsync");
-        encodedModeItems =
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            await LoadMarkdownEditor();
+        }
+    }
+
+    RenderFragment markdown =
+    @<Template>
+    </Template>
+    ;
+
+    private async Task LoadMarkdownEditor()
+    {
+        var vditor = "https://cdn.jsdelivr.net/npm/vditor@3.4.7/dist/index.min.js";
+        var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
+        var objRef = DotNetObjectReference.Create(this);
+        //await _jsRuntime.InvokeVoidAsync("appLoadJS", "vditorBlazor", objRef, "Test");
+        await _jsRuntime.InvokeVoidAsync("appLoadJSWithWaiting", vditor);
+        await _jsRuntime.InvokeVoidAsync("appLoadJSWithWaiting", vditorBlazor);
+        markdown =
         @<Template>
             <Vditor.Editor Mode="wysiwyg" />
         </Template>;
-        await base.OnAfterRenderAsync(firstRender);
+            StateHasChanged();
     }
 
-    RenderFragment encodedModeItems =
-    @<Template>
-    </Template>;
-
+    //[JSInvokable("Test")]
+    //public static async Task Test()
+    //{
+    //}
 
     private async Task OnFinish()
     {
-        
     }
 
     private async Task OnFinishFailed()
