@@ -3,6 +3,7 @@
 @using System.ComponentModel
 @using AntDesign.TableModels
 @using Microsoft.AspNetCore.Authorization
+@using System.Text.Json
 @using Vditor.Models
 @using App.Business.Model
 @inject HttpClient Http
@@ -24,17 +25,30 @@
         <FormItem Label="副标题">
             <Input @bind-Value="@context.SubTitle" />
         </FormItem>
-        <FormItem Label="栏目">
-            <Cascader Options="@channels" ExpandTrigger="hover"></Cascader>
-        </FormItem>
-        <FormItem Label="来源">
-            <Input @bind-Value="@context.Author" />
-        </FormItem>
         <FormItem Label="简介">
             <TextArea Rows="2" @bind-Value="@context.Summary"/>
         </FormItem>
+        <FormItem Label="属性">
+            <Space Size=@(("20", "0"))>
+                <SpaceItem>
+                    <FormItem Label="栏目">
+                        <Cascader Options="@channels" ExpandTrigger="hover" @bind-Value="@context.ChannelId"></Cascader>
+                    </FormItem>
+                </SpaceItem>
+                <SpaceItem>
+                    <FormItem Label="来源">
+                        <Input @bind-Value="@context.Author" />
+                    </FormItem>
+                </SpaceItem>
+            </Space>
+        </FormItem>
         <FormItem Label="内容">
             @markdown
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                提交
+            </Button>
         </FormItem>
     </Form>
 </Card>
@@ -44,6 +58,7 @@
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
     {
+        await GetChannels();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -55,9 +70,32 @@
         }
     }
 
-    private void GetChannels()
+    private async Task GetChannels()
     {
-        var resp = await Http.GetFromJsonAsync<ChannelModel>("/api/admin/article/query", query);
+        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        channels = data.Select(s =>
+        {
+            var children = data.Where(c => c.ParentId == s.Id);
+            if (children.Any())
+            {
+                return new CascaderNode
+                    {
+                        Label = s.Title,
+                        Value = s.Id,
+                        Children = children.Select(ch => new CascaderNode
+                        {
+                            Label = s.Title,
+                            Value = s.Id
+                        })
+                    };
+            }
+            return new CascaderNode
+                {
+                    Label = s.Title,
+                    Value = s.Id,
+                };
+
+        }).Where(c => c.Children == null || c.Children.Any()).ToList();
     }
 
     RenderFragment markdown =
@@ -75,7 +113,7 @@
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
         markdown =
         @<Template>
-            <Vditor.Editor Mode="wysiwyg" />
+            <Vditor.Editor Mode="wysiwyg" Height='400' />
         </Template>;
             StateHasChanged();
     }
