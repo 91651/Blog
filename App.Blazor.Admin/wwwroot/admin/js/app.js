@@ -1,22 +1,20 @@
-﻿// 动态加载JS
-window.appLoadJS = function (url, objRef, callback) {
-    script = document.createElement("script");
-    script.src = url;
-    script.addEventListener('load', e => {
-        objRef.invokeMethodAsync(callback);
-        console.log("aaaaaaaabbbbbb------------------1");
-    });
-    document.body.appendChild(script);
-}
-
-window.appLoadJSWithWaiting = function (url) {
-    return new Promise((resolve, reject) => {
+﻿window.BlazorApp = {
+    loadJS : function (url, objRef, callback) {
         script = document.createElement("script");
         script.src = url;
         script.addEventListener('load', e => {
-            resolve();
-            console.log("aaaaaaaabbbbbb------------------2");
+            objRef.invokeMethodAsync(callback);
         });
         document.body.appendChild(script);
-    });
+    },
+    loadJSWithWaiting : function (url) {
+        return new Promise((resolve, reject) => {
+            script = document.createElement("script");
+            script.src = url;
+            script.addEventListener('load', e => {
+                resolve();
+            });
+            document.body.appendChild(script);
+        });
+    }
 }

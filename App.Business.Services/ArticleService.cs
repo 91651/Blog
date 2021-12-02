@@ -95,19 +95,5 @@ namespace App.Business.Services
                 Total = users.Total
             };
         }
-        public async Task<string> AddChannelAsync(ChannelModel model)
-        {
-            var channel = _channleRepository.GetAll().Where(c => c.Title == model.Title.Trim() && c.ParentId == model.ParentId).FirstOrDefault();
-            if (channel != null)
-            {
-                return channel.Id;
-            }
-            var entity = _mapper.Map<Channel>(model);
-            entity.Id = Guid.NewGuid().ToString(10);
-            entity.State = 1;
-            await _channleRepository.AddAsync(entity);
-            await _articleRepository.SaveChangesAsync();
-            return entity.Id;
-        }
     }
 }

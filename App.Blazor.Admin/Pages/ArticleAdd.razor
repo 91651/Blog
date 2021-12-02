@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Vditor.Models
 @using App.Business.Model
+@inject HttpClient Http
 @inject IJSRuntime _jsRuntime
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.4.7/dist/index.css" />
@@ -24,12 +25,13 @@
             <Input @bind-Value="@context.SubTitle" />
         </FormItem>
         <FormItem Label="栏目">
+            <Cascader Options="@channels" ExpandTrigger="hover"></Cascader>
         </FormItem>
         <FormItem Label="来源">
             <Input @bind-Value="@context.Author" />
         </FormItem>
         <FormItem Label="简介">
-            <Input @bind-Value="@context.Summary" />
+            <TextArea Rows="2" @bind-Value="@context.Summary"/>
         </FormItem>
         <FormItem Label="内容">
             @markdown
@@ -38,8 +40,8 @@
 </Card>
 
 @code {
-    private Toolbar Toolbar = new ();
     private ArticleModel model = new();
+    private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
     {
     }
@@ -53,6 +55,11 @@
         }
     }
 
+    private void GetChannels()
+    {
+        var resp = await Http.GetFromJsonAsync<ChannelModel>("/api/admin/article/query", query);
+    }
+
     RenderFragment markdown =
     @<Template>
     </Template>
@@ -64,8 +71,8 @@
         var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
         var objRef = DotNetObjectReference.Create(this);
         //await _jsRuntime.InvokeVoidAsync("appLoadJS", "vditorBlazor", objRef, "Test");
-        await _jsRuntime.InvokeVoidAsync("appLoadJSWithWaiting", vditor);
-        await _jsRuntime.InvokeVoidAsync("appLoadJSWithWaiting", vditorBlazor);
+        await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
+        await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
         markdown =
         @<Template>
             <Vditor.Editor Mode="wysiwyg" />

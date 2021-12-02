@@ -10,6 +10,5 @@ namespace App.Business.Services
         Task<ArticleModel> GetArticleAsync(string id);
         Task<bool> UpdateArticleAsync(ArticleModel model);
         Task<PageResult<List<ArticleListModel>>> GetArticlesAsync(ArticleQueryModel model);
-        Task<string> AddChannelAsync(ChannelModel model);
     }
 }

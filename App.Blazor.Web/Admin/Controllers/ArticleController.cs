@@ -54,10 +54,5 @@ namespace App.Blazor.Web.Admin.Controllers
         {
             return _articleService.GetArticlesAsync(model);
         }
-        [HttpPost("/api/channel")]
-        public Task<string> AddChannel(ChannelModel model)
-        {
-            return _articleService.AddChannelAsync(model);
-        }
     }
 }
