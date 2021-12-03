@@ -22,41 +22,47 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<FileModel> Upload(IFormFile file)
+        public IActionResult Upload(IFormFile[] files)
         {
-            var model = new FileModel();
-            using (var ms = new MemoryStream())
-            {
-                file.CopyTo(ms);
-                var md5 = default(string);
-                using (var _md5 = MD5.Create())
-                {
-                    md5 = string.Join("", _md5.ComputeHash(ms.ToArray()).Select(x => x.ToString("X2")));
-                }
-                var existFile = await _fileServicer.GetFileByMd5Async(md5);
-                if (existFile != null)
-                {
-                    existFile.OwnerId = string.Empty;
-                    model = existFile;
-                }
-                else
-                {
-                    var path = _hostEnvironment.WebRootPath;
-                    var uploadPath = _configuration["AppSettings:ImgUploadPath"]; //避免路径敏感，使用"/"
-                    var fullPath = Path.GetFullPath(Path.Combine(path, uploadPath));
-                    var filename = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}{Path.GetExtension(file.FileName)}";
-                    if (!Directory.Exists(fullPath))
-                    {
-                        Directory.CreateDirectory(fullPath);
-                    }
-                    System.IO.File.WriteAllBytes(Path.Combine(fullPath, filename), ms.GetBuffer());
-                    model.Name = filename;
-                    model.Path = $"/{uploadPath}";
-                    model.Md5 = md5;
-                }
-            }
-            model.Id = (await _fileServicer.AddFileAsync(model));
-            return model;
+            
+            var model = new { Data = new { SuccMap = new { Filename1 = "filepath3", Filename2 = "filepath3" }  } };
+            throw new Exception();
+            //foreach(var file in files)
+            //{
+            //    using (var ms = new MemoryStream())
+            //    {
+            //        file.CopyTo(ms);
+            //        var md5 = default(string);
+            //        using (var _md5 = MD5.Create())
+            //        {
+            //            md5 = string.Join("", _md5.ComputeHash(ms.ToArray()).Select(x => x.ToString("X2")));
+            //        }
+            //        var existFile = await _fileServicer.GetFileByMd5Async(md5);
+            //        if (existFile != null)
+            //        {
+            //            existFile.OwnerId = string.Empty;
+            //            model = existFile;
+            //        }
+            //        else
+            //        {
+            //            var path = _hostEnvironment.WebRootPath;
+            //            var uploadPath = _configuration["AppSettings:ImgUploadPath"]; //避免路径敏感，使用"/"
+            //            var fullPath = Path.GetFullPath(Path.Combine(path, uploadPath));
+            //            var filename = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}{Path.GetExtension(file.FileName)}";
+            //            if (!Directory.Exists(fullPath))
+            //            {
+            //                Directory.CreateDirectory(fullPath);
+            //            }
+            //            System.IO.File.WriteAllBytes(Path.Combine(fullPath, filename), ms.GetBuffer());
+            //            model.Name = filename;
+            //            model.Path = $"/{uploadPath}";
+            //            model.Md5 = md5;
+            //        }
+            //    }
+            //    model.Id = (await _fileServicer.AddFileAsync(model));
+            //}
+
+            //return model;
 
         }
 

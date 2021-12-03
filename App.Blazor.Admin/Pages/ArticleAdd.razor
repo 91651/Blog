@@ -54,6 +54,10 @@
 </Card>
 
 @code {
+    private Vditor.Models.Upload upload = new()
+    {
+        Url = "/api/admin/file"
+    };
     private ArticleModel model = new();
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
@@ -113,7 +117,7 @@
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
         markdown =
         @<Template>
-            <Vditor.Editor Mode="wysiwyg" Height='400' />
+            <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" />
         </Template>;
             StateHasChanged();
     }
