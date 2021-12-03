@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Vditor.Models;
-using System.Linq;
 
 namespace Vditor
 {
@@ -149,6 +149,13 @@ namespace Vditor
         public void Dispose()
         {
             Destroy();
+        }
+
+        [JSInvokable]
+        public void UploadFormat(object files, string msg)
+        {
+            Console.WriteLine("ssssssssssssssssssss---------");
+            Upload.Format?.Invoke(files, msg);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Vditor.Models
+﻿using System;
+
+namespace Vditor.Models
 {
     /// <summary>
     /// 普通参数在此定义
@@ -20,5 +22,6 @@
         public bool Multiple { get; set; } = true;
         public string FieldName { get; set; } = "file[]";
         public string ExtraData { get; set; } = "";
+        public Action<object, string> Format;
     }
 }

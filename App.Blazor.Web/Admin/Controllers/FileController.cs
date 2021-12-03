@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using App.Business.Services;
-using App.Business.Model;
+﻿using App.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Admin.Controllers
@@ -24,9 +22,9 @@ namespace App.Blazor.Web.Admin.Controllers
         [HttpPost]
         public IActionResult Upload(IFormFile[] files)
         {
-            
-            var model = new { Data = new { SuccMap = new { Filename1 = "filepath3", Filename2 = "filepath3" }  } };
-            throw new Exception();
+
+            var model = new { Data = new { SuccMap = new { Filename1 = "filepath3", Filename2 = "filepath3" } } };
+            return Ok(model);
             //foreach(var file in files)
             //{
             //    using (var ms = new MemoryStream())
