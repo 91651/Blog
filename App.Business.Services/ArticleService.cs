@@ -34,7 +34,10 @@ namespace App.Business.Services
             entity.Id = Guid.NewGuid().ToString(10);
             await _articleRepository.AddAsync(entity);
             //包含的文件处理
-            await _fileRepository.GetAll().Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
+            if (model.Files != null)
+            {
+                await _fileRepository.GetAll().Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
+            }
 
             await _articleRepository.SaveChangesAsync();
             return entity.Id;
