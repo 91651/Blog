@@ -4,6 +4,7 @@
 @using AntDesign.TableModels
 @using Microsoft.AspNetCore.Authorization
 @using System.Text.Json
+@using System.Dynamic
 @using Vditor.Models
 @using App.Business.Model
 @inject HttpClient Http
@@ -56,11 +57,22 @@
 @code {
     private Vditor.Models.Upload upload = new()
     {
-        Url = "/api/admin/file",
-        Format = (object a, string b) =>
+        Url = "https://localhost:44326/api/admin/file",
+        WithCredentials = true,
+        Format = (object files, string responseText) =>
         {
-
-            Console.WriteLine("需要转换返回");
+            Console.WriteLine(responseText);
+            var resp = JsonSerializer.Deserialize<List<FileModel>>(responseText);
+            var succMap = new Dictionary<string, object>();
+            foreach(var file in resp)
+            {
+                succMap[file.Name] = file.Path;
+            }
+            var vditor = new { data = new { succMap = succMap } };
+            var vditordata = JsonSerializer.Serialize(vditor);
+            Console.WriteLine(vditordata);
+            return vditordata;
+            
         }
     };
     private ArticleModel model = new();

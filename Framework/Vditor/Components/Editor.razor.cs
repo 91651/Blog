@@ -152,10 +152,10 @@ namespace Vditor
         }
 
         [JSInvokable]
-        public void UploadFormat(object files, string msg)
+        public void UploadFormat(object files, string responseText)
         {
             Console.WriteLine("ssssssssssssssssssss---------");
-            Upload.Format?.Invoke(files, msg);
+            var a = Upload.Format?.Invoke(files, responseText);
         }
     }
 }

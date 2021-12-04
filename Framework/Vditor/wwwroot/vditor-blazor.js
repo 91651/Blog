@@ -19,6 +19,7 @@ window.vditorBlazor = window.vditorBlazor || {
             options.upload.format = (files, responseText) => {
 
                 console.log("--------------------====linkToImgFormat");
+                console.log(responseText);
                 editor.invokeMethodAsync('UploadFormat', files, responseText);
                 debugger
                 return (files, responseText);

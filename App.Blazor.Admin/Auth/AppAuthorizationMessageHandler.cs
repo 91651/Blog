@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 namespace App.Blazor.Admin.Auth
 {
@@ -16,6 +17,7 @@ namespace App.Blazor.Admin.Auth
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            request.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
             var httpResponseMessage = await base.SendAsync(request, cancellationToken);
             if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {

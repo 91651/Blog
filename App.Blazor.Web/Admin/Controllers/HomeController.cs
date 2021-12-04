@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Admin.Controllers
 {
     [ApiController]
     [Area("admin")]
+    [Authorize]
     [Route("api/[area]/[controller]")]
     public class HomeController : ControllerBase
     {
@@ -14,7 +16,7 @@ namespace App.Blazor.Web.Admin.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public IActionResult Index()
         {
             var time = DateTime.Now;

@@ -22,16 +22,31 @@ services.Configure<IdentityOptions>(options =>
         RequiredLength = 6
     };
 });
+services.ConfigureApplicationCookie(o =>
+{
+    o.Cookie.MaxAge = TimeSpan.FromDays(1);
+    o.Cookie.SameSite = SameSiteMode.None;
+    o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    o.Cookie.HttpOnly = true;
+});
 
 services.AddControllersWithViews();
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
 services.AddServerSideBlazor();
 services.AddAntDesign();
-services.AddAuthentication();
+services.AddAuthentication().AddCookie(o =>
+{
+    o.Events.OnRedirectToLogin = (context) =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+});
 services.AddEndpointsApiExplorer();
 services.AddRouting(options => options.LowercaseUrls = true);
 services.AddOpenApiDocument();
+services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(origin => true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
@@ -59,6 +74,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
