@@ -1,10 +1,12 @@
-﻿@page "/admin/article/edit"
+﻿@page "/admin/article/edit/{id}"
+@page "/admin/article/edit"
 @attribute [Authorize]
 @using System.ComponentModel
 @using AntDesign.TableModels
 @using Microsoft.AspNetCore.Authorization
 @using System.Text.Json
 @using System.Dynamic
+@using System.Linq;
 @using Vditor.Models
 @using App.Business.Model
 @inject HttpClient Http
@@ -57,11 +59,22 @@
 </Card>
 
 @code {
+    [Parameter]
+    public string id { get; set; }
     private ArticleModel model = new();
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
     {
         await GetChannels();
+        upload.Format = Format;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            GetArticle();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -71,6 +84,12 @@
         {
             await LoadMarkdownEditor();
         }
+    }
+
+    private async Task GetArticle()
+    {
+        var data = await Http.GetFromJsonAsync<ArticleModel>($"/api/admin/article/{id}");
+        model = data;
     }
 
     private async Task GetChannels()
@@ -103,54 +122,77 @@
 
     RenderFragment markdown =
     @<Template>
-    </Template>;
+    </Template>
+    ;
 
     private Vditor.Models.Upload upload = new()
     {
         Url = "https://localhost:44326/api/admin/file",
-        WithCredentials = true,
-        Format = (object files, string responseText) =>
-        {
-            var resp = JsonSerializer.Deserialize<List<FileModel>>(responseText, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
-            var succMap = new Dictionary<string, object>();
-            foreach(var file in resp)
-            {
-                succMap[file.Name] = file.Path;
-            }
-            var vditor = new { data = new { succMap = succMap } };
-            var vditordata = JsonSerializer.Serialize(vditor);
-            return vditordata;
-            
-        }
+        WithCredentials = true
     };
+    private string Format(object files, string responseText)
+    {
+        var resp = JsonSerializer.Deserialize<List<FileModel>>(responseText, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
+        model.Files = resp.Select(s => s.Id).ToArray();
+        var succMap = new Dictionary<string, object>();
+        foreach(var file in resp)
+        {
+            succMap[file.Name] = Path.Combine(file.Path, file.Name);
+        }
+        var vditor = new { data = new { succMap = succMap } };
+        var vditordata = JsonSerializer.Serialize(vditor);
+        return vditordata;
+    }
 
     private async Task LoadMarkdownEditor()
     {
         var vditor = "https://cdn.jsdelivr.net/npm/vditor@3.8.7/dist/index.min.js";
         var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
-        var objRef = DotNetObjectReference.Create(this);
-        //await _jsRuntime.InvokeVoidAsync("appLoadJS", "vditorBlazor", objRef, "Test");
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
         markdown =
         @<Template>
-            <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" />
-    </Template>
+            <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" @bind-Value="@model.MdContent" HtmlChanged="(string html) => {model.Content = html;}" />
+        </Template>
     ;
         StateHasChanged();
     }
 
     private async Task OnFinish()
     {
-        var resp = await Http.PostAsJsonAsync<ArticleModel>("/api/admin/article", model);
-        if (resp.IsSuccessStatusCode)
+        if (!string.IsNullOrWhiteSpace(id))
         {
-            var data = await resp.Content.ReadFromJsonAsync<string>();
-            await _message.Success("文章添加成功");
-            Navigation.NavigateTo("/admin/article");
-            return;
+            model.Id = id;
+            var resp = await Http.PutAsJsonAsync<ArticleModel>($"/api/admin/article/{id}", model);
+            if (resp.IsSuccessStatusCode)
+            {
+
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("文章更新成功");
+                    Navigation.NavigateTo("/admin/article");
+                    return;
+                }
+            }
+            await _message.Warn("文章更新失败");
         }
-        await _message.Success("文章添加失败");
+        else
+        {
+            var resp = await Http.PostAsJsonAsync<ArticleModel>("/api/admin/article", model);
+            if (resp.IsSuccessStatusCode)
+            {
+
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("文章添加成功");
+                    Navigation.NavigateTo("/admin/article");
+                    return;
+                }
+            }
+            await _message.Warn("文章添加失败");
+        }
     }
 
     private async Task OnFinishFailed()

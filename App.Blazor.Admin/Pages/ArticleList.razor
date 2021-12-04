@@ -87,7 +87,7 @@
 
     private async Task Edit(string id)
     {
-        Navigation.ToBaseRelativePath($"edit/{id}");
+        Navigation.NavigateTo($"/admin/article/edit/{id}");
     }
 
     private async Task Del(string id)
@@ -96,6 +96,7 @@
         if (resp.IsSuccessStatusCode)
         {
             await _message.Success("文章删除成功");
+            await GetArticles();
             return;
         }
         await _message.Warn("文章删除失败");
