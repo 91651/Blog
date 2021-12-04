@@ -1,10 +1,13 @@
-﻿using App.Business.Services;
+﻿using App.Business.Model;
+using App.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Admin.Controllers
 {
     [ApiController]
     [Area("admin")]
+    [Authorize]
     [Route("api/[area]/[controller]")]
     public class FileController : ControllerBase
     {
@@ -20,11 +23,17 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upload(IFormFile[] files)
+        public async Task<List<FileModel>> Upload(IFormFile[] files)
         {
 
-            var model = new { Data = new { SuccMap = new { Filename1 = "filepath3", Filename2 = "filepath3" } } };
-            return Ok(model);
+            var result = new List<FileModel>();
+            result.Add(new FileModel
+            {
+                Id = "123",
+                Name = "456",
+                Path = "/aaa/bbb"
+            });
+            return result;
             //foreach(var file in files)
             //{
             //    using (var ms = new MemoryStream())

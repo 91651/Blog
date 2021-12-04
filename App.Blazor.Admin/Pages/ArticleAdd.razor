@@ -4,10 +4,13 @@
 @using AntDesign.TableModels
 @using Microsoft.AspNetCore.Authorization
 @using System.Text.Json
+@using System.Dynamic
 @using Vditor.Models
 @using App.Business.Model
 @inject HttpClient Http
 @inject IJSRuntime _jsRuntime
+@inject MessageService _message
+@inject NavigationManager Navigation
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.8.7/dist/index.css" />
 
@@ -54,15 +57,6 @@
 </Card>
 
 @code {
-    private Vditor.Models.Upload upload = new()
-    {
-        Url = "/api/admin/file",
-        Format = (object a, string b) =>
-        {
-
-            Console.WriteLine("需要转换返回");
-        }
-    };
     private ArticleModel model = new();
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
@@ -109,8 +103,26 @@
 
     RenderFragment markdown =
     @<Template>
-    </Template>
-    ;
+    </Template>;
+
+    private Vditor.Models.Upload upload = new()
+    {
+        Url = "https://localhost:44326/api/admin/file",
+        WithCredentials = true,
+        Format = (object files, string responseText) =>
+        {
+            var resp = JsonSerializer.Deserialize<List<FileModel>>(responseText, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
+            var succMap = new Dictionary<string, object>();
+            foreach(var file in resp)
+            {
+                succMap[file.Name] = file.Path;
+            }
+            var vditor = new { data = new { succMap = succMap } };
+            var vditordata = JsonSerializer.Serialize(vditor);
+            return vditordata;
+            
+        }
+    };
 
     private async Task LoadMarkdownEditor()
     {
@@ -123,17 +135,22 @@
         markdown =
         @<Template>
             <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" />
-        </Template>;
-            StateHasChanged();
+    </Template>
+    ;
+        StateHasChanged();
     }
-
-    //[JSInvokable("Test")]
-    //public static async Task Test()
-    //{
-    //}
 
     private async Task OnFinish()
     {
+        var resp = await Http.PostAsJsonAsync<ArticleModel>("/api/admin/article", model);
+        if (resp.IsSuccessStatusCode)
+        {
+            var data = await resp.Content.ReadFromJsonAsync<string>();
+            await _message.Success("文章添加成功");
+            Navigation.NavigateTo("/admin/article");
+            return;
+        }
+        await _message.Success("文章添加失败");
     }
 
     private async Task OnFinishFailed()

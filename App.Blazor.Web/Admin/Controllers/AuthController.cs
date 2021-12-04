@@ -9,6 +9,7 @@ namespace App.Blazor.Web.Admin.Controllers
 
     [ApiController]
     [Area("admin")]
+    [Authorize]
     [Route("api/[area]/[controller]")]
     public class AuthController : ControllerBase
     {

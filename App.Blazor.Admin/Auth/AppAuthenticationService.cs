@@ -39,8 +39,13 @@ namespace App.Blazor.Admin.Auth
         private async Task<IEnumerable<KeyValuePair<string, string>>> GetCurrentUser()
         {
             var httpClient = _serviceProvider.GetService<HttpClient>();
-            var resp = await httpClient.GetFromJsonAsync<IEnumerable<KeyValuePair<string, string>>>("/api/admin/auth/claims");
-            return resp;
+            var resp = await httpClient.GetAsync("/api/admin/auth/claims");
+            if (resp.IsSuccessStatusCode)
+            {
+                var data = await resp.Content.ReadFromJsonAsync<IEnumerable<KeyValuePair<string, string>>>();
+                return data;
+            }
+            return Enumerable.Empty<KeyValuePair<string, string>>();
         }
     }
 }

@@ -1,12 +1,13 @@
 using App.Business.Model;
 using App.Business.Services;
-using App.EFCore.DynamicLinq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Admin.Controllers
 {
     [ApiController]
     [Area("admin")]
+    [Authorize]
     [Route("api/[area]/[controller]")]
     public class ChannelController : ControllerBase
     {
