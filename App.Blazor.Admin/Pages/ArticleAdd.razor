@@ -115,7 +115,7 @@
             var succMap = new Dictionary<string, object>();
             foreach(var file in resp)
             {
-                succMap[file.Name] = file.Path;
+                succMap[file.Name] = Path.Combine(file.Path, file.Name);
             }
             var vditor = new { data = new { succMap = succMap } };
             var vditordata = JsonSerializer.Serialize(vditor);
@@ -135,8 +135,8 @@
         markdown =
         @<Template>
             <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" />
-    </Template>
-    ;
+        </Template>
+        ;
         StateHasChanged();
     }
 
@@ -145,10 +145,14 @@
         var resp = await Http.PostAsJsonAsync<ArticleModel>("/api/admin/article", model);
         if (resp.IsSuccessStatusCode)
         {
-            var data = await resp.Content.ReadFromJsonAsync<string>();
-            await _message.Success("文章添加成功");
-            Navigation.NavigateTo("/admin/article");
-            return;
+
+            var data = await resp.Content.ReadAsStringAsync();
+            if (!string.IsNullOrWhiteSpace(data))
+            {
+                await _message.Success("文章添加成功");
+                Navigation.NavigateTo("/admin/article");
+                return;
+            }
         }
         await _message.Success("文章添加失败");
     }
