@@ -23,8 +23,8 @@ namespace App.Business.Services.AutoMapper
                 .ForMember(m => m.File, opt => opt.MapFrom(s => s.Files.FirstOrDefault()));
             CreateMap<Channel, ChannelModel>();
             CreateMap<Comment, CommentModel>().ReverseMap();
-            CreateMap<File, FileModel>();
-            CreateMap<User, UserModel>();
+            CreateMap<File, FileModel>().ReverseMap();
+            CreateMap<User, UserModel>().ReverseMap();
         }
     }
 }

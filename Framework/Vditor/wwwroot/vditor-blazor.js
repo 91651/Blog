@@ -17,7 +17,10 @@ window.vditorBlazor = window.vditorBlazor || {
     }
         if (options.upload) {
             options.upload.format = (files, responseText) => {
-                responseText = editor.invokeMethod('UploadFormat', files, responseText);
+
+                console.log("--------------------====linkToImgFormat");
+                editor.invokeMethodAsync('UploadFormat', files, responseText);
+                debugger
                 return (files, responseText);
             }
         }

@@ -24,6 +24,7 @@ services.Configure<IdentityOptions>(options =>
 });
 services.ConfigureApplicationCookie(o =>
 {
+    o.Cookie.MaxAge = TimeSpan.FromDays(1);
     o.Cookie.SameSite = SameSiteMode.None;
     o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     o.Cookie.HttpOnly = true;
