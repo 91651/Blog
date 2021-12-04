@@ -6,6 +6,8 @@
 @using App.EFCore.DynamicLinq
 @using Microsoft.AspNetCore.Authorization
 @inject HttpClient Http
+@inject MessageService _message
+@inject NavigationManager Navigation
 
 <PageTitle>Index</PageTitle>
 
@@ -53,10 +55,10 @@
         <ActionColumn Title="操作">
             <Space Size=@("middle")>
                 <SpaceItem>
-                    <a>编辑</a>
+                    <Button Type="@ButtonType.Link" @onclick="() => Edit(context.Id)">编辑</Button>
                 </SpaceItem>
                 <SpaceItem>
-                    <a>删除</a>
+                    <Button Type="@ButtonType.Link" @onclick="() => Del(context.Id)">删除</Button>
                 </SpaceItem>
             </Space>
         </ActionColumn>
@@ -81,6 +83,22 @@
     private async Task Query()
     {
         await GetArticles();
+    }
+
+    private async Task Edit(string id)
+    {
+        Navigation.ToBaseRelativePath($"edit/{id}");
+    }
+
+    private async Task Del(string id)
+    {
+        var resp = await Http.DeleteAsync($"/api/admin/article/{id}");
+        if (resp.IsSuccessStatusCode)
+        {
+            await _message.Success("文章删除成功");
+            return;
+        }
+        await _message.Warn("文章删除失败");
     }
 
     void OnRowClick(RowData<ArticleListModel> row)
