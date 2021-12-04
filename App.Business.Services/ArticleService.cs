@@ -58,7 +58,10 @@ namespace App.Business.Services
             _articleRepository.Entry(entity).Property(nameof(entity.Created)).IsModified = false;
             _articleRepository.Entry(entity).Property(nameof(entity.UserId)).IsModified = false;
             //包含的文件处理
-            await _fileRepository.GetAll().Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
+            if (model.Files != null)
+            {
+                await _fileRepository.GetAll().Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
+            }
 
             var rows = await _articleRepository.SaveChangesAsync();
             return rows > 0;
@@ -74,6 +77,7 @@ namespace App.Business.Services
         {
             model.Sort = new List<Sort> { new Sort { Field = "Created", Desc = true } };
             Expression<Func<Article, bool>> ex = t => true;
+            ex = t => t.State != 0;
             if (!string.IsNullOrWhiteSpace(model.Id))
             {
                 ex = t => t.Id.Contains(model.Id);
