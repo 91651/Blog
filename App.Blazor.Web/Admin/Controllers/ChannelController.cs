@@ -27,7 +27,7 @@ namespace App.Blazor.Web.Admin.Controllers
         [HttpGet]
         public Task<List<ChannelModel>> GetChannels()
         {
-            return _channelService.GetChannels();
+            return _channelService.GetChannelsAsync();
         }
     }
 }

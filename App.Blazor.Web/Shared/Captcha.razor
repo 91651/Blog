@@ -1,0 +1,147 @@
+﻿@using App.Captcha
+@using App.Business.Services
+@using System.Text.Json
+@using Microsoft.Extensions.Caching.Memory
+
+@inject IJSRuntime JSRuntime
+@inject IMemoryCache _memoryCache
+
+<div class="captcha-container">
+    <div class="slidercaptcha">
+        <div class="captcha-header">
+            <span>请完成安全验证!</span>
+        </div>
+        <div class="captcha-body">
+            <div style="position: relative; width: 280px; margin: 0px auto;">
+                <canvas @ref="canvasBack" width="278" height="155" @ondrop="Drop" ondragover="event.preventDefault();" /><i class="refreshIcon fa fa-redo" />
+                <canvas @ref="canvasBlock" width="50" height="50" class="block" style="background-color: aqua; left:@(point.X)px; top:@(point.Y)px; " draggable="true" @ondragstart="DragStart" />
+                <div class="sliderContainer @(Slider.SliderStatus == SliderStatus.Succeed ? "sliderContainer_success" : (Slider.SliderStatus == SliderStatus.Failed ? "sliderContainer_fail" : ""))">
+                    <div class="sliderbg" />
+                    <div class="sliderMask">
+                        @*<div class="slider" style="left: @(left)px; top:@(top)px; "
+                            >
+                            <i class="mdi mdi-arrow-right-thick sliderIcon" />
+                            </div>*@
+                    </div>
+                    <span class="sliderText" style="@(active ? "display:none" : "" )">@Slider.Text</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public bool IsShow { get; set; }
+    [Parameter]
+    public Func<string, Task> OnSucceed { get; set; }
+    private ElementReference canvasBack;
+    private ElementReference canvasBlock;
+    private bool active;
+    private const int offset = 2;
+    private App.Captcha.Point point = new() { X = offset, Y = offset };
+    private App.Captcha.Point defaultPosition = new();
+    private ISlider Slider = new SliderInitial();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CaptchaInit();
+        }
+    }
+
+    private void DragStart(DragEventArgs e)
+    {
+        defaultPosition.X = (int)e.ClientX;
+        defaultPosition.Y = (int)e.ClientY;
+        active = true;
+    }
+
+    private async Task Drop(DragEventArgs e)
+    {
+        active = false;
+        point.X = (int)e.ClientX - defaultPosition.X + offset;
+        point.Y = (int)e.ClientY - defaultPosition.Y + offset;
+        var result = await CaptchaVerifyAsync(point);
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            Slider = new SliderSucceed();
+            OnSucceed?.Invoke(result);
+        }
+        else
+        {
+            Slider = new SliderFailed();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            await CaptchaInit();
+
+        }
+    }
+
+    private async Task CaptchaInit()
+    {
+        active = false;
+        Slider = new SliderInitial();
+        point = new App.Captcha.Point() { X = offset, Y = offset };
+        defaultPosition = new App.Captcha.Point();
+        var captcha = await CaptchaGenerateAsync();
+        await JSRuntime.InvokeAsync<Task>("appjs.canvas.drawImage", canvasBack, captcha.NormalImg);
+        await JSRuntime.InvokeAsync<Task>("appjs.canvas.drawImage", canvasBlock, captcha.SlideImg);
+    }
+
+    public async Task<CaptchaModel> CaptchaGenerateAsync()
+    {
+        var captcha = new ImageCaptcha().Generate();
+        var point = JsonSerializer.Deserialize<App.Captcha.Point>(JsonSerializer.Serialize(captcha.Point));
+        _memoryCache.Set(nameof(ImageCaptcha), point, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20) });
+        captcha.Point.X = default;
+        captcha.Point.Y = default;
+        return await Task.FromResult(captcha);
+    }
+
+    public async Task<string> CaptchaVerifyAsync(App.Captcha.Point point)
+    {
+        var p = _memoryCache.Get<App.Captcha.Point>(nameof(ImageCaptcha));
+        _memoryCache.Remove(nameof(ImageCaptcha));
+        var code = ImageCaptcha.CaptchaVerify(p, point);
+        if (!string.IsNullOrWhiteSpace(code))
+        {
+            _memoryCache.Set(code, true);
+            return code;
+        }
+        return await Task.FromResult(string.Empty);
+    }
+
+
+    class SliderInitial : ISlider
+    {
+        public SliderStatus SliderStatus { get; set; } = SliderStatus.Initial;
+        public string Text { get; set; } = "拖动图案到缺口完成验证";
+    }
+
+    class SliderSucceed : ISlider
+    {
+        public SliderStatus SliderStatus { get; set; } = SliderStatus.Succeed;
+        public string Text { get; set; } = "验证通过";
+    }
+
+    class SliderFailed : ISlider
+    {
+        public SliderStatus SliderStatus { get; set; } = SliderStatus.Failed;
+        public string Text { get; set; } = "再次一次";
+    }
+
+    interface ISlider
+    {
+        SliderStatus SliderStatus { get; set; }
+        string Text { get; set; }
+    }
+
+    enum SliderStatus
+    {
+        Initial,
+        Succeed,
+        Failed
+    }
+}

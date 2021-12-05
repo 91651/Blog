@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<Application>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = new Uri("https://localhost:44326/"))
+builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<AppAuthorizationMessageHandler>();
 builder.Services.AddTransient<AppAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ServerAPI"));

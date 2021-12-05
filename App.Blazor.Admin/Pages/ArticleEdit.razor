@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using System.Text.Json
 @using System.Dynamic
-@using System.Linq;
+@using System.Linq
 @using Vditor.Models
 @using App.Business.Model
 @inject HttpClient Http
@@ -127,7 +127,7 @@
 
     private Vditor.Models.Upload upload = new()
     {
-        Url = "https://localhost:44326/api/admin/file",
+        Url = "/api/admin/file",
         WithCredentials = true
     };
     private string Format(object files, string responseText)

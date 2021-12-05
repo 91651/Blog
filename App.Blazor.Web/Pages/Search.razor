@@ -1,18 +1,17 @@
-﻿@page "/"
+﻿@page "/search"
 
 @using App.Business.Model
 @using App.Business.Services
+@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager _navigationManager
 @inject IChannelService _channelService
 @inject IArticleService _articleService
 
-<PageTitle>遇见时光 | 博客首页</PageTitle>
-<HeadContent>
-    <meta name="description" content="人生百态，爱我所爱！">
-</HeadContent>
+<PageTitle>遇见时光 | 搜索结果</PageTitle>
 
 <div class="blogtab">
     <ul id="blogtab">
-        <li class="current">最新文章</li>
+        <li class="current">搜索结果</li>
     </ul>
     @foreach (var article in articles)
     {
@@ -38,18 +37,26 @@
 </div>
 
 @code {
+    public string word;
     private int page = default;
-    private ArticleQueryModel query = new() {  PageSize = 20 };
+    private ArticleQueryModel query = new () { PageSize = 20 };
     private List<ArticleListModel> articles = new ();
 
 
     protected override async Task OnInitializedAsync()
     {
+        var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(nameof(word), out var p))
+        {
+            word = p.First();
+        }
+
         await GetArticles();
     }
 
     private async Task GetArticles()
     {
+        query.Keyword = word.Trim();
         query.PageIndex = page++;
         var data = (await _articleService.GetArticlesAsync(query)).Data;
         articles.AddRange(data);

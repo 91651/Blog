@@ -1,6 +1,5 @@
 ﻿using App.Business.Model;
 using App.DbAccess.Entities;
-using App.DbAccess.Entities.Identity;
 using App.DbAccess.Repositories;
 using App.Util;
 using AutoMapper;
@@ -34,10 +33,22 @@ namespace App.Business.Services
             return entity.Id;
         }
 
-        public async Task<List<ChannelModel>> GetChannels()
+        public async Task<List<ChannelModel>> GetChannelsAsync()
         {
             var channels = await _channelRepository.GetAll().ToListAsync();
             return _mapper.Map<List<ChannelModel>>(channels);
+        }
+
+        public async Task<ChannelModel> GetChannelAsync(string id)
+        {
+            var entity = await _channelRepository.GetByIdAsync(id);
+            return _mapper.Map<ChannelModel>(entity);
+        }
+        public async Task<List<ChannelModel>> GetChannelsAsync(string pid = null)
+        {
+            var channels = await _channelRepository.GetAll().Where(c => c.State == 1 && c.ParentId == pid).ToListAsync();
+            var list = _mapper.Map<List<ChannelModel>>(channels);
+            return list;
         }
 
     }

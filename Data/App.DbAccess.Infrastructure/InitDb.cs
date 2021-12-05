@@ -7,7 +7,7 @@ namespace App.DbAccess.Infrastructure
 {
     public static class InitDb
     {
-        public static async Task UseInitDb(this IApplicationBuilder app)
+        public static void UseInitDb(this IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
@@ -15,7 +15,8 @@ namespace App.DbAccess.Infrastructure
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 if (dbContext.Database.EnsureCreated())
                 {
-                    await InitUser(userManager);
+                    var initUser = InitUser(userManager);
+                    Task.WaitAll(initUser);
                 }
             }
         }

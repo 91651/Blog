@@ -102,5 +102,20 @@ namespace App.Business.Services
                 Total = users.Total
             };
         }
+
+        public async Task<ArticleModel> GetPrevArticleAsync(string id, string channelId)
+        {
+            var article = await _articleRepository.GetByIdAsync(id);
+            var entity = await _articleRepository.GetAll().Where(a => (string.IsNullOrEmpty(channelId) || a.ChannelId == channelId) && a.Updated < article.Updated).OrderByDescending(o => o.Updated).FirstOrDefaultAsync();
+            var model = _mapper.Map<ArticleModel>(entity);
+            return model;
+        }
+        public async Task<ArticleModel> GetNextArticleAsync(string Id, string channelId)
+        {
+            var article = await _articleRepository.GetByIdAsync(Id);
+            var entity = await _articleRepository.GetAll().Where(a => (string.IsNullOrEmpty(channelId) || a.ChannelId == channelId) && a.Updated > article.Updated).OrderBy(o => o.Updated).FirstOrDefaultAsync();
+            var model = _mapper.Map<ArticleModel>(entity);
+            return model;
+        }
     }
 }

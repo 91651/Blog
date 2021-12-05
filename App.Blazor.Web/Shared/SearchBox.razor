@@ -1,0 +1,20 @@
+﻿@using App.Business.Model
+@using App.Business.Services
+
+    <div class="searchbox">
+        <div  class="@(IsShowSearchInput ? "search_bar search_open" : "search_bar")">
+            <form method="get" action="/search" >
+                <input name="word" class="input" placeholder="写下所想，并按回车..." type="text">
+                <p class="search_ico" @onclick="ShowSearchInput"> <span></span></p>
+            </form>
+        </div>
+    </div>
+
+@code {
+    private bool IsShowSearchInput;
+
+    private void ShowSearchInput()
+    {
+        IsShowSearchInput = !IsShowSearchInput;
+    }
+}

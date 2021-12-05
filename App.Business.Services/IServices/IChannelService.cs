@@ -1,12 +1,13 @@
 ﻿using App.Business.Model;
-using App.DbAccess.Entities;
 
 namespace App.Business.Services
 {
     public interface IChannelService
     {
         Task<string> AddChannelAsync(ChannelModel model);
-        Task<List<ChannelModel>> GetChannels();
+        Task<List<ChannelModel>> GetChannelsAsync();
+        Task<ChannelModel> GetChannelAsync(string id);
+        Task<List<ChannelModel>> GetChannelsAsync(string pid = null);
 
     }
 }

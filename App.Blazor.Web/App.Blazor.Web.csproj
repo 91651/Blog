@@ -14,12 +14,17 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.14.7" />
+    <PackageReference Include="久伴" Version="1.0.936" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\App.Blazor.Admin\App.Blazor.Admin.csproj" />
+    <ProjectReference Include="..\App.Business.Model\App.Business.Model.csproj" />
     <ProjectReference Include="..\App.Business.Services\App.Business.Services.csproj" />
+    <ProjectReference Include="..\Framework\App.Captcha\App.Captcha.csproj" />
+    <ProjectReference Include="..\Framework\App.EFCore\App.EFCore.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

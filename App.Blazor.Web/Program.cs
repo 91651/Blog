@@ -1,4 +1,3 @@
-using App.Blazor.Web.Data;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
@@ -6,6 +5,7 @@ using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -29,7 +29,7 @@ services.ConfigureApplicationCookie(o =>
     o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     o.Cookie.HttpOnly = true;
 });
-
+services.AddMemoryCache();
 services.AddControllersWithViews();
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
@@ -50,7 +50,6 @@ services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOri
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
-services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();
 
@@ -72,6 +71,7 @@ app.UseInitDb();
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(configuration["AppSettings:StaticContentPath"]).FullName) });
 
 app.UseRouting();
 app.UseCors();
@@ -80,7 +80,7 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("admin", "admin/index.html");
+app.MapFallbackToFile("admin/{*path}", "admin/index.html");
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
