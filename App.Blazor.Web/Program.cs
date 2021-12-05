@@ -1,3 +1,5 @@
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
@@ -6,6 +8,7 @@ using BC.Microsoft.DependencyInjection.Plus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -34,6 +37,8 @@ services.AddControllersWithViews();
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
 services.AddServerSideBlazor();
+services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
+services.AddHotKeys();
 services.AddAntDesign();
 services.AddAuthentication().AddCookie(o =>
 {

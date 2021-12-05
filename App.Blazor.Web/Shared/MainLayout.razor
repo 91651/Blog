@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using Toolbelt.Blazor.HotKeys
+@inject IJSRuntime _jsRuntime
+@inject HotKeys HotKeys
 
 <PageTitle>App.Blazor.Web</PageTitle>
 
@@ -31,3 +34,16 @@
     <p>Copyright © 遇见时光(31023.xyz), 2020  本站展示页面由.net core & Blazor 技术呈现</p>
 </footer>
 <a href="#" class="cd-top">Top</a>
+
+@code {
+    protected override void OnInitialized()
+    {
+        HotKeys.CreateContext().Add(ModKeys.Ctrl|ModKeys.Alt, Keys.L, MyLucky);
+    }
+
+    private void MyLucky()
+    {
+        _jsRuntime.InvokeVoidAsync("console.info", "%c%s", "color: #9399; font-size: 12px;", @久伴.初见.缘份);
+        _jsRuntime.InvokeVoidAsync("console.info", "%c ", $"padding:70px;background:url({@久伴.照片.照片_201804_2}) no-repeat;");
+    }
+}
