@@ -57,7 +57,7 @@ namespace App.Blazor.Web.Admin.Controllers
                         var model = new FileModel
                         {
                             Name = filename,
-                            Path = $"/{uploadPath}",
+                            Path = $"/static/{uploadPath}",
                             Md5 = md5
                         };
                         model.Id = (await _fileServicer.AddFileAsync(model));
