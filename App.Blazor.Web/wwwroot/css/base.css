@@ -121,17 +121,8 @@ article { max-width: 1200px; margin: 100px auto 0; overflow: hidden; z-index: 99
 }
 .logo { float: left; font-size: 22px }
 nav { max-width: 1200px; margin: auto; position: relative }
-#mnavh { display: none; width: 30px; height: 40px; text-align: center; padding: 0 5px }
 #starlist { float: left; margin-left: 50px }
 #starlist li { float: left; width: 100px; text-align: center; display: block; font-size: 16px; margin-right: 5px }
-.navicon { display: block; position: relative; width: 30px; height: 5px; background-color: #333; margin-top: 20px }
-.navicon:before, .navicon:after { content: ''; display: block; width: 30px; height: 5px; position: absolute; background: #333; -webkit-transition-property: margin, -webkit-transform; transition-property: margin, -webkit-transform; transition-property: margin, transform; transition-property: margin, transform, -webkit-transform; -webkit-transition-duration: 300ms; transition-duration: 300ms; }
-.navicon:before { margin-top: -10px; }
-.navicon:after { margin-top: 10px; }
-.open .navicon { background: none }
-.open .navicon:before { margin-top: 0; -webkit-transform: rotate(45deg); transform: rotate(45deg); }
-.open .navicon:after { margin-top: 0; -webkit-transform: rotate(-45deg); transform: rotate(-45deg); }
-.open .navicon:before, .open .navicon:after { content: ''; display: block; width: 30px; height: 5px; position: absolute; background: #333; }
 .sub { display: none; background: #FFF; position: relative; overflow: hidden; padding: 0 0 10px 0; box-shadow: 0 4px 4px rgba(0,0,0,.04); border-top: #ddd 1px solid; }
 .menu { position: relative; }
 #starlist li:hover ul { display: block }
