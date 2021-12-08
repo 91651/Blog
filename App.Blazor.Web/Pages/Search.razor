@@ -19,7 +19,7 @@
             <h3 class="blogtitle"><a href="/p/@article.Id" target="_blank">@article.Title</a></h3>
             <span class="blogpic">
                 @if (@article.File != null)
-                {<a href="/p/@article.Id" title=""><img src="@(article.File.Path + article.File.Name)"></a>}
+                {<a href="/p/@article.Id" title=""><img src="@Path.Combine(article.File.Path, article.File.Name)"></a>}
             </span>
             <p class="blogtext">@article.Summary</p>
             <div class="bloginfo" style="@(article.File !=null ? "margin-top:80px" : "" )">
