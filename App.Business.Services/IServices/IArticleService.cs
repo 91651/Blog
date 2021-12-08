@@ -12,5 +12,6 @@ namespace App.Business.Services
         Task<PageResult<List<ArticleListModel>>> GetArticlesAsync(ArticleQueryModel model);
         Task<ArticleModel> GetPrevArticleAsync(string channelId, string id);
         Task<ArticleModel> GetNextArticleAsync(string channelId, string id);
+        Task<int> UpdateArticleViewedAsync(string id);
     }
 }

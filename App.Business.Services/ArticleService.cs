@@ -117,5 +117,12 @@ namespace App.Business.Services
             var model = _mapper.Map<ArticleModel>(entity);
             return model;
         }
+        public async Task<int> UpdateArticleViewedAsync(string id)
+        {
+            var article = await _articleRepository.GetByIdAsync(id);
+            article.Viewed++;
+            await _articleRepository.SaveChangesAsync();
+            return article.Viewed;
+        }
     }
 }
