@@ -45,7 +45,7 @@ namespace App.Blazor.Web.Admin.Controllers
                     }
                     else
                     {
-                        var path = _hostEnvironment.WebRootPath;
+                        var path = Path.Combine(_hostEnvironment.WebRootPath, _configuration["AppSettings:StaticContentPath"]) ;
                         var uploadPath = _configuration["AppSettings:ImgUploadPath"]; //避免路径敏感，使用"/"
                         var fullPath = Path.GetFullPath(Path.Combine(path, uploadPath));
                         var filename = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}{Path.GetExtension(file.FileName)}";
@@ -57,7 +57,7 @@ namespace App.Blazor.Web.Admin.Controllers
                         var model = new FileModel
                         {
                             Name = filename,
-                            Path = $"/{uploadPath}",
+                            Path = $"/static/{uploadPath}",
                             Md5 = md5
                         };
                         model.Id = (await _fileServicer.AddFileAsync(model));

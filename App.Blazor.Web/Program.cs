@@ -76,7 +76,7 @@ app.UseInitDb();
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(configuration["AppSettings:StaticContentPath"]).FullName) });
+app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, configuration["AppSettings:StaticContentPath"])).FullName) });
 
 app.UseRouting();
 app.UseCors();
