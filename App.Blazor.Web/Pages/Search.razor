@@ -37,7 +37,7 @@
 </div>
 
 @code {
-    public string word;
+    public string? word;
     private int page = default;
     private ArticleQueryModel query = new () { PageSize = 20 };
     private List<ArticleListModel> articles = new ();
@@ -56,7 +56,7 @@
 
     private async Task GetArticles()
     {
-        query.Keyword = word.Trim();
+        query.Keyword = word?.Trim();
         query.PageIndex = page++;
         var data = (await _articleService.GetArticlesAsync(query)).Data;
         articles.AddRange(data);

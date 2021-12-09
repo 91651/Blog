@@ -14,7 +14,7 @@
 @inject MessageService _message
 @inject NavigationManager Navigation
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.8.7/dist/index.css" />
+<link rel="stylesheet" href="/admin/lib/vditor@3.8.8/index.css" />
 
 <PageTitle>Index</PageTitle>
 
@@ -60,12 +60,13 @@
 
 @code {
     [Parameter]
-    public string id { get; set; }
+    public string? id { get; set; }
     private ArticleModel model = new();
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
     {
         await GetChannels();
+        await LoadMarkdownEditor();
         upload.Format = Format;
     }
 
@@ -73,7 +74,7 @@
     {
         if (!string.IsNullOrWhiteSpace(id))
         {
-            GetArticle();
+            await GetArticle();
         }
     }
 
@@ -89,35 +90,41 @@
     private async Task GetArticle()
     {
         var data = await Http.GetFromJsonAsync<ArticleModel>($"/api/admin/article/{id}");
-        model = data;
+        if(data != null)
+        {
+            model = data;
+        }
     }
 
     private async Task GetChannels()
     {
         var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
-        channels = data.Select(s =>
+        if(data != null)
         {
-            var children = data.Where(c => c.ParentId == s.Id);
-            if (children.Any())
+            channels = data.Select(s =>
             {
+                var children = data.Where(c => c.ParentId == s.Id);
+                if (children.Any())
+                {
+                    return new CascaderNode
+                        {
+                            Label = s.Title,
+                            Value = s.Id,
+                            Children = children.Select(ch => new CascaderNode
+                            {
+                                Label = s.Title,
+                                Value = s.Id
+                            })
+                        };
+                }
                 return new CascaderNode
                     {
                         Label = s.Title,
                         Value = s.Id,
-                        Children = children.Select(ch => new CascaderNode
-                        {
-                            Label = s.Title,
-                            Value = s.Id
-                        })
                     };
-            }
-            return new CascaderNode
-                {
-                    Label = s.Title,
-                    Value = s.Id,
-                };
 
-        }).Where(c => c.Children == null || c.Children.Any()).ToList();
+            }).Where(c => c.Children == null || c.Children.Any()).ToList();
+        }
     }
 
     RenderFragment markdown =
@@ -146,16 +153,15 @@
 
     private async Task LoadMarkdownEditor()
     {
-        var vditor = "https://cdn.jsdelivr.net/npm/vditor@3.8.7/dist/index.min.js";
+        var vditor = "/admin/lib/vditor@3.8.8/index.min.js";
         var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
         markdown =
         @<Template>
             <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" @bind-Value="@model.MdContent" HtmlChanged="(string html) => {model.Content = html;}" />
-        </Template>
-    ;
-        StateHasChanged();
+        </Template>;
+       // StateHasChanged();
     }
 
     private async Task OnFinish()
@@ -193,11 +199,6 @@
             }
             await _message.Warn("文章添加失败");
         }
-    }
-
-    private async Task OnFinishFailed()
-    {
-
     }
 
 }
