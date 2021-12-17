@@ -1,15 +1,12 @@
 @charset "gb2312";
 @media screen and (min-width: 1024px) and (max-width: 1199px) {
-header { width: 96%; margin: auto }
 }
 @media screen and (min-width: 960px) and (max-width: 1023px) {
-header { width: 96%; margin: auto }
 article { width: 96% }
 nav { width: 96%; }
 .wall_a { width: 100% }
 }
 @media screen and (min-width: 768px) and (max-width: 959px) {
-header { width: 96%; margin: auto }
 article { width: 96% }
 .logo { width: 100% }
 nav { width: 100%; position: relative }
@@ -34,7 +31,6 @@ nav { width: 100%; position: relative }
 .toppic li h2 { padding: 5px 10px; font-size: 14px }
 }
  @media only screen and (min-width: 480px) and (max-width: 767px) {
-header { width: 96%; margin: auto }
 article { width: 96% }
 .logo { width: 100% }
 nav { width: 100%; position: relative }
@@ -68,7 +64,6 @@ main { width: 100% }
 #starlist .sub li:last-child{ padding-bottom:0}
 }
 @media only screen and (max-width: 479px) {
-header { width: 96%; margin: auto }
 article { width: 96% }
 .logo { width: 100% }
 nav { width: 100%; position: relative }

@@ -12,53 +12,6 @@ a:hover { text-decoration: none; color: #000; }
 .f_r { float: right }
 article { max-width: 1200px; margin: 100px auto 0; overflow: hidden; z-index: 999 }
 .container { max-width: 1200px; margin: auto }
-/*header*/
-#header {
-    position: fixed;
-    top: 0px;
-    width: 100%;
-    z-index: 9999;
-}
-.header-navigation {width: 100%; height: 60px; line-height: 60px; background: #fff; text-align: center; border-bottom: 1px solid #ddd; box-shadow: 0 1px 1px rgba(0,0,0,.04); }
-.navbar {
-    border-bottom: 1px solid #ececec;
-    background-color: #555;
-    color: #ccc;
-    line-height: 36px;
-    height: 36px;
-    font-size: 14px;
-    position: relative;
-}
-.foryou {
-    width: 1200px;
-    margin: auto;
-    overflow: hidden;
-    display: block;
-    position: relative
-}
-.luck {
-    width: 750px;
-    overflow: hidden;
-    display: block;
-    float: left;
-    position: relative
-}
-
-    .luck:after {
-        position: absolute;
-        content: "";
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 36px;
-        background: #555;
-        -webkit-animation: animations 5s ease-out 1s backwards;
-        -moz-animation: animations 5s ease-out 1s backwards;
-        -o-animation: animations 5s ease-out 5s backwards;
-        -ms-animation: animations 5s ease-out 1s backwards;
-        animation: animations 5s ease-out 1s backwards;
-        opacity: 0
-    }
 
 @-webkit-keyframes animations {
     0% {
@@ -149,9 +102,6 @@ main { overflow: hidden; clear: both; width: 70%; float: left; z-index: 1; displ
 /* Slide transitions */
 .slideUp { -webkit-transform: translateY(-100px); -ms-transform: translateY(-100px); -o-transform: translateY(-100px); transform: translateY(-100px); -webkit-transition: transform .5s ease-out; -o-transition: transform .5s ease-out; transition: transform .5s ease-out; }
 .slideDown { -webkit-transform: translateY(0); -ms-transform: translateY(0); -o-transform: translateY(0); transform: translateY(0); -webkit-transition: transform .5s ease-out; -o-transition: transform .5s ease-out; transition: transform .5s ease-out; }
-/*footer*/
-footer { width: 100%; color: #a5a4a4; text-align: center; padding: 20px 0; clear: both; text-shadow: #fff 1px 0 2px, #fff 0 1px 2px, #fff -1px 0 2px, #fff 0 -1px 2px; }
-footer a { color: #a5a4a4; }
 /*cd-top*/
 .cd-top { display: inline-block; height: 40px; width: 40px; position: fixed; bottom: 40px; right: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); overflow: hidden; text-indent: 100%; white-space: nowrap; background: rgba(0, 0, 0, 0.8) url(../image/top.png) no-repeat center; visibility: hidden; opacity: 0; -webkit-transition: all 0.3s; -moz-transition: all 0.3s; transition: all 0.3s; z-index: 9999999 }
 .cd-top.cd-is-visible { visibility: visible; opacity: 1; }

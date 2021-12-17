@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Business.Model", "App.B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vditor", "Framework\Vditor\Vditor.csproj", "{826A4E3E-E21C-4B4C-878E-11494E73FC09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Captcha", "Framework\App.Captcha\App.Captcha.csproj", "{8E372910-3F78-4C05-A66F-C222BF535E55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Captcha", "Framework\App.Captcha\App.Captcha.csproj", "{8E372910-3F78-4C05-A66F-C222BF535E55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
