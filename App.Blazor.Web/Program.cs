@@ -75,7 +75,7 @@ else
 }
 app.UseInitDb();
 app.UseHttpsRedirection();
-app.UseRewriter(new RewriteOptions().AddRedirectToNonWww(301));
+app.UseRewriter(new RewriteOptions().AddRedirectToNonWww());
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, configuration["AppSettings:StaticContentPath"])).FullName) });
