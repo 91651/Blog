@@ -6,6 +6,7 @@ using App.DbAccess.Infrastructure;
 using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
@@ -19,7 +20,7 @@ services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["Co
 services.AddDefaultIdentity<User>().AddEntityFrameworkStores<AppDbContext>();
 services.Configure<IdentityOptions>(options =>
 {
-    //≈‰÷√”√ªß√‹¬Î≤ﬂ¬‘
+    //ÈÖçÁΩÆÁî®Êà∑ÂØÜÁ†ÅÁ≠ñÁï•
     options.Password = new PasswordOptions
     {
         RequiredLength = 6
@@ -74,6 +75,7 @@ else
 }
 app.UseInitDb();
 app.UseHttpsRedirection();
+app.UseRewriter(new RewriteOptions().AddRedirectToNonWww(301));
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, configuration["AppSettings:StaticContentPath"])).FullName) });
