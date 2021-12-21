@@ -26,7 +26,8 @@
   overflow: hidden;
 }
 .about-me img {
-  width: 100%;
+  width: 60%;
+  margin: auto;
   border-radius: 10%;
 }
 .about-me p {
@@ -34,12 +35,7 @@
   font-size: 14px;
 }
 .about-me i {
-  width: 120px;
-  float: left;
-  clear: left;
-  margin-right: 10px;
-  height: 90px;
-  overflow: hidden;
+  width: 100%;
 }
 .channel li {
   margin-bottom: 10px;

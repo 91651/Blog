@@ -80,17 +80,17 @@
   color: black;
 }
 .article-list-section .article-info .author {
-  background: url(../images/auicon.jpg) no-repeat 0 0;
+  background: url(/img/auicon.jpg) no-repeat 0 0;
 }
 .article-list-section .article-info .channel {
-  background: url(../images/auicon.jpg) no-repeat top -23px left;
+  background: url(/img/auicon.jpg) no-repeat top -23px left;
 }
 .article-list-section .article-info .time {
-  background: url(../images/auicon.jpg) no-repeat top -44px left;
+  background: url(/img/auicon.jpg) no-repeat top -44px left;
 }
 .article-list-section .article-info .views {
-  background: url(../images/auicon.jpg) no-repeat top -64px left;
+  background: url(/img/auicon.jpg) no-repeat top -64px left;
 }
 .article-list-section .article-info .hot {
-  background: url(../images/auicon.jpg) no-repeat top -85px left;
+  background: url(/img/auicon.jpg) no-repeat top -85px left;
 }
