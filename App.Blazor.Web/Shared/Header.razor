@@ -8,7 +8,7 @@
         <nav>
             <div class="logo"><a href="/">遇见时光</a></div>
             <h2 class="menu-trigger-icon" @onclick="()=>{isCollapsed = !isCollapsed;}"><Icon Type="menu-unfold" Theme="outline" Style="font-size:1.2em;"/></h2>
-            <ul id="starlist" style="@(isCollapsed ? "display: none;" : "display: block;")"  >
+            <ul class="@(isCollapsed ? "nav-menu nav-menu-hide" : "nav-menu")"  >
                 <li><a href="/">网站首页</a></li>
                 <li><a href="timeline">时间轴</a></li>
                 <li><a href="https://tools.1023.org.cn">在线工具</a></li>

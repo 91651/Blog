@@ -74,16 +74,9 @@ article { max-width: 1200px; margin: 100px auto 0; overflow: hidden; z-index: 99
 }
 .logo { float: left; font-size: 22px }
 nav { max-width: 1200px; margin: auto; position: relative }
-#starlist { float: left; margin-left: 50px }
-#starlist li { float: left; width: 100px; text-align: center; display: block; font-size: 16px; margin-right: 5px }
 .sub { display: none; background: #FFF; position: relative; overflow: hidden; padding: 0 0 10px 0; box-shadow: 0 4px 4px rgba(0,0,0,.04); border-top: #ddd 1px solid; }
 .menu { position: relative; }
-#starlist li:hover ul { display: block }
-#starlist li:hover.menu:before { display: none }
-#starlist .sub li { padding: 0 0 0 0; width: 100%; border-bottom: #ddd 1px solid; line-height: 40px; }
 .menu:after { content: ""; position: absolute; right: 0px; top: 30px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #989898; -ms-transition: all .5s ease; -moz-transition: all .5s ease; -webkit-transition: all .5s ease; -o-transition: all .5s ease; transition: all .5s ease; }/*Èý½ÇÐÎ*/
-#starlist li:hover.menu:after { transform: rotate(180deg); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #fff; }/*Ðý×ª*/
-#starlist li a:hover, #starlist #selected, .selected > a { background: #3690cf; display: block; color: #fff; }
 /*search*/
 .searchbox { position: absolute; right: 0; }
 .search_bar { position: relative; width: 0%; min-width: 60px; height: 60px; float: right; overflow: hidden; -webkit-transition: width 0.3s; -moz-transition: width 0.3s; transition: width 0.3s; -webkit-backface-visibility: hidden; }
