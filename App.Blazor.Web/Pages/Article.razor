@@ -16,10 +16,10 @@
 
 
 
-<div class="infosbox">
-    <div class="newsview">
-        <h3 class="news_title">@article.Title</h3>
-        <div class="bloginfo">
+<div class="article-section">
+    <div class="article-view">
+        <h3 class="article-title">@article.Title</h3>
+        <div class="article-info">
             <ul>
                 <li class="author">作者：<a href="/">@article.Author</a></li>
                 <li class="lmname"><a href="/c/@article.ChannelId[article.ChannelId.Length - 1]">@article.ChannelName</a></li>
@@ -27,13 +27,13 @@
                 <li class="view">@article.Viewed 人已阅读</li>
             </ul>
         </div>
-        <div class="news_about"><strong>简介</strong>@article.Summary</div>
+        <div class="article-summary"><strong>简介</strong>@article.Summary</div>
         <div class="@(article.Editor == 1 ? "markdown-body" : "" )">
             @((MarkupString)article.Content)
         </div>
     </div>
 
-    <div class="nextinfo">
+    <div class="next">
         <p>上一篇：<a href="/Article/@prevArticle?.Id">@(prevArticle?.Title ?? "已经是第一篇") </a></p>
         <p>下一篇：<a href="/Article/@nextArticle?.Id">@(nextArticle?.Title ?? "已经是最后一篇") </a></p>
     </div>

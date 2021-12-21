@@ -15,20 +15,20 @@
     </ul>
     @foreach (var article in articles)
     {
-        <div class="blogs">
-            <h3 class="blogtitle"><a href="/p/@article.Id" target="_blank">@article.Title</a></h3>
-            <span class="blogpic">
+        <div class="article-list-section">
+            <h3 class="article-title"><a href="/p/@article.Id" target="_blank">@article.Title</a></h3>
+            <span class="article-pic">
                 @if (@article.File != null)
                 {<a href="/p/@article.Id" title=""><img src="@Path.Combine(article.File.Path, article.File.Name)"></a>}
             </span>
-            <p class="blogtext">@article.Summary</p>
-            <div class="bloginfo" style="@(article.File !=null ? "margin-top:80px" : "" )">
+            <p class="article-summary">@article.Summary</p>
+            <div class="article-info" style="@(article.File !=null ? "margin-top:80px" : "" )">
                 <ul>
                     <li class="author"><a>@article.Author</a></li>
-                    <li class="lmname"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
-                    <li class="timer">@($"{article.Updated:yyyy年M月d日 HH:mm}")</li>
-                    <li class="view"><span>@article.Viewed</span> 阅读</li>
-                    <li class="view"><span>@article.CommentCount</span> 评论</li>
+                    <li class="channel"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
+                    <li class="time">@($"{article.Updated:yyyy年M月d日 HH:mm}")</li>
+                    <li class="views"><span>@article.Viewed</span> 阅读</li>
+                    <li class="hot"><span>@article.CommentCount</span> 评论</li>
                 </ul>
             </div>
         </div>

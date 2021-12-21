@@ -1,8 +1,8 @@
-.searchbox {
+.search-box {
   position: absolute;
   right: 0;
 }
-.search_bar {
+.search-box .search-bar {
   position: relative;
   width: 0%;
   min-width: 60px;
@@ -14,7 +14,7 @@
   transition: width 0.3s;
   -webkit-backface-visibility: hidden;
 }
-.search_bar .input {
+.search-box .search-bar .input {
   width: 0;
   position: absolute;
   top: 16px;
@@ -28,8 +28,8 @@
   color: #333333;
   background: none;
 }
-.search_ico,
-.search_btn {
+.search-box .search-ico,
+.search-box .search_btn {
   width: 60px;
   height: 60px;
   display: block;
@@ -41,23 +41,23 @@
   line-height: 60px;
   cursor: pointer;
 }
-.search_ico {
+.search-box .search-ico {
   z-index: 90;
 }
-.search_open {
+.search-box .search-open {
   width: 200px;
   display: inline-block;
 }
-.search_open.search_bar .input {
+.search-box .search-open.search-bar .input {
   border-bottom: #222222 1px solid;
   background: white;
   width: 200px;
 }
-.search_ico span {
+.search-box .search-ico span {
   position: relative;
   top: 20px;
 }
-.search_ico span:before {
+.search-box .search-ico span:before {
   content: ' ';
   position: absolute;
   width: 12px;
@@ -65,7 +65,7 @@
   border: 1px solid #666666;
   border-radius: 10px;
 }
-.search_ico span::after {
+.search-box .search-ico span::after {
   content: ' ';
   position: absolute;
   width: 12px;
@@ -78,11 +78,11 @@
   -o-transform: rotate(225deg);
   transform: rotate(225deg);
 }
-.search_ico span:before {
+.search-box .search-ico span:before {
   top: 0;
   left: 0;
 }
-.search_ico span:after {
+.search-box .search-ico span:after {
   right: -22px;
   top: 14px;
 }
