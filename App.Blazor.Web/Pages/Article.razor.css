@@ -7,7 +7,7 @@
 .article-section ::deep .hljs {
   background: none;
 }
-.article-section ::deep .img {
+.article-section ::deep img {
   max-width: 100% !important;
   width: auto !important;
   height: auto !important;
