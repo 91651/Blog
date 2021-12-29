@@ -1,11 +1,17 @@
-::deep .hljs {
-  background: none;
-}
 .article-section {
   width: 100%;
   overflow: hidden;
   background: white;
   margin-bottom: 20px;
+}
+.article-section ::deep .hljs {
+  background: none;
+}
+.article-section ::deep .img {
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 10px auto;
 }
 .article-section .article-view {
   padding: 0 30px;
@@ -43,6 +49,17 @@
   font-size: 13px;
   padding-right: 8px;
 }
+.article-section .notice {
+  text-align: center;
+  color: #808595;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 30px auto;
+  letter-spacing: 0.05em;
+}
+.article-section .notice a {
+  color: #808595;
+}
 .article-section .next {
   line-height: 24px;
   width: 100%;
@@ -52,6 +69,10 @@
 .article-section .next p {
   padding: 4px 10px;
   border-radius: 5px;
+}
+.article-section .next a {
+  text-decoration: none;
+  font-weight: bold;
 }
 .article-section .next a:hover {
   color: black;

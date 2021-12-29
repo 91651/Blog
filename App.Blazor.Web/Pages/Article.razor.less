@@ -1,13 +1,19 @@
-// 修改代码高亮区域底色
-::deep .hljs {
-    background: none;
-}
-
 .article-section {
     width: 100%;
     overflow: hidden;
     background: #fff;
     margin-bottom: 20px;
+    // 修改代码高亮区域底色
+    ::deep .hljs {
+        background: none;
+    }
+
+    ::deep .img {
+        max-width: 100% !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 10px auto;
+    }
 
     .article-view {
         padding: 0 30px
@@ -52,15 +58,34 @@
         }
     }
 
+    .notice {
+        text-align: center;
+        color: #808595;
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 30px auto;
+        letter-spacing: .05em;
+    }
+
+    .notice a {
+        color: #808595;
+    }
+
     .next {
         line-height: 24px;
         width: 100%;
         overflow: hidden;
         margin: 20px 0
     }
+
     .next p {
         padding: 4px 10px;
         border-radius: 5px;
+    }
+
+    .next a {
+        text-decoration:none;
+        font-weight:bold;
     }
 
     .next a:hover {
@@ -68,5 +93,3 @@
         text-decoration: underline
     }
 }
-
-
