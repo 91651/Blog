@@ -60,7 +60,7 @@
     protected override async Task OnParametersSetAsync()
     {
         article = await _articleService.GetArticleAsync(id);
-        article.Viewed = await _articleService.UpdateArticleViewedAsync(id);
+        await _articleService.UpdateArticleViewedAsync(id);
         var channelId = article.ChannelId;
         prevArticle = await _articleService.GetPrevArticleAsync(id, channelId);
         nextArticle = await _articleService.GetNextArticleAsync(id, channelId);

@@ -36,7 +36,7 @@
 @code {
     [Parameter]
     public string? id { get; set; }
-    private int page = default;
+    private int page = 1;
     private ChannelModel? channel { get; set; }
     private ArticleQueryModel query = new () { PageSize = 20 };
     private List<ArticleListModel> articles = new ();
