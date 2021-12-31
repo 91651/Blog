@@ -26,7 +26,7 @@
                 <ul>
                     <li class="author"><a>@article.Author</a></li>
                     <li class="channel"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
-                    <li class="time">@($"{article.Updated:yyyy年M月d日 HH:mm}")</li>
+                    <li class="time">@($"{article.Created:yyyy年M月d日 HH:mm}")</li>
                     <li class="views"><span>@article.Viewed</span> 阅读</li>
                     <li class="hot"><span>@article.CommentCount</span> 评论</li>
                 </ul>
