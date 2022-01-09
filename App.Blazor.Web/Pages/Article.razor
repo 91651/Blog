@@ -5,7 +5,7 @@
 @using App.Business.Services
 @inject IArticleService _articleService
 
-<PageTitle>遇见时光-1023.org.cn | @article.Title</PageTitle>
+<PageTitle>@article.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
     <meta name="description" content="@article.Summary">
     @*为Markdown加载样式*@
@@ -38,8 +38,8 @@
       </div>
 
     <div class="next">
-        <p>上一篇：<a href="/Article/@prevArticle?.Id">@(prevArticle?.Title ?? "已经是第一篇") </a></p>
-        <p>下一篇：<a href="/Article/@nextArticle?.Id">@(nextArticle?.Title ?? "已经是最后一篇") </a></p>
+        <p>上一篇：<a href="/article/@prevArticle?.Id">@(prevArticle?.Title ?? "已经是第一篇") </a></p>
+        <p>下一篇：<a href="/article/@nextArticle?.Id">@(nextArticle?.Title ?? "已经是最后一篇") </a></p>
     </div>
     <div>
         <Card Title="@("评论")">
