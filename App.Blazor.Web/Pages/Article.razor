@@ -17,7 +17,7 @@
 
 <div class="article-section">
     <div class="article-view">
-        <h3 class="article-title">@article.Title</h3>
+        <h1 class="article-title">@article.Title</h1>
         <div class="article-info">
             <ul>
                 <li class="author">作者：<a href="/">@article.Author</a></li>
@@ -38,8 +38,8 @@
       </div>
 
     <div class="next">
-        <p>上一篇：<a href="/article/@prevArticle?.Id">@(prevArticle?.Title ?? "已经是第一篇") </a></p>
-        <p>下一篇：<a href="/article/@nextArticle?.Id">@(nextArticle?.Title ?? "已经是最后一篇") </a></p>
+        <p>上一篇：<a href="/p/@prevArticle?.Id">@(prevArticle?.Title ?? "已经是第一篇") </a></p>
+        <p>下一篇：<a href="/p/@nextArticle?.Id">@(nextArticle?.Title ?? "已经是最后一篇") </a></p>
     </div>
     <div>
         <Card Title="@("评论")">
