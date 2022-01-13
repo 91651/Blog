@@ -45,6 +45,11 @@
                         <Input @bind-Value="@context.Author" />
                     </FormItem>
                 </SpaceItem>
+                <SpaceItem>
+                    <FormItem Label="Markdown">
+                        <Switch @bind-Value="isMarkdown" OnChange="()=>{context.Editor = isMarkdown ? 1 : 2 ; }" />
+                    </FormItem>
+                </SpaceItem>
             </Space>
         </FormItem>
         <FormItem Label="内容">
@@ -61,6 +66,7 @@
 @code {
     [Parameter]
     public string? id { get; set; }
+    public bool isMarkdown { get; set; } = true;
     private ArticleModel model = new();
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
@@ -93,6 +99,7 @@
         if(data != null)
         {
             model = data;
+            isMarkdown = model.Editor == 1;
         }
     }
 
