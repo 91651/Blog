@@ -1,4 +1,4 @@
-﻿@page "/admin/article"
+﻿@page "/admin/channel"
 @attribute [Authorize]
 @using System.ComponentModel
 @using AntDesign.TableModels
@@ -33,41 +33,16 @@
         </Space>
     </Card>
     <br />
-    <Table TItem="ArticleListModel" Bordered=@true DataSource="@data.Data"
-        Total="data.Total" RemoteDataSource
-       @bind-PageIndex="query.PageIndex"
-       @bind-PageSize="query.PageSize"
-        OnRowClick="OnRowClick"
-        OnChange="OnChange">
-
-        <Column @bind-Field="@context.Id">
-            <a>@context.Id</a>
-        </Column>
-        <Column @bind-Field="@context.Title"></Column>
-        <Column @bind-Field="@context.ChannelName">
-        </Column>
-        <Column @bind-Field="@context.UserName">
-        </Column>
-        <Column @bind-Field="@context.Created">
-        </Column>
-        <Column @bind-Field="@context.Updated">
-        </Column>
-        <ActionColumn Title="操作">
-            <Space Size=@("middle")>
-                <SpaceItem>
-                    <Button Type="@ButtonType.Link" @onclick="() => Edit(context.Id)">编辑</Button>
-                </SpaceItem>
-                <SpaceItem>
-                    <Button Type="@ButtonType.Link" @onclick="() => Del(context.Id)">删除</Button>
-                </SpaceItem>
-            </Space>
-        </ActionColumn>
+    <Table DataSource="data" TreeChildren="item=>item.Children">
+        <Selection CheckStrictly />
+        <Column @bind-Field="@context.Title" />
+        <Column @bind-Field="@context.State" Width="12%" Sortable />
     </Table>
 </Card>
 
 @code {
     private ArticleQueryModel query = new ();
-    private PageResult<List<ArticleListModel>>? data = new();
+    private List<ChannelModel>? data = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,10 +51,10 @@
 
     private async Task GetArticles()
     {
-        var resp = await Http.PostAsJsonAsync<ArticleQueryModel>("/api/admin/article/query", query);
-        if(resp != null)
+        var channels = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        if(channels != null)
         {
-            data = await resp.Content.ReadFromJsonAsync<PageResult<List<ArticleListModel>>>();
+            data = channels;
         }
     }
 
