@@ -1,0 +1,29 @@
+﻿@using Toolbelt.Blazor.HotKeys
+@inherits LayoutComponentBase
+@inject IJSRuntime _jsRuntime
+@inject HotKeys HotKeys
+
+<PageTitle>遇见时光</PageTitle>
+
+<App.Blazor.Client.Shared.Header />
+<article>
+    <main>
+        @Body
+    </main>
+    <RightSide />
+</article>
+<App.Blazor.Client.Shared.Footer />
+<a href="#" class="back-top">Top</a>
+
+@code {
+    protected override void OnInitialized()
+    {
+        HotKeys.CreateContext().Add(ModKeys.Ctrl|ModKeys.Alt, Keys.L, MyLucky);
+    }
+
+    private void MyLucky()
+    {
+        _jsRuntime.InvokeVoidAsync("console.info", "%c%s", "color: #9399; font-size: 12px;", @久伴.初见.缘份);
+        _jsRuntime.InvokeVoidAsync("console.info", "%c ", $"padding:70px;background:url({@久伴.照片.照片_201804_2}) no-repeat;");
+    }
+}

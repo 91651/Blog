@@ -148,7 +148,7 @@ namespace Vditor
 
         public void Dispose()
         {
-            Destroy();
+            _ = Destroy();
         }
 
         [JSInvokable]

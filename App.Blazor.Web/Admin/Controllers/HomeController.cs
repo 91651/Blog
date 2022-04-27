@@ -21,9 +21,6 @@ namespace App.Blazor.Web.Admin.Controllers
         [HttpGet, AllowAnonymous]
         public IActionResult Index()
         {
-            var path = Path.Combine(_hostEnvironment.WebRootPath, _configuration["AppSettings:StaticContentPath"]);
-            var uploadPath = _configuration["AppSettings:ImgUploadPath"]; //避免路径敏感，使用"/"
-            var fullPath = Path.GetFullPath(Path.Combine(path, uploadPath));
             var time = DateTime.Now;
             return Ok(time);
         }
