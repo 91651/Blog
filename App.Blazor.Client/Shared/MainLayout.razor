@@ -1,7 +1,7 @@
 ﻿@using Toolbelt.Blazor.HotKeys
 @inherits LayoutComponentBase
+@inject IServiceProvider _serviceProvider
 @inject IJSRuntime _jsRuntime
-@inject HotKeys HotKeys
 
 <PageTitle>遇见时光</PageTitle>
 
@@ -16,9 +16,16 @@
 <a href="#" class="back-top">Top</a>
 
 @code {
-    protected override void OnInitialized()
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        HotKeys.CreateContext().Add(ModKeys.Ctrl|ModKeys.Alt, Keys.L, MyLucky);
+        base.OnAfterRenderAsync(firstRender);
+        if (OperatingSystem.IsBrowser())
+        {
+            var hotKeys = _serviceProvider.GetRequiredService<HotKeys>();
+            hotKeys.CreateContext().Add(ModKeys.Ctrl|ModKeys.Alt, Keys.L, MyLucky);
+        }
+        return Task.CompletedTask;
     }
 
     private void MyLucky()

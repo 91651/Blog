@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace App.Blazor.Web.Client.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("api/[controller]")]
     public class ChannelController : ControllerBase
     {
@@ -17,10 +16,10 @@ namespace App.Blazor.Web.Client.Controllers
             _channelService = articleService;
         }
 
-        [HttpPost("/api/channel")]
-        public Task<string> AddChannel(ChannelModel model)
+        [HttpGet("{id}")]
+        public Task<ChannelModel> GetChannel(string id)
         {
-            return _channelService.AddChannelAsync(model);
+            return _channelService.GetChannelAsync(id);
         }
 
         [HttpGet]

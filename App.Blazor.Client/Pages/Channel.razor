@@ -47,7 +47,7 @@
             page = default;
             articles.Clear();
             query.ChannelId = id;
-            channel = await _api.GetChannelAsync(id);
+            //channel = await _api.GetChannelAsync(id);
             await GetArticles();
         }
     }

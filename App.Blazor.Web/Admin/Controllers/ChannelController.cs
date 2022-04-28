@@ -18,7 +18,7 @@ namespace App.Blazor.Web.Admin.Controllers
             _channelService = articleService;
         }
 
-        [HttpPost("/api/channel")]
+        [HttpPost]
         public Task<string> AddChannel(ChannelModel model)
         {
             return _channelService.AddChannelAsync(model);

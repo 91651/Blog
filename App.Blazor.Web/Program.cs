@@ -1,14 +1,18 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using App.Blazor.Client.Data;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
 using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Refit;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,8 +43,6 @@ services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
 services.AddServerSideBlazor();
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
-services.AddHotKeys();
-services.AddAntDesign();
 services.AddAuthentication().AddCookie(o =>
 {
     o.Events.OnRedirectToLogin = (context) =>
@@ -57,7 +59,13 @@ services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
-builder.AddAppServices();
+services.AddAntDesign();
+services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) => {
+    var server = sp.GetRequiredService<IServer>();
+    var addressFeature = server.Features.Get<IServerAddressesFeature>();
+    string baseAddress = addressFeature.Addresses.First();
+    c.BaseAddress = new Uri(baseAddress);
+});
 
 var app = builder.Build();
 

@@ -14,11 +14,13 @@ namespace App.Blazor.Client.Data
         Task<ArticleModel> GetNextArticleAsync([Query]string chennelId, [Query]string id);
         [Put("/api/article/{id}/viewed")]
         Task UpdateArticleViewedAsync(string id);
-        [Get("/api/channel/{id}")]
+        [Get("/api/article")]
         Task<PageResult<List<ArticleListModel>>> GetArticlesAsync([Query] ArticleQueryModel query);
 
         [Get("/api/channel/{id}")]
         Task<ChannelModel> GetChannelAsync(string id);
+        [Get("/api/channel")]
+        Task<List<ChannelModel>> GetChannelsAsync();
 
         [Post("/api/comment")]
         Task<bool> AddCommentAsync(CommentModel model, string captchaCode);

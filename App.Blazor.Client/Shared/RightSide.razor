@@ -1,5 +1,6 @@
 ﻿@using App.Business.Model
-@inject HttpClient Http
+@using App.Blazor.Client.Data
+@inject IDataProviderApi _api
 
 <aside class="box-section">
     <div class="about-me">
@@ -26,7 +27,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("api/channel");
+        var data = await _api.GetChannelsAsync();
         channels = data ?? channels;
     }
 }
