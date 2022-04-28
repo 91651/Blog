@@ -5,6 +5,12 @@ using Refit;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var services = builder.Services;
 
-services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-
 await builder.Build().RunAsync();
+
+public static class AppExtensions
+{
+    public static void AddAppServices(this IServiceCollection services)
+    {
+        services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+    }
+}

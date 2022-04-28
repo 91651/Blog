@@ -57,6 +57,8 @@ services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
+builder.AddAppServices();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
