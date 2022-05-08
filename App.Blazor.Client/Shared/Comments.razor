@@ -34,102 +34,102 @@
 
     private async Task GetComments()
     {
-        comments = await _api.GetCommentsAsync(OwnerId);
+        comments = await _api.GetCommentsAsync(OwnerId, default);
     }
 
     private void SubmitComment(CommentModel comment, string pid)
     {
         IsShowCaptcha = true;
         captcha =
-    @<Template>
-        <Captcha OnSucceed="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />
-    </Template>;
-}
+            @<Template>
+                <Captcha OnSucceed="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />
+            </Template>;
+    }
 
 
-private async Task CaptchaSucceed(CommentModel comment, string pid, string captchaCode)
-{
-IsShowCaptcha = false;
-StateHasChanged();
-comment.OwnerId = OwnerId;
-comment.ParentId = pid;
-var result = await _api.AddCommentAsync(comment, captchaCode);
-if (result)
-{
- replyId = default;
- comment = new CommentModel();
- await GetComments();
-
-}
-}
-
-private void ReplyComment(CommentModel comment)
-{
-replyComment = new CommentModel();
-replyId = comment.Id;
-}
-
-
-RenderFragment CommentContent(List<CommentModel> DataSource) =>
-@<div>
-    @foreach (var item in DataSource)
+    private async Task CaptchaSucceed(CommentModel comment, string pid, string captchaCode)
     {
-        <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")" Author="@item.Author" Content="@item.Content" Actions="@(new []{replyAction(item)})">
-            <DatetimeTemplate>
-                @dateTime(item.Created)
-            </DatetimeTemplate>
-            <ChildContent>@CommentContent(item.Comments)</ChildContent>
-        </Comment>
-        @if (item.Id == replyId)
+        IsShowCaptcha = false;
+        StateHasChanged();
+        comment.OwnerId = OwnerId;
+        comment.ParentId = pid;
+        var result = await _api.AddCommentAsync(comment, captchaCode);
+        if (result)
         {
-            <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")">
-                <ContentTemplate>
-                    @(GetEditor(replyComment, item.Id))
-                </ContentTemplate>
-            </Comment>
+         replyId = default;
+         comment = new CommentModel();
+         await GetComments();
+
         }
     }
-</div>;
 
-RenderFragment replyAction(CommentModel comment) =>
-@<Template>
-    <Button Type="@ButtonType.Link" @onclick="() => ReplyComment(comment)">回复</Button>
+    private void ReplyComment(CommentModel comment)
+    {
+        replyComment = new CommentModel();
+        replyId = comment.Id;
+    }
 
 
-</Template>;
+    RenderFragment CommentContent(List<CommentModel> DataSource) =>
+        @<div>
+            @foreach (var item in DataSource)
+            {
+                <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")" Author="@item.Author" Content="@item.Content" Actions="@(new []{replyAction(item)})">
+                    <DatetimeTemplate>
+                        @dateTime(item.Created)
+                    </DatetimeTemplate>
+                    <ChildContent>@CommentContent(item.Comments)</ChildContent>
+                </Comment>
+                @if (item.Id == replyId)
+                {
+                    <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")">
+                        <ContentTemplate>
+                            @(GetEditor(replyComment, item.Id))
+                        </ContentTemplate>
+                    </Comment>
+                }
+            }
+        </div>;
 
-RenderFragment GetEditor(CommentModel model, string pid = null)
-{
-return
-@<div>
-    <EditForm Model="@model" OnValidSubmit="() => SubmitComment(model, pid)">
-        <DataAnnotationsValidator />
-        <TextArea Placeholder="一语中的" MinRows="3" MaxRows="5" @bind-Value="@model.Content"></TextArea>
-        <br />
-        <br />
-        昵称：<Input Type="text" @bind-Value="@model.Author" style="width:30%" /> &emsp;
-        邮箱：<Input type="email" @bind-Value="@model.Email" style="width:30%" />
-        <Button Type="@ButtonType.Primary" HtmlType="submit">提交</Button>
-        <div style="color:red">
-            <br />
-            <ValidationSummary />
-        </div>
+    RenderFragment replyAction(CommentModel comment) =>
+        @<Template>
+            <Button Type="@ButtonType.Link" @onclick="() => ReplyComment(comment)">回复</Button>
 
-    </EditForm>
 
-    @*<Row Justify="space-around">
-            <AntDesign.Col Span="22">
-                // todo
-            </AntDesign.Col>
-        </Row>*@
-</div>;
-}
+        </Template>;
 
-RenderFragment dateTime(DateTime dateTime) =>
-@<Tooltip Title="@(dateTime.ToString("yyyy-MM-dd HH:mm:ss"))">
-    <span>
-        @(MomentHelper.FromNow(dateTime))
-    </span>
-</Tooltip>;
+    RenderFragment GetEditor(CommentModel model, string pid = null)
+    {
+        return
+        @<div>
+            <EditForm Model="@model" OnValidSubmit="() => SubmitComment(model, pid)">
+                <DataAnnotationsValidator />
+                <TextArea Placeholder="一语中的" MinRows="3" MaxRows="5" @bind-Value="@model.Content"></TextArea>
+                <br />
+                <br />
+                昵称：<Input Type="text" @bind-Value="@model.Author" style="width:30%" /> &emsp;
+                邮箱：<Input type="email" @bind-Value="@model.Email" style="width:30%" />
+                <Button Type="@ButtonType.Primary" HtmlType="submit">提交</Button>
+                <div style="color:red">
+                    <br />
+                    <ValidationSummary />
+                </div>
+
+            </EditForm>
+
+            @*<Row Justify="space-around">
+                    <AntDesign.Col Span="22">
+                        // todo
+                    </AntDesign.Col>
+                </Row>*@
+        </div>;
+    }
+
+    RenderFragment dateTime(DateTime dateTime) =>
+        @<Tooltip Title="@(dateTime.ToString("yyyy-MM-dd HH:mm:ss"))">
+            <span>
+                @(MomentHelper.FromNow(dateTime))
+            </span>
+        </Tooltip>;
 }
 

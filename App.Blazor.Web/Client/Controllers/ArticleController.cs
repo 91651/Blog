@@ -12,14 +12,10 @@ namespace App.Blazor.Web.Client.Controllers
     [Route("api/[controller]")]
     public class ArticleController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly IArticleService _articleService;
 
-        public ArticleController(UserManager<User> userManager, SignInManager<User> signInManager, IArticleService articleService)
+        public ArticleController(IArticleService articleService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _articleService = articleService;
         }
 
@@ -29,16 +25,16 @@ namespace App.Blazor.Web.Client.Controllers
             return _articleService.GetArticleAsync(id);
         }
 
-        [HttpGet("prev")]
-        public Task<ArticleModel> GetPrevArticle(string id, string chennelId)
+        [HttpGet("{id}/prev")]
+        public Task<ArticleModel> GetPrevArticle(string id)
         {
-            return _articleService.GetPrevArticleAsync(id, chennelId);
+            return _articleService.GetPrevArticleAsync(id);
         }
 
-        [HttpGet("next")]
-        public Task<ArticleModel> GetNextArticleAsync(string id, string chennelId)
+        [HttpGet("{id}/next")]
+        public Task<ArticleModel> GetNextArticleAsync(string id)
         {
-            return _articleService.GetNextArticleAsync(id, chennelId);
+            return _articleService.GetNextArticleAsync(id);
         }
 
         [HttpPut("{id}/viewed")]

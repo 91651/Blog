@@ -1,9 +1,9 @@
-﻿@using App.Captcha
-@using System.Text.Json
-@using Microsoft.Extensions.Caching.Memory
+﻿@using System.Text.Json
+@using App.Captcha
+@using App.Blazor.Client.Data
 
 @inject IJSRuntime JSRuntime
-@inject IMemoryCache _memoryCache
+@inject IDataProviderApi _api
 
 <div class="captcha-container">
     <div class="slidercaptcha">
@@ -63,7 +63,7 @@
         active = false;
         point.X = (int)e.ClientX - defaultPosition.X + offset;
         point.Y = (int)e.ClientY - defaultPosition.Y + offset;
-        var result = await CaptchaVerifyAsync(point);
+        var result = await _api.VerifyCaptchaAsync(point);
         if (!string.IsNullOrWhiteSpace(result))
         {
             Slider = new SliderSucceed();
@@ -84,34 +84,10 @@
         Slider = new SliderInitial();
         point = new App.Captcha.Point() { X = offset, Y = offset };
         defaultPosition = new App.Captcha.Point();
-        var captcha = await CaptchaGenerateAsync();
+        var captcha = await _api.GenerateCaptchaAsync();
         await JSRuntime.InvokeAsync<Task>("appjs.canvas.drawImage", canvasBack, captcha.NormalImg);
         await JSRuntime.InvokeAsync<Task>("appjs.canvas.drawImage", canvasBlock, captcha.SlideImg);
     }
-
-    public async Task<CaptchaModel> CaptchaGenerateAsync()
-    {
-        var captcha = new ImageCaptcha().Generate();
-        var point = JsonSerializer.Deserialize<App.Captcha.Point>(JsonSerializer.Serialize(captcha.Point));
-        _memoryCache.Set(nameof(ImageCaptcha), point, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20) });
-        captcha.Point.X = default;
-        captcha.Point.Y = default;
-        return await Task.FromResult(captcha);
-    }
-
-    public async Task<string> CaptchaVerifyAsync(App.Captcha.Point point)
-    {
-        var p = _memoryCache.Get<App.Captcha.Point>(nameof(ImageCaptcha));
-        _memoryCache.Remove(nameof(ImageCaptcha));
-        var code = ImageCaptcha.CaptchaVerify(p, point);
-        if (!string.IsNullOrWhiteSpace(code))
-        {
-            _memoryCache.Set(code, true);
-            return code;
-        }
-        return await Task.FromResult(string.Empty);
-    }
-
 
     class SliderInitial : ISlider
     {

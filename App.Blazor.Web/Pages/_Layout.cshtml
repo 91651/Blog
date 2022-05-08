@@ -6,14 +6,19 @@
 <html lang="zh">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <base href="~/" />
     <link href="_content/AntDesign/css/ant-design-blazor.css" rel="stylesheet">
-    <link href="~/css/captcha.css" rel="stylesheet">
+    <link href="css/captcha.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet" />
     <link href="@(typeof(App.Blazor.Client.Application).Assembly.GetName().Name).styles.css" rel="stylesheet" />
-    
-    <component type="typeof(HeadOutlet)" render-mode="WebAssemblyPrerendered" />
+    @if (!OperatingSystem.IsBrowser())
+    {
+        <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    }else{
+        <component type="typeof(HeadOutlet)" render-mode="WebAssembly" />
+    }
+
 </head>
 <body>
     @RenderBody()
@@ -29,7 +34,6 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
     <script src="~/js/hc-sticky.js"></script>
     <script src="~/js/scrollReveal.js"></script>

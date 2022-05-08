@@ -6,14 +6,15 @@ using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
 using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
+using Blazor.HybridRender;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Refit;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -38,7 +39,10 @@ services.ConfigureApplicationCookie(o =>
     o.Cookie.HttpOnly = true;
 });
 services.AddMemoryCache();
-services.AddControllersWithViews();
+services.AddControllersWithViews(opt =>
+{
+    opt.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
+});
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
 services.AddServerSideBlazor();
@@ -60,6 +64,7 @@ services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
 services.AddAntDesign();
+services.Configure<HybridRenderOptions>(configuration);
 services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) => {
     var server = sp.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();

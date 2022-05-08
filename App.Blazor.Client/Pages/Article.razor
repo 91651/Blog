@@ -21,7 +21,7 @@
         <div class="article-info">
             <ul>
                 <li class="author">作者：<a href="/">@article.Author</a></li>
-                <li class="lmname"><a href="/c/@article.ChannelId[article.ChannelId.Length - 1]">@article.ChannelName</a></li>
+                <li class="lmname"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
                 <li class="timer">发布：@($"{article.Created:yyyy年M月d日 HH:mm}")</li>
                 @*<li class="timer">更新时间：@($"{article.Updated:yyyy年M月d日 HH:mm}")</li>*@
                 <li class="view">@article.Viewed 人已阅读</li>
@@ -53,17 +53,18 @@
 @code {
     [Parameter]
     public string id { get; set; }
-    private ArticleModel article { get; set; }
-    private ArticleModel prevArticle { get; set; }
-    private ArticleModel nextArticle { get; set; }
+    private ArticleModel article = new();
+    private ArticleModel prevArticle = new();
+    private ArticleModel nextArticle = new();
 
     protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
         article = await _api.GetArticleAsync(id);
         await _api.UpdateArticleViewedAsync(id);
         var channelId = article.ChannelId;
-        prevArticle = await _api.GetPrevArticleAsync(id, channelId);
-        nextArticle = await _api.GetNextArticleAsync(id, channelId);
+        prevArticle = await _api.GetPrevArticleAsync(id);
+        nextArticle = await _api.GetNextArticleAsync(id);
 
     }
 }

@@ -1,8 +1,51 @@
 ﻿@page "/"
-@namespace App.Blazor.Web.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Options
+@using Blazor.HybridRender;
+@using App.Blazor.Client
+@inject IOptions<HybridRenderOptions> HybridOptions
+@{
+    var hybridType = HybridOptions?.Value?.HybridRenderMode ?? HybridRenderMode.HybridOnNavigation; 
+}
 @{
     Layout = "_Layout";
 }
+@*混合模式渲染，参考
+https://itnext.io/blazor-switching-server-and-webassembly-at-runtime-d65c25fd4d8
+https://github.com/jdtcn/HybridBlazor
+*@
+@if (hybridType.ToString().StartsWith("Hybrid"))
+    {
+        <srvr-app>
+            <component type="typeof(Application)" render-mode="ServerPrerendered" />
+            <persist-component-state />
+        </srvr-app>
+        <wasm-app style="display: none;">
+            <component type="typeof(Application)" render-mode="WebAssembly">
+        </wasm-app>
+    }
 
-<component type="typeof(App.Blazor.Client.Application)" render-mode="WebAssemblyPrerendered" />
+    <script>
+        window.hybridType = '@hybridType';
+        window.getHybridType = function () { return window.hybridType; }
+    </script>
+
+    @if (hybridType == HybridRenderMode.ServerSide)
+    {
+        <app>
+            <component type="typeof(Application)" render-mode="ServerPrerendered" />
+            <persist-component-state />
+        </app>
+        <script src="_framework/blazor.server.js"></script>
+    }
+    else if (hybridType == HybridRenderMode.WebAssembly)
+    {
+        <app>
+            <component type="typeof(Application)" render-mode="WebAssemblyPrerendered">
+        </app>
+        <script src="_framework/blazor.webassembly.js"></script>
+    }
+    else
+    {
+        <script src="js/blazor.hybrid.js"></script>
+    }

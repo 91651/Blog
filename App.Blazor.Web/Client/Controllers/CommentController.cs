@@ -15,5 +15,11 @@ namespace App.Blazor.Web.Client.Controllers
         {
             _commentService = articleService;
         }
+
+        [HttpGet("owner/{ownerId}")]
+        public Task<List<CommentModel>> GetComments(string ownerId, [FromQuery]string? pid)
+        {
+            return _commentService.GetCommentsAsync(ownerId, pid);
+        }
     }
 }

@@ -95,25 +95,25 @@ namespace App.Business.Services
             {
                 ex = ex.And(t => t.Title.Contains(model.Keyword) || t.SubTitle.Contains(model.Keyword) || t.Summary.Contains(model.Keyword) || t.Content.Contains(model.Keyword));
             }
-            var users = await _articleRepository.GetAll().Include(i => i.Channel).Include(i => i.User).Include(i => i.Comments).Include(i => i.Files).Where(ex).ToDataSourceResultAsync(model);
+            var data = await _articleRepository.GetAll().Include(i => i.Channel).Include(i => i.User).Include(i => i.Comments).Include(i => i.Files).Where(ex).ToDataSourceResultAsync(model);
             return new PageResult<List<ArticleListModel>>
             {
-                Data = _mapper.Map<List<ArticleListModel>>(users.Data),
-                Total = users.Total
+                Data = _mapper.Map<List<ArticleListModel>>(data.Data),
+                Total = data.Total
             };
         }
 
-        public async Task<ArticleModel> GetPrevArticleAsync(string id, string channelId)
+        public async Task<ArticleModel> GetPrevArticleAsync(string id)
         {
             var article = await _articleRepository.GetByIdAsync(id);
-            var entity = await _articleRepository.GetAll().Where(a => (string.IsNullOrEmpty(channelId) || a.ChannelId == channelId) && a.Updated < article.Updated).OrderByDescending(o => o.Updated).FirstOrDefaultAsync();
+            var entity = await _articleRepository.GetAll().Where(a => a.ChannelId == article.ChannelId && a.Updated < article.Updated).OrderByDescending(o => o.Updated).FirstOrDefaultAsync();
             var model = _mapper.Map<ArticleModel>(entity);
             return model;
         }
-        public async Task<ArticleModel> GetNextArticleAsync(string Id, string channelId)
+        public async Task<ArticleModel> GetNextArticleAsync(string Id)
         {
             var article = await _articleRepository.GetByIdAsync(Id);
-            var entity = await _articleRepository.GetAll().Where(a => (string.IsNullOrEmpty(channelId) || a.ChannelId == channelId) && a.Updated > article.Updated).OrderBy(o => o.Updated).FirstOrDefaultAsync();
+            var entity = await _articleRepository.GetAll().Where(a => a.ChannelId == article.ChannelId && a.Updated > article.Updated).OrderBy(o => o.Updated).FirstOrDefaultAsync();
             var model = _mapper.Map<ArticleModel>(entity);
             return model;
         }
