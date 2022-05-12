@@ -12,12 +12,7 @@
     <link href="css/captcha.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet" />
     <link href="@(typeof(App.Blazor.Client.Application).Assembly.GetName().Name).styles.css" rel="stylesheet" />
-    @if (!OperatingSystem.IsBrowser())
-    {
-        <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
-    }else{
-        <component type="typeof(HeadOutlet)" render-mode="WebAssembly" />
-    }
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 
 </head>
 <body>
