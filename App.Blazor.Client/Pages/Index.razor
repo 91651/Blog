@@ -2,6 +2,7 @@
 
 @using App.Business.Model
 @using App.Blazor.Client.Data
+@inject PersistentComponentState _componentState
 @inject IDataProviderApi _api
 
 <PageTitle>遇见时光-1023.org.cn | 博客首页 | 学习技术、记录生活</PageTitle>
@@ -44,7 +45,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetArticles();
+        _componentState.RegisterOnPersisting(PersistArticles);
+        if (!_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var data))
+        {
+            await GetArticles();
+        }
+        else
+        {
+            articles = data;
+        }
+    }
+
+    private Task PersistArticles()
+    {
+        _componentState.PersistAsJson(nameof(articles), articles);
+        return Task.CompletedTask;
     }
 
     private async Task GetArticles()
