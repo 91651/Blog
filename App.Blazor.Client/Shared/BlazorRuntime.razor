@@ -1,14 +1,10 @@
-﻿<nav aria-label="breadcrumb">
-    <ol class="breadcrumb" style="border-radius: 0;">
-        <li class="breadcrumb-item active">
-            <span>Runtime: <b>@Runtime</b>, Hybrid Render: <i>@HybridType</i></span>
+﻿<div>
+    <span>Runtime: <b>@Runtime</b>, Hybrid Render: <i>@HybridType</i></span>
             @if (HybridType?.StartsWith("Hybrid") == true)
             {
-                <a class="ml-2" @onclick="SwitchMode">Switch runtime</a>
+                <a class="ml-2" @onclick="SwitchMode"> Switch runtime </a>
             }
-        </li>
-    </ol>
-</nav>
+</div>
 
 @code{
     [Inject] IJSRuntime JSRuntime { get; set; }
