@@ -46,14 +46,16 @@
     protected override async Task OnInitializedAsync()
     {
         _componentState.RegisterOnPersisting(PersistArticles);
-        if (!_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var data))
+        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var data) && data != null)
         {
-            await GetArticles();
+            articles = data;
+
         }
         else
         {
-            articles = data;
+            await GetArticles();
         }
+        
     }
 
     private Task PersistArticles()

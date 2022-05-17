@@ -3,6 +3,7 @@
 
 @using App.Blazor.Client.Data
 @using App.Business.Model
+@inject PersistentComponentState _componentState
 @inject IDataProviderApi _api
 
 <PageTitle>@article.Title | 遇见时光-1023.org.cn</PageTitle>
@@ -60,11 +61,27 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        article = await _api.GetArticleAsync(id);
+        _componentState.RegisterOnPersisting(PersistArticle);
+        if (_componentState.TryTakeFromJson<ArticleModel>(nameof(article), out var data) && data != null)
+        {
+            article = data;
+
+        }
+        else
+        {
+            article = await _api.GetArticleAsync(id);
+        }
+        
         await _api.UpdateArticleViewedAsync(id);
         var channelId = article.ChannelId;
         prevArticle = await _api.GetPrevArticleAsync(id);
         nextArticle = await _api.GetNextArticleAsync(id);
 
+    }
+
+    private Task PersistArticle()
+    {
+        _componentState.PersistAsJson(nameof(article), article);
+        return Task.CompletedTask;
     }
 }

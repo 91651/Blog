@@ -3,6 +3,7 @@
 
 @using App.Business.Model
 @using App.Blazor.Client.Data
+@inject PersistentComponentState _componentState
 @inject IDataProviderApi _api
 
 <PageTitle>@channel.Title | 遇见时光-1023.org.cn</PageTitle>
@@ -36,20 +37,36 @@
     [Parameter]
     public string? id { get; set; }
     private int page = 1;
-    private ChannelModel? channel { get; set; }
+    private ChannelModel channel = new();
     private ArticleQueryModel query = new () { PageSize = 20 };
     private List<ArticleListModel> articles = new ();
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!string.IsNullOrWhiteSpace(id))
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return;
+        }
+         _componentState.RegisterOnPersisting(PersistArticles);
+        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var data) && data != null)
+        {
+            articles = data;
+
+        }
+        else
         {
             page = default;
             articles.Clear();
             query.ChannelId = id;
-            //channel = await _api.GetChannelAsync(id);
+            channel = await _api.GetChannelAsync(id);
             await GetArticles();
         }
+    }
+
+    private Task PersistArticles()
+    {
+        _componentState.PersistAsJson(nameof(articles), articles);
+        return Task.CompletedTask;
     }
 
     private async Task GetArticles()
