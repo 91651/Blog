@@ -1,12 +1,13 @@
+using System.Diagnostics.Metrics;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using App.Blazor.Client.Data;
+using App.Blazor.Web.Components;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
 using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
-using Blazor.HybridRender;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +22,7 @@ var configuration = builder.Configuration;
 // Add services to the container.
 var services = builder.Services;
 
+services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
 services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]));
 services.AddDefaultIdentity<User>().AddEntityFrameworkStores<AppDbContext>();
 services.Configure<IdentityOptions>(options =>
@@ -64,7 +66,6 @@ services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
 services.AddAntDesign();
-services.Configure<HybridRenderOptions>(configuration);
 services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) => {
     var server = sp.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();
@@ -85,26 +86,26 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 app.UseInitDb();
 app.UseHttpsRedirection();
 app.UseRewriter(new RewriteOptions().AddRedirectToNonWww());
-app.UseBlazorFrameworkFiles();
+// app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, configuration["AppSettings:StaticContentPath"])).FullName) });
-
+app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.GetFullPath(configuration["AppSettings:StaticContentPath"])).FullName) });
 app.UseRouting();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapRazorPages();
+app.UseAntiforgery();
+// app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("admin/{*path}", "admin/index.html");
+// app.MapFallbackToFile("admin/{*path}", "admin/index.html");
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<_App>()
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(App.Blazor.Client._Imports).Assembly);
 
 app.Run();

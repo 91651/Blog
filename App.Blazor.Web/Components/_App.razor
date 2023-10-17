@@ -1,0 +1,45 @@
+﻿@inject IWebHostEnvironment env
+
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="_content/AntDesign/css/ant-design-blazor.css">
+    <link rel="stylesheet" href="css/captcha.css">
+    <link rel="stylesheet" href="css/app.css"/>
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="@(typeof(_App).Assembly.GetName().Name).styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <HeadOutlet />
+</head>
+
+<body>
+    <Routes />
+
+    <div id="blazor-error-ui">
+        @if (env.IsDevelopment())
+        {
+            <span>An unhandled exception has occurred. See browser dev tools for details.</span>
+        }
+        else
+        {
+            <span>An error has occurred. This application may no longer respond until reloaded.</span>
+        }
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.web.js"></script>
+    <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
+    <script src="js/hc-sticky.js"></script>
+    <script src="js/scrollReveal.js"></script>
+    <!--[if lt IE 9]>
+    <script src="js/modernizr.js"></script>
+    <![endif]-->
+    <script src="js/blazor-app.js"></script>
+</body>
+
+</html>

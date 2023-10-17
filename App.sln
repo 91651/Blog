@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Captcha", "Framework\Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Blazor.Client", "App.Blazor.Client\App.Blazor.Client.csproj", "{F48A8ECC-C0A3-4748-918C-5E9385B5A1C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.HybridRender", "Blazor.HybridRender\Blazor.HybridRender.csproj", "{A6F948EE-AC92-4A6E-9D72-A7732A49AB56}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,10 +85,6 @@ Global
 		{F48A8ECC-C0A3-4748-918C-5E9385B5A1C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F48A8ECC-C0A3-4748-918C-5E9385B5A1C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F48A8ECC-C0A3-4748-918C-5E9385B5A1C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6F948EE-AC92-4A6E-9D72-A7732A49AB56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6F948EE-AC92-4A6E-9D72-A7732A49AB56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6F948EE-AC92-4A6E-9D72-A7732A49AB56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6F948EE-AC92-4A6E-9D72-A7732A49AB56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,7 +97,6 @@ Global
 		{63224B93-13D7-41C9-9E5D-644C22534980} = {74D87709-82CB-4A13-809D-F8DED1D1FF1A}
 		{826A4E3E-E21C-4B4C-878E-11494E73FC09} = {74D87709-82CB-4A13-809D-F8DED1D1FF1A}
 		{8E372910-3F78-4C05-A66F-C222BF535E55} = {74D87709-82CB-4A13-809D-F8DED1D1FF1A}
-		{A6F948EE-AC92-4A6E-9D72-A7732A49AB56} = {74D87709-82CB-4A13-809D-F8DED1D1FF1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B50B549D-B66B-4926-8014-B6CB1A77E057}
