@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.2.23480.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0-rc.2.23480.2" />
 	<PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="13.0.0.1" />
+	<PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="3.1.0" />
 	<PackageReference Include="久伴" Version="1.0.936" />
   </ItemGroup>
 

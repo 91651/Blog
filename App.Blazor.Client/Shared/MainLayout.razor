@@ -1,4 +1,4 @@
-﻿@using Toolbelt.Blazor.HotKeys
+﻿@using Toolbelt.Blazor.HotKeys2
 @inherits LayoutComponentBase
 @inject IServiceProvider _serviceProvider
 @inject IJSRuntime _jsRuntime
@@ -23,7 +23,7 @@
         if (OperatingSystem.IsBrowser())
         {
             var hotKeys = _serviceProvider.GetRequiredService<HotKeys>();
-            hotKeys.CreateContext().Add(ModKeys.Ctrl|ModKeys.Alt, Keys.L, MyLucky);
+            hotKeys.CreateContext().Add(ModCode.Ctrl | ModCode.Alt, Code.L, MyLucky);
         }
         return Task.CompletedTask;
     }
