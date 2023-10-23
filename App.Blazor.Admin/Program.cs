@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using AntDesign.ProLayout;
 using App.Blazor.Admin;
 using App.Blazor.Admin.Auth;
@@ -6,14 +8,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<Application>("#app");
+builder.RootComponents.Add<_App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddHttpClient("ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+builder.Services.AddHttpClient(nameof(App.Blazor.Admin), client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<AppAuthorizationMessageHandler>();
 builder.Services.AddTransient<AppAuthorizationMessageHandler>();
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ServerAPI"));
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(App.Blazor.Admin)));
 builder.Services.AddScoped<AppAuthenticationService>();
-builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetService<AppAuthenticationService>());
+builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<AppAuthenticationService>());
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddAntDesign();

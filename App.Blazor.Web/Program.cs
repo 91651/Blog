@@ -91,6 +91,7 @@ else
 app.UseInitDb();
 app.UseHttpsRedirection();
 app.UseRewriter(new RewriteOptions().AddRedirectToNonWww());
+app.UseRewriter(new RewriteOptions().AddRewrite(@"^.+/_content/(.*)", "_content/$1", skipRemainingRules: true));
 app.UseBlazorFrameworkFiles("/admin");
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.GetFullPath(configuration["AppSettings:StaticContentPath"])).FullName) });
@@ -100,7 +101,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 app.MapControllers();
-app.MapFallbackToFile("admin/{*path}", "admin/index.html");
+app.MapFallbackToFile("admin/{*path:nonfile}", "admin/index.html");
 
 app.MapRazorComponents<_App>()
     .AddInteractiveServerRenderMode()
