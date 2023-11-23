@@ -22,8 +22,11 @@ jobs:
           dotnet-version: '8.x'
           include-prerelease: true
 
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
       - name: dotnet publish
-        run: dotnet publish App.Blazor.Web/App.Blazor.Web.csproj --sc true -r win-x64 -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -51,4 +54,4 @@ jobs:
           app-name: 'LZH-Blog'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A80257453C454A1F9809B677FA5ABBE5 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C880507BBB804F60BB28A359D6AC4216 }}
