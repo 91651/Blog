@@ -1,4 +1,3 @@
-using System.Diagnostics.Metrics;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using App.Blazor.Client.Data;
@@ -69,7 +68,7 @@ services.AddAntDesign();
 services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) => {
     var server = sp.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();
-    string baseAddress = addressFeature.Addresses.First();
+    var baseAddress = addressFeature.Addresses.Last();
     c.BaseAddress = new Uri(baseAddress);
 });
 
