@@ -1,7 +1,4 @@
-﻿@using Toolbelt.Blazor.HotKeys2
-@inherits LayoutComponentBase
-@inject IServiceProvider _serviceProvider
-@inject IJSRuntime _jsRuntime
+﻿@inherits LayoutComponentBase
 
 <PageTitle>遇见时光</PageTitle>
 
@@ -13,24 +10,5 @@
     <RightSide />
 </article>
 <App.Blazor.Client.Shared.Footer />
+<Jiuban.Lucky />
 <a href="#" class="back-top">Top</a>
-
-@code {
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        base.OnAfterRenderAsync(firstRender);
-        if (OperatingSystem.IsBrowser())
-        {
-            var hotKeys = _serviceProvider.GetRequiredService<HotKeys>();
-            hotKeys.CreateContext().Add(ModCode.Ctrl | ModCode.Alt, Code.L, MyLucky);
-        }
-        return Task.CompletedTask;
-    }
-
-    private void MyLucky()
-    {
-        _jsRuntime.InvokeVoidAsync("console.info", "%c%s", "color: #9399; font-size: 12px;", @久伴.初见.缘份);
-        _jsRuntime.InvokeVoidAsync("console.info", "%c ", $"padding:70px;background:url({@久伴.照片.照片_201804_2}) no-repeat;");
-    }
-}
