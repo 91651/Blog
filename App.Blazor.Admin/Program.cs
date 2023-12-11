@@ -14,10 +14,10 @@ builder.Services.AddHttpClient(nameof(App.Blazor.Admin), client => client.BaseAd
     .AddHttpMessageHandler<AppAuthorizationMessageHandler>();
 builder.Services.AddTransient<AppAuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(App.Blazor.Admin)));
-builder.Services.AddScoped<AppAuthenticationService>();
-builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<AppAuthenticationService>());
-
 builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddSingleton<AppAuthenticationService>();
+builder.Services.AddSingleton<AuthenticationStateProvider>(p => p.GetRequiredService<AppAuthenticationService>());
 builder.Services.AddAntDesign();
 builder.Services.Configure<ProSettings>(x =>
 {

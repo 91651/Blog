@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Blazor.Admin.Auth
 {
@@ -28,7 +29,6 @@ namespace App.Blazor.Admin.Auth
                 identity = new ClaimsIdentity(identity.Claims, "Claims");
             }
             var state = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
-            NotifyAuthenticationStateChanged(state);
             return await state;
         }
         public Task<bool> SignIn()
@@ -38,7 +38,8 @@ namespace App.Blazor.Admin.Auth
         }
         private async Task<IEnumerable<KeyValuePair<string, string>>> GetCurrentUser()
         {
-            var httpClient = _serviceProvider.GetService<HttpClient>();
+            using var scope = _serviceProvider.CreateScope();
+            var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
             var resp = await httpClient.GetAsync("/api/admin/auth/claims");
             if (resp.IsSuccessStatusCode)
             {
