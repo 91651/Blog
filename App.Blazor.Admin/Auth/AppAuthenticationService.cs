@@ -42,7 +42,7 @@ namespace App.Blazor.Admin.Auth
             var resp = await httpClient.GetAsync("/api/admin/auth/claims");
             if (resp.IsSuccessStatusCode)
             {
-                var options = new JsonSerializerOptions();
+                // var options = new JsonSerializerOptions();
                 // var data = await resp.Content.ReadFromJsonAsync<IEnumerable<KeyValuePair<string, string>>>();
                 // return data;
             }
