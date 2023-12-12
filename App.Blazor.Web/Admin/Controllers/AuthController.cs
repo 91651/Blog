@@ -46,10 +46,10 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpGet("claims")]
-        public async Task<IEnumerable<KeyValuePair<string, string>>> GetUserClaims()
+        public Task<Dictionary<string, string>> GetUserClaims()
         {
-            var result = HttpContext.User.Claims.Select(s => new KeyValuePair<string, string>(s.Type, s.Value));
-            return await Task.FromResult(result);
+            var result = HttpContext.User.Claims.ToDictionary(s => s.Type, s=> s.Value);
+            return Task.FromResult(result);
         }
     }
 }

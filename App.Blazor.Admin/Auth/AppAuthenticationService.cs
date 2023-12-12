@@ -43,7 +43,7 @@ namespace App.Blazor.Admin.Auth
             if (resp.IsSuccessStatusCode)
             {
                 var options = new JsonSerializerOptions();
-                var data = await resp.Content.ReadFromJsonAsync<IEnumerable<KeyValuePair<string, string>>>();
+                var data = await resp.Content.ReadFromJsonAsync<IDictionary<string, string>>();
                 return data;
             }
             return Enumerable.Empty<KeyValuePair<string, string>>();
