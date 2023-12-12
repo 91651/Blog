@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Blazor.Admin.Auth
 {
@@ -16,7 +15,7 @@ namespace App.Blazor.Admin.Auth
             _serviceProvider = serviceProvider;
         }
 
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        public async Task<AuthenticationState> GetAuthenticationStateIdentityAsync()
         {
             var identity = new ClaimsIdentity();
             var claims = await GetCurrentUser();
@@ -28,8 +27,7 @@ namespace App.Blazor.Admin.Auth
                 }
                 identity = new ClaimsIdentity(identity.Claims, "Claims");
             }
-            var state = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
-            return await state;
+            return new AuthenticationState(new ClaimsPrincipal(identity));
         }
         public Task<bool> SignIn()
         {
@@ -48,5 +46,7 @@ namespace App.Blazor.Admin.Auth
             }
             return Enumerable.Empty<KeyValuePair<string, string>>();
         }
+
+        public override Task<AuthenticationState> GetAuthenticationStateAsync() => GetAuthenticationStateIdentityAsync();
     }
 }
