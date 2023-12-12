@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace App.Blazor.Admin.Auth
@@ -41,8 +42,9 @@ namespace App.Blazor.Admin.Auth
             var resp = await httpClient.GetAsync("/api/admin/auth/claims");
             if (resp.IsSuccessStatusCode)
             {
-                var data = await resp.Content.ReadFromJsonAsync<IEnumerable<KeyValuePair<string, string>>>();
-                return data;
+                var options = new JsonSerializerOptions();
+                // var data = await resp.Content.ReadFromJsonAsync<IEnumerable<KeyValuePair<string, string>>>();
+                // return data;
             }
             return Enumerable.Empty<KeyValuePair<string, string>>();
         }
