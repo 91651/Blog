@@ -28,7 +28,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var user = await _userManager.FindByNameAsync(model.Name);
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("用户信息不存在，请检查您输入的账户。");
             }
             var signIn = await _signInManager.PasswordSignInAsync(user, model.Pwd, false, false);
             if (signIn.Succeeded)
@@ -37,19 +37,19 @@ namespace App.Blazor.Web.Admin.Controllers
             }
             else if (signIn.IsLockedOut)
             {
-                return Unauthorized();
+                return Unauthorized("用户已经被锁定，请联系管理员解锁。");
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized("用户名或密码错误。");
             }
         }
 
         [HttpGet("claims")]
-        public Task<Dictionary<string, string>> GetUserClaims()
+        public async Task<IEnumerable<KeyValuePair<string, string>>> GetUserClaims()
         {
             var result = HttpContext.User.Claims.ToDictionary(s => s.Type, s=> s.Value);
-            return Task.FromResult(result);
+            return await Task.FromResult(result);
         }
     }
 }

@@ -10,60 +10,82 @@
 
 <div class="user-layout-container">
     <div class="user-layout-content">
-      <div class="user-layout-top">
-        <div class="user-layout-header">
-          <span class="user-layout-title">
-            应用管理后台
-          </span>
+        <div class="user-layout-top">
+            <div class="user-layout-header">
+                <span class="user-layout-title">
+                    应用管理后台
+                </span>
+            </div>
+            <div class="user-layout-desc">个人展示平台</div>
         </div>
-        <div class="user-layout-desc">个人展示平台</div>
-      </div>
-      <div class="user-login-main">
-          <Form Model="@model"
-              LabelColSpan="4"
-              WrapperColSpan="20"
-              OnFinish="OnFinish"
-              OnFinishFailed="OnFinishFailed">
-            <FormItem Label="用户名">
-                <Input @bind-Value="@context.Name" />
-            </FormItem>
-            <FormItem Label="密码">
-                <InputPassword @bind-Value="@context.Pwd" />
-            </FormItem>
-            <FormItem WrapperColSpan="24">
-                <Row Gutter="(16,24)" Justify="end">
-                    <Col Span="10">
+        <div class="user-login-main">
+            <Form Model="@model"
+                  LabelColSpan="4"
+                  WrapperColSpan="20"
+                  OnFinish="OnFinish"
+                  OnFinishFailed="OnFinishFailed"
+                  ValidateOnChange="@true">
+                <FormItem Label="用户名">
+                    <Input @bind-Value="@context.Name" />
+                </FormItem>
+                <FormItem Label="密码">
+                    <InputPassword @bind-Value="@context.Pwd" />
+                </FormItem>
+                <Row Justify="end">
+                    <Col Xs="24" Sm="20">
+                        @if (!string.IsNullOrWhiteSpace(msg))
+                        {
+                            <Alert Type="@AlertType.Warning"
+                               Message="@msg"
+                               ShowIcon="true"/>
+                        }
+                    </Col>
+                </Row>
+                <br>
+                <Row Justify="end">
+                    <Col Xs="24" Sm="20">
+                    <Row Justify="space-between">
+                        <Col Span="11">
                         <Button Type="@ButtonType.Primary" Block HtmlType="submit">
                             登录
                         </Button>
-                    </Col>
-                    <Col Span="10">
-                        <Button Block HtmlType="button">
+                        </Col>
+                        <Col Span="11">
+                        <Button Block HtmlType="button" @onclick="Reset">
                             重置
                         </Button>
+                        </Col>
+                    </Row>
                     </Col>
                 </Row>
-            </FormItem>
-        </Form>
-      </div>
+            </Form>
+        </div>
     </div>
     <div Class="user-layout-footer">Copyright © 2021 <a href="mailto:mail@521.org.cn">mail@521.org.cn</a></div>
-  </div>
+</div>
 
 @code {
-    private SignInModel model = new ();
+    private SignInModel model = new();
+    private string msg = default;
     private async Task OnFinish(EditContext editContext)
     {
-        var result = await Http.PostAsJsonAsync<SignInModel>("/api/admin/auth/signin", model);
-        if (result.IsSuccessStatusCode)
+        var resp = await Http.PostAsJsonAsync<SignInModel>("/api/admin/auth/signin", model);
+        if (resp.IsSuccessStatusCode)
         {
             await authenticationService.SignIn();
             Navigation.NavigateTo("/admin");
         }
+        msg = await resp.Content.ReadAsStringAsync();
+    }
+
+    private async Task Reset()
+    {
+        msg = string.Empty;
+        model = new SignInModel();
     }
 
     private void OnFinishFailed(EditContext editContext)
     {
-        
+
     }
 }
