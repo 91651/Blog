@@ -33,34 +33,44 @@
         </Space>
     </Card>
     <br />
-    @*<Table DataSource="data" TreeChildren="item=>item.Children">
+    <Table HidePagination="true" DataSource="data" TreeChildren="item=>item.Children">
         <Selection CheckStrictly />
-        <Column @bind-Field="@context.Title" />
-        <Column @bind-Field="@context.State" Width="12%" Sortable />
-    </Table>*@
+        <PropertyColumn Property="c=>c.Channel.Title" />
+        <PropertyColumn Property="c=>c.Channel.Description" Width="30%" />
+        <PropertyColumn Property="c=>c.Channel.State" Width="30%">
+            @if (context.Channel.State == 1)
+            {
+                <Tag Color="@PresetColor.Green.ToString()">启用</Tag>
+            }
+            else
+            {
+                <Tag Color="@PresetColor.Red.ToString()">禁用</Tag>
+            }
+        </PropertyColumn>
+    </Table>
 </Card>
 
 @code {
     private ArticleQueryModel query = new ();
-    private List<ChannelModel>? data = new();
+    private List<Data> data = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await GetArticles();
+        await GetChannels();
     }
 
-    private async Task GetArticles()
+    private async Task GetChannels()
     {
         var channels = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
         if(channels != null)
         {
-            data = channels;
+            data = channels.Select(c => new Data { Channel = c, Children = channels.Where(ch => ch.ParentId == c.Id).Select(ch => new Data { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
         }
     }
 
     private async Task Query()
     {
-        await GetArticles();
+
     }
 
     private async Task Edit(string id)
@@ -74,7 +84,7 @@
         if (resp.IsSuccessStatusCode)
         {
             await _message.Success("文章删除成功");
-            await GetArticles();
+            // await GetArticles();
             return;
         }
         await _message.Warn("文章删除失败");
@@ -87,6 +97,12 @@
 
     public async Task OnChange(QueryModel<ArticleListModel> queryModel)
     {
-        await GetArticles();
+        // await GetArticles();
+    }
+
+    public class Data
+    {
+        public ChannelModel Channel { get; set; }
+        public Data[] Children { get; set; }
     }
 }

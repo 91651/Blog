@@ -14,7 +14,7 @@
 @inject MessageService _message
 @inject NavigationManager Navigation
 
-<link rel="stylesheet" href="/admin/lib/vditor@3.8.8/index.css" />
+<link rel="stylesheet" href="/admin/lib/vditor@3.9.3/index.css" />
 
 <PageTitle>Index</PageTitle>
 
@@ -67,7 +67,7 @@
     [Parameter]
     public string? id { get; set; }
     public bool isMarkdown { get; set; } = true;
-    private ArticleModel model = new();
+    private ArticleModel model = new ArticleModel{ Editor = 1 };
     private List<CascaderNode> channels = new();
     protected override async Task OnInitializedAsync()
     {
@@ -160,7 +160,7 @@
 
     private async Task LoadMarkdownEditor()
     {
-        var vditor = "/admin/lib/vditor@3.8.8/index.min.js";
+        var vditor = "/admin/lib/vditor@3.9.3/index.min.js";
         var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
         await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);

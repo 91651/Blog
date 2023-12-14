@@ -26,7 +26,7 @@
                                <Button Type="@ButtonType.Primary" @onclick="Query">查询</Button>
                            </SpaceItem>
                            <SpaceItem>
-                               <Button Danger>新建</Button>
+                        <Button Danger @onclick="() => Edit(string.Empty)">新建</Button>
                            </SpaceItem>
                         </Space>
             </SpaceItem>
