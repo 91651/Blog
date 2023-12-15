@@ -13,24 +13,46 @@
 
 <Card Hoverable>
     <Card>
-         <Space>
-            <SpaceItem>
-                <Input Placeholder="序号" @bind-Value="@query.Id" />
-            </SpaceItem>
-            <SpaceItem>
-                <Input Placeholder="关键字" @bind-Value="@query.Keyword" />
-            </SpaceItem>
-            <SpaceItem>
-                <Space>
-                           <SpaceItem>
-                               <Button Type="@ButtonType.Primary" @onclick="Query">查询</Button>
-                           </SpaceItem>
-                           <SpaceItem>
-                        <Button Danger @onclick="() => Edit(string.Empty)">新建</Button>
-                           </SpaceItem>
-                        </Space>
-            </SpaceItem>
-        </Space>
+            <Space Wrap>
+                <SpaceItem>
+                    <InputGroup Compact Style="min-width:280px; padding:10px 0;">
+                        <lable class="search-label">序号:</lable> 
+                        <Input @bind-Value="@query.Keyword"  />
+                    </InputGroup>
+                </SpaceItem>
+                <SpaceItem>
+                    <InputGroup Compact Style="min-width:280px; padding:10px 0;">
+                        <lable class="search-label">关键字:</lable> 
+                        <Input @bind-Value="@query.Keyword" />
+                    </InputGroup>
+                </SpaceItem>
+                <SpaceItem>
+                    <InputGroup Compact Style="min-width:280px; padding:10px 0;">
+                        <lable class="search-label">栏目:</lable> 
+                        <TreeSelect TItem="ChannelTreeModel"
+                                DataSource="channels"
+                                @bind-Value="@query.ChannelId"
+                                Placeholder="默认"
+                                AllowClear
+                                TreeDefaultExpandAll
+                                ChildrenExpression="node=>node.DataItem.Children"
+                                TitleExpression="node=>node.DataItem.Channel.Title"
+                                KeyExpression="node=>node.DataItem.Channel.Id"
+                                IsLeafExpression="node=>node.DataItem.Children==null">
+                        </TreeSelect>
+                    </InputGroup>
+                </SpaceItem>
+                <SpaceItem>
+                    <Space>
+                        <SpaceItem>
+                             <Button Type="@ButtonType.Primary" @onclick="Query">查询</Button>
+                        </SpaceItem>
+                        <SpaceItem>
+                            <Button Danger @onclick="() => Edit(string.Empty)">新建</Button>
+                         </SpaceItem>
+                    </Space>
+                </SpaceItem>
+            </Space>
     </Card>
     <br />
     <Table TItem="ArticleListModel" Bordered=@true DataSource="@data.Data"
@@ -53,12 +75,12 @@
         <Column @bind-Field="@context.Updated">
         </Column>
         <ActionColumn Title="操作">
-            <Space Size=@("middle")>
+            <Space>
                 <SpaceItem>
-                    <Button Type="@ButtonType.Link" @onclick="() => Edit(context.Id)">编辑</Button>
+                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context.Id)">编辑</Button>
                 </SpaceItem>
                 <SpaceItem>
-                    <Button Type="@ButtonType.Link" @onclick="() => Del(context.Id)">删除</Button>
+                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
                 </SpaceItem>
             </Space>
         </ActionColumn>
@@ -68,10 +90,12 @@
 @code {
     private ArticleQueryModel query = new ();
     private PageResult<List<ArticleListModel>>? data = new();
+    private List<ChannelTreeModel> channels = new();
 
     protected override async Task OnInitializedAsync()
     {
         await GetArticles();
+        await GetChannels();
     }
 
     private async Task GetArticles()
@@ -80,6 +104,15 @@
         if(resp != null)
         {
             data = await resp.Content.ReadFromJsonAsync<PageResult<List<ArticleListModel>>>();
+        }
+    }
+
+    private async Task GetChannels()
+    {
+        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        if(data != null)
+        {
+            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
         }
     }
 

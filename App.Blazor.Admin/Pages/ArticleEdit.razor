@@ -119,8 +119,8 @@
                             Value = s.Id,
                             Children = children.Select(ch => new CascaderNode
                             {
-                                Label = s.Title,
-                                Value = s.Id
+                                Label = ch.Title,
+                                Value = ch.Id
                             })
                         };
                 }

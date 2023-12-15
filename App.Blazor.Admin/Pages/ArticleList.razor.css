@@ -1,0 +1,6 @@
+.search-label {
+  white-space: nowrap;
+  align-items: center;
+  display: inline-flex;
+  padding: 0 10px;
+}

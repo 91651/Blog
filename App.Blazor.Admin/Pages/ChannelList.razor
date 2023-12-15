@@ -21,7 +21,7 @@
                            
     </Card>
     <br />
-    <Table HidePagination="true" DataSource="data" TreeChildren="item => item.Children" IndentSize="20" >
+    <Table HidePagination="true" DataSource="channels" TreeChildren="item => item.Children" IndentSize="20" >
         <PropertyColumn Property="c=>c.Channel.Title" />
         <PropertyColumn Property="c=>c.Channel.Description" Width="30%" />
         <PropertyColumn Property="c=>c.Channel.State">
@@ -35,25 +35,25 @@
             }
         </PropertyColumn>
         <ActionColumn Title="操作">
-            <Space Size=@("middle")>
+            <Space>
                 <SpaceItem>
-                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" @onclick="() => Edit(context.Channel)" />
+                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context.Channel)">编辑</Button>
                 </SpaceItem>
                 @if(context.Channel.State == 1)
                 {
                     <SpaceItem>
-                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Stop" @onclick="() => EditState(context.Channel, 2)" />
+                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.EyeInvisible" Size="@ButtonSize.Small" @onclick="() => EditState(context.Channel, 2)">禁用</Button>
                     </SpaceItem>
                 }
                 else
                 {
                     <SpaceItem>
-                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Eye" @onclick="() => EditState(context.Channel, 1)" />
+                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Eye" Size="@ButtonSize.Small" @onclick="() => EditState(context.Channel, 1)">启用</Button>
                     </SpaceItem>
                 }
 
                 <SpaceItem>
-                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" @onclick="() => Del(context.Channel.Id)" />
+                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Channel.Id)">删除</Button>
                 </SpaceItem>
             </Space>
         </ActionColumn>
@@ -68,8 +68,8 @@
                 <Input @bind-Value="@context.Title" />
             </FormItem>
             <FormItem Label="上级栏目">
-                <TreeSelect TItem="ChannelData"
-                            DataSource="data"
+                <TreeSelect TItem="ChannelTreeModel"
+                            DataSource="channels"
                             @bind-Value="@context.ParentId"
                             Placeholder="默认添加顶级栏目"
                             AllowClear
@@ -94,7 +94,7 @@
 @code {
     private ArticleQueryModel query = new ();
     private ChannelModel channel = new ChannelModel{ State = 1 };
-    private List<ChannelData> data = new();
+    private List<ChannelTreeModel> channels = new();
     private Form<ChannelModel> editForm;
     private bool isShowEditModal = false;
 
@@ -105,10 +105,10 @@
 
     private async Task GetChannels()
     {
-        var channels = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
-        if(channels != null)
+        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        if(data != null)
         {
-            data = channels.Select(c => new ChannelData { Channel = c, Children = channels.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelData { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
         }
     }
 
@@ -197,16 +197,5 @@
             return;
         }
         await _message.Warn("栏目删除失败");
-    }
-
-    public async Task OnChange(QueryModel<ArticleListModel> queryModel)
-    {
-        // await GetArticles();
-    }
-
-    public class ChannelData
-    {
-        public ChannelModel Channel { get; set; }
-        public ChannelData[] Children { get; set; }
     }
 }
