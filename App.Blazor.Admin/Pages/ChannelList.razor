@@ -11,33 +11,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<Card Hoverable>
+<Card>
     <Card>
          <Space>
             <SpaceItem>
-                <Input Placeholder="序号" @bind-Value="@query.Id" />
+                <Button Danger @onclick="() => Edit()">添加栏目</Button>
             </SpaceItem>
-            <SpaceItem>
-                <Input Placeholder="关键字" @bind-Value="@query.Keyword" />
-            </SpaceItem>
-            <SpaceItem>
-                <Space>
-                           <SpaceItem>
-                               <Button Type="@ButtonType.Primary" @onclick="Query">查询</Button>
-                           </SpaceItem>
-                           <SpaceItem>
-                               <Button Danger>新建</Button>
-                           </SpaceItem>
-                        </Space>
-            </SpaceItem>
-        </Space>
+         </Space>
+                           
     </Card>
     <br />
-    <Table HidePagination="true" DataSource="data" TreeChildren="item=>item.Children">
-        <Selection CheckStrictly />
+    <Table HidePagination="true" DataSource="data" TreeChildren="item => item.Children" IndentSize="20" >
         <PropertyColumn Property="c=>c.Channel.Title" />
         <PropertyColumn Property="c=>c.Channel.Description" Width="30%" />
-        <PropertyColumn Property="c=>c.Channel.State" Width="30%">
+        <PropertyColumn Property="c=>c.Channel.State">
             @if (context.Channel.State == 1)
             {
                 <Tag Color="@PresetColor.Green.ToString()">启用</Tag>
@@ -47,12 +34,69 @@
                 <Tag Color="@PresetColor.Red.ToString()">禁用</Tag>
             }
         </PropertyColumn>
+        <ActionColumn Title="操作">
+            <Space Size=@("middle")>
+                <SpaceItem>
+                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" @onclick="() => Edit(context.Channel)" />
+                </SpaceItem>
+                @if(context.Channel.State == 1)
+                {
+                    <SpaceItem>
+                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Stop" @onclick="() => EditState(context.Channel, 2)" />
+                    </SpaceItem>
+                }
+                else
+                {
+                    <SpaceItem>
+                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Eye" @onclick="() => EditState(context.Channel, 1)" />
+                    </SpaceItem>
+                }
+
+                <SpaceItem>
+                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" @onclick="() => Del(context.Channel.Id)" />
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
     </Table>
+
+    <Modal Title="添加栏目" Closable="@false" Visible="isShowEditModal" OnOk="@HandleOk" OnCancel="() => isShowEditModal = false">
+        <Form @ref="@editForm" Model="@channel"
+              LabelColSpan="6"
+              WrapperColSpan="16"
+              OnFinish="Submit">
+            <FormItem Label="标题">
+                <Input @bind-Value="@context.Title" />
+            </FormItem>
+            <FormItem Label="上级栏目">
+                <TreeSelect TItem="ChannelData"
+                            DataSource="data"
+                            @bind-Value="@context.ParentId"
+                            Placeholder="默认添加顶级栏目"
+                            AllowClear
+                            TreeDefaultExpandAll
+                            ChildrenExpression="node=>node.DataItem.Children"
+                            TitleExpression="node=>node.DataItem.Channel.Title"
+                            KeyExpression="node=>node.DataItem.Channel.Id"
+                            IsLeafExpression="node=>node.DataItem.Children==null">
+                </TreeSelect>
+            </FormItem>
+            <FormItem Label="描述">
+                <TextArea AllowClear @bind-Value="@context.Description" />
+            </FormItem>
+            <FormItem Label="状态">
+                <Switch Value="context.State == 1 ? true: false" CheckedChildren="启用" UnCheckedChildren="禁用" OnChange="value => context.State = value ? 1 : 2" />
+            </FormItem>
+        </Form>
+    </Modal>
+    
 </Card>
 
 @code {
     private ArticleQueryModel query = new ();
-    private List<Data> data = new();
+    private ChannelModel channel = new ChannelModel{ State = 1 };
+    private List<ChannelData> data = new();
+    private Form<ChannelModel> editForm;
+    private bool isShowEditModal = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,7 +108,7 @@
         var channels = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
         if(channels != null)
         {
-            data = channels.Select(c => new Data { Channel = c, Children = channels.Where(ch => ch.ParentId == c.Id).Select(ch => new Data { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+            data = channels.Select(c => new ChannelData { Channel = c, Children = channels.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelData { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
         }
     }
 
@@ -73,26 +117,86 @@
 
     }
 
-    private async Task Edit(string id)
+    private async Task Edit(ChannelModel? channel = default)
     {
-        Navigation.NavigateTo($"/admin/article/edit/{id}");
+        if (channel != null)
+        {
+            this.channel = channel;
+        }
+        isShowEditModal = true;
+    }
+
+    private async Task EditState(ChannelModel channel, int state)
+    {
+        channel.State = state;
+        var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
+            if (resp.IsSuccessStatusCode)
+            {
+
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("栏目更新成功");
+                    isShowEditModal = false;
+                    await GetChannels();
+                    return;
+                }
+            }
+            await _message.Warn("栏目更新失败");
+    }
+
+    private async Task Submit(EditContext editContext)
+    {
+        if (!string.IsNullOrWhiteSpace(channel.Id))
+        {
+            var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
+            if (resp.IsSuccessStatusCode)
+            {
+
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("栏目更新成功");
+                    isShowEditModal = false;
+                    await GetChannels();
+                    return;
+                }
+            }
+            await _message.Warn("栏目更新失败");
+        }
+        else
+        {
+            var resp = await Http.PostAsJsonAsync<ChannelModel>("/api/admin/channel", channel);
+            if (resp.IsSuccessStatusCode)
+            {
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("栏目添加成功");
+                    isShowEditModal = false;
+                    await GetChannels();
+                    return;
+                }
+            }
+            await _message.Warn("栏目添加失败");
+        }
+    }
+
+    private async Task HandleOk(MouseEventArgs e)
+    {
+        editForm.Submit();
     }
 
     private async Task Del(string id)
     {
-        var resp = await Http.DeleteAsync($"/api/admin/article/{id}");
+        var resp = await Http.DeleteAsync($"/api/admin/channel/{id}");
         if (resp.IsSuccessStatusCode)
         {
-            await _message.Success("文章删除成功");
-            // await GetArticles();
+            await _message.Success("栏目删除成功");
+            await GetChannels();
             return;
         }
-        await _message.Warn("文章删除失败");
-    }
-
-    void OnRowClick(RowData<ArticleListModel> row)
-    {
-        Console.WriteLine($"row {row.Data.Id} was clicked.");
+        await _message.Warn("栏目删除失败");
     }
 
     public async Task OnChange(QueryModel<ArticleListModel> queryModel)
@@ -100,9 +204,9 @@
         // await GetArticles();
     }
 
-    public class Data
+    public class ChannelData
     {
         public ChannelModel Channel { get; set; }
-        public Data[] Children { get; set; }
+        public ChannelData[] Children { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using AntDesign;
 using App.Business.Model;
 using App.Business.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,18 @@ namespace App.Blazor.Web.Admin.Controllers
         public Task<string> AddChannel(ChannelModel model)
         {
             return _channelService.AddChannelAsync(model);
+        }
+
+        [HttpDelete("{id}")]
+        public Task<bool> DelChannel(string Id)
+        {
+            return _channelService.DelChannelAsync(Id);
+        }
+
+        [HttpPut("{id}")]
+        public Task<bool> UpdateChannel(ChannelModel model)
+        {
+            return _channelService.UpdateChannelAsync(model);
         }
 
         [HttpGet]

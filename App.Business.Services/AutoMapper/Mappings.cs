@@ -22,7 +22,7 @@ namespace App.Business.Services.AutoMapper
                 .ForMember(m => m.UserName, opt => opt.MapFrom(s => s.User.UserName))
                 .ForMember(m => m.CommentCount, opt => opt.MapFrom(s => s.Comments.Count))
                 .ForMember(m => m.File, opt => opt.MapFrom(s => s.Files.FirstOrDefault()));
-            CreateMap<Channel, ChannelModel>();
+            CreateMap<Channel, ChannelModel>().ReverseMap();
             CreateMap<Comment, CommentModel>().ReverseMap();
             CreateMap<File, FileModel>().ReverseMap();
             CreateMap<User, UserModel>().ReverseMap();
