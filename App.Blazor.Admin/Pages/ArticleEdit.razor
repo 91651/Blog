@@ -42,7 +42,9 @@
                 </SpaceItem>
                 <SpaceItem>
                     <FormItem Label="来源">
-                        <Input @bind-Value="@context.Author" />
+                        <AutoComplete Options="@(new string[]{"原创文章", "转载文章"})">
+                            <AutoCompleteInput Placeholder="原创文章" @bind-Value="@context.Author" />
+                        </AutoComplete>
                     </FormItem>
                 </SpaceItem>
                 <SpaceItem>
