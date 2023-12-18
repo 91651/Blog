@@ -62,6 +62,8 @@ namespace Vditor
 
         [Parameter]
         public Upload Upload { get; set; }
+        [Parameter]
+        public string Cdn { get; set; }
 
         private ElementReference _ref;
 
@@ -94,7 +96,11 @@ namespace Vditor
             Options["Width"] = int.TryParse(Width, out var w) ? w : (object)Width;
             Options["MinHeight"] = int.TryParse(MinHeight, out var m) ? m : (object)MinHeight;
             Options["Options"] = Outline;
-
+            if (!string.IsNullOrWhiteSpace(Cdn))
+            {
+                Options["Cdn"] = Cdn;
+            }
+            
             if (Upload != null)
             {
                 Options["Upload"] = Upload;
