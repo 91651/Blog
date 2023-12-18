@@ -21,7 +21,7 @@ builder.Services.AddSingleton<AuthenticationStateProvider>(p => p.GetRequiredSer
 builder.Services.AddAntDesign();
 builder.Services.Configure<ProSettings>(x =>
 {
-    x.Title = "Ant Design Pro";
+    x.Title = "内容管理后台";
     x.NavTheme = "light";
     x.Layout = "mix";
     x.PrimaryColor = "daybreak";

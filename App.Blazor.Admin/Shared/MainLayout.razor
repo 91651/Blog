@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using App.Blazor.Admin.Auth
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject AppAuthenticationService authenticationService
 
 <Layout Style="height:100vh;">
     <BasicLayout
@@ -6,7 +9,7 @@
         MenuData="MenuData"
         Theme="MenuTheme.Light">
         <RightContentRender>
-            <RightContent />
+            <RightContent OnUserItemSelected="SelectedItem" />
         </RightContentRender>
         <MenuExtraRender>
             <Select
@@ -54,7 +57,7 @@
                     Key = "article",
                     Icon = "book",
                     Children = new MenuDataItem[]
-                    {
+        {
                         new ()
                         {
                             Path = "/admin/article",
@@ -69,7 +72,7 @@
                             Key = "article-add",
                             Icon = "crown",
                         }
-                    }
+        }
                 },
                 new ()
                 {
@@ -79,5 +82,17 @@
                     Icon = "smile"
                 }
             };
+    }
+
+    private async Task SelectedItem(MenuItem item)
+    {
+        if (item.Key == "logout")
+        {
+            var isSignOut = await authenticationService.SignOut();
+            if (isSignOut)
+            {
+                Navigation.NavigateTo("/admin/signin");
+            }
+        }
     }
 }

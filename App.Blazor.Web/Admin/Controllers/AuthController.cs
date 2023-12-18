@@ -45,6 +45,12 @@ namespace App.Blazor.Web.Admin.Controllers
             }
         }
 
+        [HttpPost("signout")]
+        public async Task SignOut()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
         [HttpGet("claims")]
         public async Task<IEnumerable<KeyValuePair<string, string>>> GetUserClaims()
         {

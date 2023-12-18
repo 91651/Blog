@@ -35,6 +35,17 @@ namespace App.Blazor.Admin.Auth
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return Task.FromResult(true);
         }
+        public async Task<bool> SignOut()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
+            var resp = await httpClient.PostAsync("/api/admin/auth/signout", null);
+            if (resp.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
         private async Task<IEnumerable<KeyValuePair<string, string>>> GetCurrentUser()
         {
             using var scope = _serviceProvider.CreateScope();
