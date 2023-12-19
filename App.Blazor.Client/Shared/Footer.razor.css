@@ -3,7 +3,7 @@
   margin-top: 16px;
 }
 .footer:before {
-  background: black linear-gradient(to left, #28b3f7, #9871e2, #fc31d0, #2eaff6, #c851da, #fa32d1);
+  background: #000 linear-gradient(to left, #28b3f7, #9871e2, #fc31d0, #2eaff6, #c851da, #fa32d1);
   content: "";
   height: 4px;
   position: absolute;
@@ -13,14 +13,16 @@
 .footer .footer_container {
   background: #2c2d2f;
   text-align: center;
-  color: white;
+  color: #fff;
   padding: 23px 20px 18px;
   line-height: 200%;
 }
 .footer .footer_container span {
   margin: 0 10px;
-  color: white;
+  color: #fff;
 }
 .footer .footer_container span a {
-  color: white;
+  color: #fff;
 }
+
+/*# sourceMappingURL=Footer.razor.css.map */

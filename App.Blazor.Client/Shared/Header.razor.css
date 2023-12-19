@@ -2,6 +2,7 @@ header {
   width: 96%;
   margin: auto;
 }
+
 .header {
   position: fixed;
   top: 0px;
@@ -12,15 +13,15 @@ header {
   width: 100%;
   height: 60px;
   line-height: 60px;
-  background: white;
+  background: #fff;
   text-align: center;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #ddd;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 .header .navbar {
   border-bottom: 1px solid #ececec;
   background-color: #2c2d2f;
-  color: #cccccc;
+  color: #ccc;
   line-height: 36px;
   height: 36px;
   font-size: 14px;
@@ -70,7 +71,7 @@ header {
 .header .nav-menu .sub li {
   padding: 0 0 0 0;
   width: 100%;
-  border-bottom: #dddddd 1px solid;
+  border-bottom: #ddd 1px solid;
   line-height: 40px;
 }
 .header .nav-menu li:hover.menu:after {
@@ -79,14 +80,14 @@ header {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid white;
+  border-top: 5px solid #fff;
 }
-.header .nav-menu li a:hover,
-.header .nav-menu .selected > a {
+.header .nav-menu li a:hover, .header .nav-menu .selected > a {
   background: #3690cf;
   display: block;
-  color: white;
+  color: #fff;
 }
+
 @media screen and (min-width: 960px) {
   .menu-trigger-icon {
     display: none;
@@ -132,10 +133,12 @@ header {
     display: block;
     padding: 0 0 0 0;
     width: 60%;
-    background: white;
-    border-bottom: whitesmoke 1px solid;
+    background: rgb(255, 255, 255);
+    border-bottom: #f5f5f5 1px solid;
   }
   .nav-menu .sub li {
     border-bottom: none;
   }
 }
+
+/*# sourceMappingURL=Header.razor.css.map */

@@ -8,23 +8,24 @@
   float: right;
 }
 .box-section h2 {
-  color: #333333;
+  color: #333;
   font-size: 14px;
   line-height: 30px;
   padding-left: 20px;
   background: #f8f8f8;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #ddd;
 }
 .box-section div {
-  background: white;
+  background: #fff;
   margin: 10px 0;
   overflow: hidden;
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
 }
 .box-section div ul {
   padding: 10px;
   overflow: hidden;
 }
+
 .about-me img {
   width: 60%;
   margin: auto;
@@ -37,7 +38,10 @@
 .about-me i {
   width: 100%;
 }
+
 .channel li {
   margin-bottom: 10px;
   margin-left: 10px;
 }
+
+/*# sourceMappingURL=RightSide.razor.css.map */

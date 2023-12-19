@@ -4,6 +4,7 @@ article {
   overflow: hidden;
   z-index: 999;
 }
+
 main {
   overflow: hidden;
   clear: both;
@@ -13,6 +14,7 @@ main {
   display: block;
   position: relative;
 }
+
 .back-top {
   height: 40px;
   width: 40px;
@@ -35,6 +37,7 @@ main {
   visibility: visible;
   opacity: 1;
 }
+
 @media only screen and (max-width: 767px) {
   article {
     width: 96%;
@@ -43,3 +46,5 @@ main {
     width: 100%;
   }
 }
+
+/*# sourceMappingURL=MainLayout.razor.css.map */

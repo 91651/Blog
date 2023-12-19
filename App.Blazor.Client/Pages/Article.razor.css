@@ -1,80 +1,17 @@
-.article-section {
-  width: 100%;
-  overflow: hidden;
-  background: white;
-  margin-bottom: 20px;
-}
-.article-section ::deep .hljs {
-  background: none;
-}
-.article-section ::deep img {
-  max-width: 100% !important;
-  width: auto !important;
-  height: auto !important;
-  margin: 10px auto;
-}
-.article-section .article-view {
-  padding: 0 30px;
-}
-.article-section .article-title {
-  font-size: 24px;
-  font-weight: normal;
-  padding: 20px 0;
-  color: #333333;
-}
-.article-section .article-info {
-  width: 100%;
-  overflow: hidden;
-  margin-bottom: 10px;
-  clear: both;
-}
-.article-section .article-info ul {
-  overflow: hidden;
-}
-.article-section .article-info ul li {
-  float: left;
-  margin-right: 20px;
-}
-.article-section .article-summary {
-  color: #888888;
-  border: 1px solid #f3f3f3;
-  padding: 10px;
-  margin: 20px auto 15px auto;
-  line-height: 23px;
-  background: none repeat 0 0 #f6f6f6;
-}
-.article-section .article-summary strong {
-  color: #38485a;
-  font-weight: 400 !important;
-  font-size: 13px;
-  padding-right: 8px;
-}
-.article-section .notice {
-  text-align: center;
-  color: #808595;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 30px auto;
-  letter-spacing: 0.05em;
-}
-.article-section .notice a {
-  color: #808595;
-}
-.article-section .next {
-  line-height: 24px;
-  width: 100%;
-  overflow: hidden;
-  margin: 20px 0;
-}
-.article-section .next p {
-  padding: 4px 10px;
-  border-radius: 5px;
-}
-.article-section .next a {
-  text-decoration: none;
-  font-weight: bold;
-}
-.article-section .next a:hover {
-  color: black;
-  text-decoration: underline;
+/* Error: Invalid UTF-8.
+ *   ,
+ * 6 |     // �޸Ĵ�����������ɫ
+ *   |        ^
+ *   '
+ *   Pages\Article.razor.scss 6:8  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Invalid UTF-8.\a   \2577 \a 6 \2502      // \fffd \7b8 \134 \fffd \fffd \fffd \fffd \fffd \fffd \fffd \fffd \fffd \fffd \fffd \26b \d\a   \2502         ^\a   \2575 \a   Pages\\Article.razor.scss 6:8  root stylesheet";
 }

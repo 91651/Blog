@@ -5,7 +5,7 @@
 .tab-section .tabs {
   overflow: hidden;
   zoom: 1;
-  background: white;
+  background: #fff;
   width: 100%;
   margin: 10px 0;
 }
@@ -17,15 +17,15 @@
   list-style-type: none;
   padding: 0 20px;
 }
-.tab-section .tabs li.current,
-.tab-section .tabs li a:hover {
+.tab-section .tabs li.current, .tab-section .tabs li a:hover {
   color: #3690cf;
 }
+
 .article-list-section {
   overflow: hidden;
   margin-bottom: 20px;
   padding: 20px;
-  background: white;
+  background: #FFF;
   -webkit-box-shadow: 0 2px 5px 0 rgba(146, 146, 146, 0.1);
   -moz-box-shadow: 0 2px 5px 0 rgba(146, 146, 146, 0.1);
   box-shadow: 0 2px 5px 0 rgba(146, 146, 146, 0.1);
@@ -100,7 +100,7 @@
   color: #748594;
 }
 .article-list-section .article-info li a:hover {
-  color: black;
+  color: #000;
 }
 .article-list-section .article-info .author {
   background: url(/img/auicon.jpg) no-repeat 0 0;
@@ -117,3 +117,5 @@
 .article-list-section .article-info .hot {
   background: url(/img/auicon.jpg) no-repeat top -85px left;
 }
+
+/*# sourceMappingURL=Index.razor.css.map */
