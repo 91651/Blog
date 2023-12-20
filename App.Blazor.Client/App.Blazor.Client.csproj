@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Framework\App.Captcha\App.Captcha.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Article.razor.scss" />
+  </ItemGroup>
+
 </Project>
