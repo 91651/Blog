@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using AntDesign.ProLayout;
 using App.Blazor.Admin;
 using App.Blazor.Admin.Auth;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<_App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 builder.Services.AddHttpClient(nameof(App.Blazor.Admin), client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<AppAuthorizationMessageHandler>();
 builder.Services.AddTransient<AppAuthorizationMessageHandler>();
