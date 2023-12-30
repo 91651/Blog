@@ -10,7 +10,7 @@ namespace App.Captcha
         public CaptchaModel Generate()
         {
             var r = new CaptchaModel { Point = new Point(), Id = Guid.NewGuid() };
-            var imgPath = Path.GetFullPath(@"CaptchaImages");
+            var imgPath = Path.Combine(AppContext.BaseDirectory, "CaptchaImages");
             var imgs = Directory.GetFiles(imgPath);
             var img = imgs.OrderBy(i => Guid.NewGuid()).First();
             var sourceImg = Image.Load(img);

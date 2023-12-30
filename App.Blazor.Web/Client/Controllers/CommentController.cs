@@ -21,5 +21,11 @@ namespace App.Blazor.Web.Client.Controllers
         {
             return _commentService.GetCommentsAsync(ownerId, pid);
         }
+
+        [HttpPost]
+        public Task<bool> AddComments(CommentModel model, string captchaCode)
+        {
+            return _commentService.AddCommentAsync(model, captchaCode);
+        }
     }
 }
