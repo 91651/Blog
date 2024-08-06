@@ -68,10 +68,7 @@
                 <Input @bind-Value="@context.Title" />
             </FormItem>
             <FormItem Label="上级栏目">
-                <TreeSelect TItem="ChannelTreeModel"
-                            DataSource="channels"
-                            @bind-Value="@context.ParentId"
-                            Placeholder="默认添加顶级栏目"
+                <TreeSelect DataSource="channels" @bind-Value="@context.ParentId" Placeholder="默认添加顶级栏目"
                             AllowClear
                             TreeDefaultExpandAll
                             ChildrenExpression="node=>node.DataItem.Children"

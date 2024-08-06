@@ -1,9 +1,8 @@
 ﻿using App.DbAccess.Entities.Identity;
-using Microsoft.AspNetCore.Builder;
+using App.DbAccess.Infrastructure;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace App.DbAccess.Infrastructure
+namespace App.Blazor.Web.Middleware
 {
     public static class InitDb
     {

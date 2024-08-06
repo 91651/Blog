@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using App.Blazor.Client.Data;
 using App.Blazor.Web.Components;
+using App.Blazor.Web.Middleware;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
@@ -23,7 +24,7 @@ var services = builder.Services;
 
 services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
 services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]));
-services.AddDefaultIdentity<User>().AddEntityFrameworkStores<AppDbContext>();
+services.AddIdentityCore<User>().AddEntityFrameworkStores<AppDbContext>();
 services.Configure<IdentityOptions>(options =>
 {
     //配置用户密码策略
