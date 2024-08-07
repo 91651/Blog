@@ -11,32 +11,37 @@
     <meta name="description" content="人生百态，爱我所爱！">
 </HeadContent>
 
-<div class="tab-section">
-    <ul class="tabs">
-        <li class="current">最新文章</li>
-    </ul>
+<section class="site-content common-container">
     @foreach (var article in articles)
     {
-        <div class="article-list-section">
-            <h3 class="article-title"><a href="/p/@article.Id" target="_blank">@article.Title</a></h3>
-            <span class="article-pic">
-                @if (@article.File != null)
-                {<a href="/p/@article.Id" title=""><img src="@Path.Combine(article.File.Path, article.File.Name)"></a>}
-            </span>
-            <p class="article-summary">@article.Summary</p>
-            <div class="article-info" style="@(article.File !=null ? "margin-top:80px" : "" )">
-                <ul>
-                    <li class="author"><a>@article.Author</a></li>
-                    <li class="channel"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
-                    <li class="time">@($"{article.Created:yyyy年M月d日 HH:mm}")</li>
-                    <li class="views"><span>@article.Viewed</span> 阅读</li>
-                    <li class="hot"><span>@article.CommentCount</span> 评论</li>
-                </ul>
+        <article class="hasThumb flex">
+            <div class="article-content">
+                <h2 class="entry-title hidden">
+                    <a class="hoverColor" href="/p/@article.Id" title="@article.Title" rel="bookmark">@article.Title</a>
+                </h2>
+                <div class="entry-content hidden">
+                    @article.Summary
+                </div>
+                <div class="entry-info">
+                    <span class="infoLeft"><i class="iconfont icon-book-read-line"></i>@article.ChannelName</span>
+                    <span class="rtime infoLeft"><i class="iconfont icon-calendar-2-line"></i>@($"{article.Created:yyyy年M月d日 HH:mm}")</span>
+                    <span><i class="iconfont icon-user-3-line"></i>@article.Author</span>
+                </div>
             </div>
-        </div>
+            <div class="entry-thumb">
+                <a class="focus hidden" href="/p/@article.Id" title="@article.Title">
+                    @if (@article.File != null)
+                    {
+                        <img loading="auto" src="@Path.Combine(article.File.Path, article.File.Name)" alt="@article.Title" title="@article.Title">
+                    }
+                </a>
+            </div>
+        </article>
     }
-    <Button block size="large" @onclick="GetArticles">加载更多</Button>
-</div>
+    <div class="pagenavi flex">
+        <a class="load-more" @onclick="GetArticles">阅读更多</a>
+    </div>
+</section>
 
 @code {
     private int page = 1;

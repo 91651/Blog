@@ -1,95 +1,350 @@
-.article-section {
+.post-header, .post-title {
+    margin-bottom: var(--postGlobalMargin)
+}
+
+.post-title {
+    font-size: var(--postH1Size);
+    line-height: 2;
+    word-break: break-all
+}
+
+.post-info {
+    color: var(--entryConColor);
+    font-size: 14px
+}
+
+.post-info .infoLeft {
+    margin-right: 20px
+}
+
+.post-info .iconfont {
+    margin-right: 5px
+}
+
+#qrcode {
+    position: absolute;
+    z-index: 10;
+    visibility: hidden;
+    width: 148px;
+    height: 148px;
+    border-radius: 5px;
+    background: var(--bgColor);
+    box-shadow: 0 0 10px var(--boxShowColor);
+    opacity: 0;
+    transition: all .5s cubic-bezier(.4,.01,.165,.99);
+    -webkit-transform: translate(310px,10px);
+    transform: translate(310px,10px);
+    justify-content: center;
+    align-items: center
+}
+
+.opQrcode:hover ~ #qrcode {
+    visibility: visible;
+    opacity: 1
+}
+
+.post-main {
+    line-height: 2
+}
+
+.post-main figure, .post-main p {
+    margin-bottom: var(--postGlobalMargin);
+    max-width: 100%
+}
+
+.post-main figure {
+    text-align: left
+}
+
+.post-main img {
+    display: block;
+    margin: 0 auto;
+    height: auto;
+    max-width: 100%
+}
+
+.post-main h1, .post-main h2, .post-main h3, .post-main h4, .post-main h5, .post-main h6 {
+    position: relative;
+    margin-bottom: var(--postGlobalMargin);
+    padding: 0 0 0 12px;
+    font-weight: 700
+}
+
+.post-main h1 {
+    font-size: 22px
+}
+
+.post-main h2 {
+    font-size: 20px
+}
+
+.post-main h3 {
+    font-size: 18px
+}
+
+.post-main h4, .post-main h5, .post-main h6 {
+    font-size: 16px
+}
+
+.post-main h1:before, .post-main h2:before, .post-main h3:before, .post-main h4:before, .post-main h5:before, .post-main h6:before {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 0;
+    margin: auto;
+    width: 4px;
+    border-radius: 10px;
+    background: var(--themeColor);
+    content: ""
+}
+
+.post-main ol {
+    counter-reset: sectioncounter
+}
+
+.post-main ol, .post-main ul {
+    margin-bottom: var(--postGlobalMargin);
+    padding-left: var(--postGlobalMargin)
+}
+
+.post-main ol li, .post-main ul li {
+    color: var(--entryConColor);
+    list-style: inherit
+}
+
+figcaption {
+    color: var(--entryConColor);
+    text-align: center;
+    font-size: 14px
+}
+
+blockquote p {
+    margin-bottom: 10px !important
+}
+
+.post-main blockquote {
+    margin-bottom: 30px;
+    padding: 10px 20px 20px;
+    border-radius: 5px;
+    background-color: var(--footerColor)
+}
+
+.post-main blockquote cite {
+    color: var(--entryConColor);
+    font-style: normal
+}
+
+.post-main blockquote:before {
+    content: "\e61d";
+    font-style: normal;
+    font-size: 24px;
+    font-family: iconfont !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale
+}
+
+.post-main hr {
+    margin-bottom: var(--postGlobalMargin);
+    height: 4px;
+    border: none;
+    background: var(--borderColor)
+}
+
+.post-main video {
+    height: auto;
+    max-width: 100%;
+    margin-bottom: var(--postGlobalMargin)
+}
+
+.post-main iframe {
+    height: calc(var(--headSearchWidth)*.5625);
     width: 100%;
+    margin-bottom: var(--postGlobalMargin)
+}
+
+.post-main .wp-block-table {
+    width: 100%;
+    overflow-x: auto
+}
+
+.post-main .wp-block-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+.post-main .wp-block-table td, .wp-block-table th, .wp-block-table tr {
     overflow: hidden;
-    background: #fff;
-    margin-bottom: 20px;
-    /* 修改代码高亮区域底色 */
-    ::deep .hljs {
-        background: none;
-    }
+    padding: 6px 12px;
+    border: 1px solid var(--borderColor);
+    vertical-align: middle;
+    white-space: nowrap
+}
 
-    ::deep img {
-        max-width: 100% !important;
-        width: auto !important;
-        height: auto !important;
-        margin: 10px auto;
-    }
+.post-main .wp-block-table tr:nth-child(odd) {
+    background: var(--footerColor)
+}
 
-    .article-view {
-        padding: 0 30px
-    }
+.post-main a {
+    border-bottom: 2px solid var(--themeColor)
+}
 
-    .article-title {
-        font-size: 24px;
-        font-weight: normal;
-        padding: 20px 0;
-        color: #333;
-    }
+.post-main a:hover {
+    box-shadow: inset 0 -10px var(--themeColor);
+    -webkit-transition: box-shadow .2s linear;
+    transition: box-shadow .2s linear
+}
 
-    .article-info {
-        width: 100%;
-        overflow: hidden;
-        margin-bottom: 10px;
-        clear: both;
+.post-tag {
+    margin-bottom: var(--postGlobalMargin);
+    padding: 14px 0;
+    width: 100%;
+    border-top: 1px solid var(--borderColor);
+    border-bottom: 1px solid var(--borderColor);
+    color: var(--entryConColor);
+    font-size: 14px;
+    line-height: 2
+}
 
-        ul {
-            overflow: hidden;
+.post-tag a {
+    display: inline-block;
+    margin: 4px 6px;
+    padding: 2px 10px;
+    border-radius: 18px;
+    background: var(--footerColor)
+}
 
-            li {
-                float: left;
-                margin-right: 20px
-            }
-        }
-    }
+.post-tag a:hover {
+    color: var(--themeColor)
+}
 
-    .article-summary {
-        color: #888888;
-        border: 1px solid #F3F3F3;
-        padding: 10px;
-        margin: 20px auto 15px auto;
-        line-height: 23px;
-        background: none repeat 0 0 #F6F6F6;
+.post-navigation {
+    margin-bottom: var(--postGlobalMargin);
+    font-size: 14px;
+    justify-content: space-between
+}
 
-        strong {
-            color: #38485A;
-            font-weight: 400 !important;
-            font-size: 13px;
-            padding-right: 8px;
-        }
-    }
+.nav-box {
+    position: relative;
+    width: calc(50% - 8px)
+}
 
-    .notice {
-        text-align: center;
-        color: #808595;
-        font-size: 14px;
-        line-height: 1.5;
-        margin: 30px auto;
-        letter-spacing: .05em;
-    }
+.nav-box a {
+    display: block;
+    padding: 30px 14px;
+    border-radius: 5px;
+    background-position: 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: var(--ButtonFontColor)
+}
 
-    .notice a {
-        color: #808595;
-    }
+.nav-box a:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    background: rgba(0,0,0,.46);
+    content: ""
+}
 
-    .next {
-        line-height: 24px;
-        width: 100%;
-        overflow: hidden;
-        margin: 20px 0
-    }
+.post-navigation .next {
+    text-align: right
+}
 
-    .next p {
-        padding: 4px 10px;
-        border-radius: 5px;
-    }
+.prev_info {
+    position: relative;
+    z-index: 1
+}
 
-    .next a {
-        text-decoration: none;
-        font-weight: bold;
-    }
+.prev_info p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical
+}
 
-    .next a:hover {
-        color: #000;
-        text-decoration: underline
-    }
+.down-detail {
+    position: relative;
+    margin-bottom: var(--postGlobalMargin);
+    padding: 14px;
+    min-height: 120px;
+    border: 2px solid var(--borderColor);
+    border-radius: 5px;
+    justify-content: flex-start
+}
+
+.down-detail .down-icon {
+    padding: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    background: var(--fontColor)
+}
+
+.down-detail .down-icon .iconfont {
+    color: var(--ButtonFontColor);
+    font-size: 28px
+}
+
+.down-detail .down-con {
+    margin-right: auto;
+    margin-left: 28px
+}
+
+.down-detail .down-con > strong {
+    display: inline-block;
+    margin-bottom: 18px
+}
+
+.down-detail .down-con .down-tip {
+    color: var(--entryConColor);
+    font-size: 14px
+}
+
+.down-detail .down-btn {
+    position: absolute;
+    bottom: 14px
+}
+
+.down-detail .down-con .downBtn {
+    display: inline-block;
+    margin-right: 14px;
+    padding: 6px 16px;
+    border-radius: 16px;
+    background: var(--themeColor);
+    color: var(--ButtonFontColor);
+    font-size: 14px
+}
+
+.down-detail .down-con .downBtn:last-child {
+    margin-right: auto
+}
+
+.down-detail .down-img, .down-detail .down-img img {
+    width: 120px;
+    height: 120px
+}
+
+.related-post {
+    margin-top: calc(var(--postGlobalMargin)*2)
+}
+
+.attach-title {
+    display: block;
+    margin-bottom: var(--postGlobalMargin);
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--borderColor);
+    font-weight: 700;
+    font-size: var(--postH3Size)
+}
+
+code::-webkit-scrollbar-thumb {
+    width: 8px;
+    border-radius: 2em;
+    background: #374e70
 }
