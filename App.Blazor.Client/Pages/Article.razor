@@ -15,17 +15,6 @@
     @*为Markdown加载样式*@
     <link href="/lib/github-markdown-css@5.1.0/github-markdown.min.css" rel="stylesheet" />
     <link href="/lib/highlight.js@11.3.1/monokai-sublime.min.css" rel="stylesheet" />
-    <script type="importmap" src="/lib/highlight.js@11.3.1/highlight.min.js"></script>
-    <script type="importmap" src="/lib/highlight.js@11.3.1/highlightjs-line-numbers-2.8.0.min.js"></script>
-    import(/lib/highlight.js@11.3.1/highlightjs-line-numbers-2.8.0.min.js);
-    <script type="importmap">
-        import(/lib/highlight.js@11.3.1/highlightjs-line-numbers-2.8.0.min.js);
-        function codeColoring() {
-             hljs.initHighlightingOnLoad(); hljs.initLineNumbersOnLoad(); function highlightjs() { $("code.hljs").each(function (i, block) { hljs.lineNumbersBlock(block) }) } document.addEventListener("highlightjs", highlightjs, false);
-        }
-        debugger;
-        codeColoring();
-    </script>
 </HeadContent>
 
 
@@ -67,8 +56,14 @@
         </div>
     </div>
 </div>
-
-
+<script>
+    async function codeColoring() {
+        await appjs.loadJS("/js/highlight.min.js");
+        await appjs.loadJS("/js/highlightjs-line-numbers-2.8.0.min.js");
+        hljs.highlightAll();
+        $("code.hljs").each(function (i, block) { hljs.lineNumbersBlock(block) });
+    }
+</script>
 
 @code {
     [Parameter]
@@ -100,10 +95,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (OperatingSystem.IsBrowser())
+        if (firstRender)
         {
             await JS.InvokeVoidAsync("codeColoring");
-            
         }
     }
 
