@@ -12,9 +12,7 @@
 <PageTitle>@article.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
     <meta name="description" content="@article.Summary">
-    @*为Markdown加载样式*@
-    <link href="/lib/github-markdown-css@5.1.0/github-markdown.min.css" rel="stylesheet" />
-    <link href="/lib/highlight.js@11.3.1/monokai-sublime.min.css" rel="stylesheet" />
+    <link href="/lib/highlight.js@11.10.0/monokai-sublime.min.css" rel="stylesheet" />
 </HeadContent>
 
 
@@ -56,13 +54,15 @@
         </div>
     </div>
 </div>
+
+<script src="/lib/highlight.js@11.10.0/highlight.min.js"></script>
+<script src="/lib/highlight.js@11.10.0/highlightjs-line-numbers-2.8.0.min.js"></script>
+
 <script>
-    async function codeColoring() {
-        await appjs.loadJS("/js/highlight.min.js");
-        await appjs.loadJS("/js/highlightjs-line-numbers-2.8.0.min.js");
-        hljs.highlightAll();
-        $("code.hljs").each(function (i, block) { hljs.lineNumbersBlock(block) });
-    }
+    hljs.highlightAll();
+    document.querySelectorAll('code.hljs').forEach(function (block) {
+        hljs.lineNumbersBlock(block);
+    });
 </script>
 
 @code {
@@ -93,13 +93,7 @@
 
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("codeColoring");
-        }
-    }
+    
 
     private Task PersistArticle()
     {

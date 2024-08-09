@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
-    <link rel="stylesheet" href="_content/AntDesign/css/ant-design-blazor.css">
     <link rel="stylesheet" href="@Assets["css/captcha.css"]">
     <link rel="stylesheet" href="@Assets["css/app.css"]" />
     <link rel="stylesheet" href="@Assets["css/iconfont.css"]" />
@@ -18,13 +17,12 @@
 <body>
     <Routes />
 
-    <script src="_framework/blazor.web.js"></script>
-    <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
-    <script src="js/hc-sticky.js"></script>
-    <script src="js/scrollReveal.js"></script>
-    <!--[if lt IE 9]>
-    <script src="js/modernizr.js"></script>
-    <![endif]-->
+    <script src="_framework/blazor.web.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+            ssr: { disableDomPreservation: true }
+        });
+    </script>
     <script src="js/blazor-app.js"></script>
 </body>
 
