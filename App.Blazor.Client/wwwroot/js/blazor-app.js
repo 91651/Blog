@@ -18,5 +18,8 @@
                 ctxCaptcha.drawImage(img, 0, 0);
             }
         }
+    },
+    css: function (el, prop, value){
+        el.style[prop] = value;
     }
 }

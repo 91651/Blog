@@ -7,32 +7,63 @@
 @inject PersistentComponentState _componentState
 @inject IDataProviderApi _api
 
-<PageTitle>@channel.Title | 遇见时光-1023.org.cn</PageTitle>
+<PageTitle>@channel?.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
-    <meta name="description" content="@channel.Description">
+    <meta name="description" content="@channel?.Title">
 </HeadContent>
 
-@foreach (var article in articles)
+@if (articles.Any())
 {
-    <div class="article-list-section" >
-        <h3 class="article-title"><a href="/p/@article.Id" target="_blank">@article.Title</a></h3>
-        <span class="article-pic">
-            @if (@article.File != null)
-            {<a href="/p/@article.Id" title=""><img src="@Path.Combine(article.File.Path, article.File.Name)"></a>}
-        </span>
-        <p class="article-summary">@article.Summary</p>
-        <div class="article-info" style="@(article.File !=null ? "margin-top:80px" : "" )">
-            <ul>
-                <li class="author"><a>@article.Author</a></li>
-                <li class="channel"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
-                <li class="time">@($"{article.Created:yyyy年M月d日 HH:mm}")</li>
-                <li class="views"><span>@article.Viewed</span> 阅读</li>
-                <li class="hot"><span>@article.CommentCount</span> 评论</li>
-            </ul>
+    <section class="term-bar">
+        <div class="container">
+            <span>当前分类</span>
+            <span class="term-illustrate">@channel.Title</span>
         </div>
-    </div>
+    </section>
+    <section class="site-content container">
+        @foreach (var article in articles)
+        {
+            <article class="hasThumb flex">
+                <div class="article-content">
+                    <h2 class="entry-title hidden">
+                        <a class="hoverColor" href="/p/@article.Id" title="@article.Title" rel="bookmark">@article.Title</a>
+                    </h2>
+                    <div class="entry-content hidden">
+                        @article.Summary
+                    </div>
+                    <div class="entry-info">
+                        <span class="infoLeft"><i class="iconfont icon-book-read-line"></i>@article.ChannelName</span>
+                        <span class="rtime infoLeft"><i class="iconfont icon-calendar-2-line"></i>@($"{article.Created:yyyy年M月d日 HH:mm}")</span>
+                        <span><i class="iconfont icon-user-3-line"></i>@article.Author</span>
+                    </div>
+                </div>
+                <div class="entry-thumb">
+                    <a class="focus hidden" href="/p/@article.Id" title="@article.Title">
+                        @if (@article.File != null)
+                        {
+                            <img loading="auto" src="@Path.Combine(article.File.Path, article.File.Name)" alt="@article.Title" title="@article.Title">
+                        }
+                    </a>
+                </div>
+            </article>
+        }
+        <div class="pagenavi flex">
+            <a class="load-more" @onclick="GetArticles">阅读更多</a>
+        </div>
+    </section>
 }
-<Button block size="large" @onclick="GetArticles">加载更多</Button>
+else
+{
+    <section class="site-content container">
+        <span class="trem-state">抱歉，这个页面不存在！</span>
+        <span class="trem-info">它可能已经被删除，或者您访问的URL是不正确的。也许您可以试试搜索？</span>
+        <form method="get" class="vice-search" action="/search">
+            <input type="search" class="field" placeholder="输入关键词进行搜索…" name="q" required>
+            <button type="submit" class="search-submit"><i class="iconfont icon-search-2-line"></i></button>
+        </form>
+    </section>
+}
+
 
 @code {
     [Parameter]
@@ -49,23 +80,31 @@
             return;
         }
          _componentState.RegisterOnPersisting(PersistArticles);
-        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var data) && data != null)
+        if (_componentState.TryTakeFromJson<ChannelModel>(nameof(channel), out var channel_data) && channel_data != null)
         {
-            articles = data;
+            channel = channel_data;
 
+        }
+        else
+        {
+            channel = await _api.GetChannelAsync(id);
+        }
+        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var articles_data) && articles_data != null)
+        {
+            articles = articles_data;
         }
         else
         {
             page = default;
             articles.Clear();
             query.ChannelId = id;
-            channel = await _api.GetChannelAsync(id);
             await GetArticles();
         }
     }
 
     private Task PersistArticles()
     {
+        _componentState.PersistAsJson(nameof(channel), channel);
         _componentState.PersistAsJson(nameof(articles), articles);
         return Task.CompletedTask;
     }

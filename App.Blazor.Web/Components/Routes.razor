@@ -1,6 +1,6 @@
-﻿<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Blazor.Client._Imports).Assembly }">
+﻿<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Blazor.Client._Imports).Assembly }">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Blazor.Client.Shared.MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Blazor.Client.Shared.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>

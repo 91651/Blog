@@ -3,6 +3,7 @@
 
 @using App.Business.Model
 @using App.Blazor.Client.Data
+
 @inject PersistentComponentState _componentState
 @inject IDataProviderApi _api
 
@@ -11,7 +12,7 @@
     <meta name="description" content="人生百态，爱我所爱！">
 </HeadContent>
 
-<section class="site-content common-container">
+<section class="site-content container">
     @foreach (var article in articles)
     {
         <article class="hasThumb flex">
@@ -61,7 +62,7 @@
         {
             await GetArticles();
         }
-        
+
     }
 
     private Task PersistArticles()

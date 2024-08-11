@@ -1,0 +1,14 @@
+.mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: none;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+  display: block;
+}
+
+/*# sourceMappingURL=Mask.razor.css.map */

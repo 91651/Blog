@@ -1,0 +1,36 @@
+﻿@rendermode InteractiveAuto
+
+@inject IJSRuntime JS
+@inject MaskService MaskService
+
+@if (isShow)
+{
+    <div class="mask" @ref="_ref" @onclick="Hide"></div>
+}
+
+@code {
+    private ElementReference _ref;
+    private bool isShow = false;
+
+    protected override void OnInitialized()
+    {
+        MaskService.Show = async () => await Show();
+        MaskService.Hide = async () => await Hide();
+    }
+
+    private async Task Show()
+    {
+        isShow = true;
+        MaskService.OnShow?.Invoke();
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+    private async Task Hide()
+    {
+        isShow = false;
+        MaskService.OnHide?.Invoke();
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+}

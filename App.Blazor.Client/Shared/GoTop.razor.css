@@ -1,0 +1,47 @@
+.hoverBg:hover {
+  background: var(--themeColor) !important;
+}
+
+.goTop {
+  position: fixed;
+  right: 75px;
+  bottom: 150px;
+  z-index: 88;
+  display: none;
+  overflow: hidden;
+  padding: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  background: #333;
+  color: var(--ButtonFontColor);
+  text-align: center;
+}
+
+.goTop i {
+  font-size: 26px;
+  line-height: 30px;
+}
+
+.goTop em {
+  display: none;
+}
+
+.goTop:hover em {
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.goTop:hover i {
+  display: none;
+}
+
+@media (max-width: 981px) {
+  .goTop {
+    right: 14px;
+  }
+}
+
+/*# sourceMappingURL=GoTop.razor.css.map */

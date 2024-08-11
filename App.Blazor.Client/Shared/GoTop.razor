@@ -1,0 +1,12 @@
+﻿@rendermode InteractiveAuto
+
+@inject IJSRuntime JS
+
+<div class="hoverBg goTop" style="display: block;" @onclick="Top"><i class="iconfont icon-arrow-up-s-line"></i><em>回到顶部</em></div>
+
+@code {
+    private async Task Top()
+    {
+        await JS.InvokeVoidAsync("document.body.scrollIntoView");
+    }
+}

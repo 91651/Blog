@@ -65,13 +65,14 @@ services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
-services.AddAntDesign();
 services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) => {
     var server = sp.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();
     var baseAddress = addressFeature.Addresses.Last();
     c.BaseAddress = new Uri(baseAddress);
 });
+
+services.AddClientServices();
 
 var app = builder.Build();
 

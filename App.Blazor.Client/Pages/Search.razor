@@ -9,46 +9,71 @@
 
 <PageTitle>搜索结果 | 遇见时光-1023.org.cn</PageTitle>
 
-<div class="blogtab">
-    <ul id="blogtab">
-        <li class="current">搜索结果</li>
-    </ul>
-    @foreach (var article in articles)
-    {
-        <div class="article-list-section">
-            <h3 class="article-title"><a href="/p/@article.Id" target="_blank">@article.Title</a></h3>
-            <span class="article-pic">
-                @if (@article.File != null)
-                {<a href="/p/@article.Id" title=""><img src="@Path.Combine(article.File.Path, article.File.Name)"></a>}
-            </span>
-            <p class="article-summary">@article.Summary</p>
-            <div class="article-info" style="@(article.File !=null ? "margin-top:80px" : "" )">
-                <ul>
-                    <li class="author"><a>@article.Author</a></li>
-                    <li class="channel"><a href="/c/@article.ChannelId">@article.ChannelName</a></li>
-                    <li class="time">@($"{article.Created:yyyy年M月d日 HH:mm}")</li>
-                    <li class="views"><span>@article.Viewed</span> 阅读</li>
-                    <li class="hot"><span>@article.CommentCount</span> 评论</li>
-                </ul>
-            </div>
+@if (total > 0)
+{
+    <section class="term-bar">
+        <div class="container">
+            <span>搜索结果</span>
+            <span class="term-illustrate">“@q” 搜到 @total 篇文章</span>
         </div>
-    }
-    <Button block size="large" @onclick="GetArticles">加载更多</Button>
-</div>
+    </section>
+    <section class="site-content container">
+        @foreach (var article in articles)
+        {
+            <article class="hasThumb flex">
+                <div class="article-content">
+                    <h2 class="entry-title hidden">
+                        <a class="hoverColor" href="/p/@article.Id" title="@article.Title" rel="bookmark">@article.Title</a>
+                    </h2>
+                    <div class="entry-content hidden">
+                        @article.Summary
+                    </div>
+                    <div class="entry-info">
+                        <span class="infoLeft"><i class="iconfont icon-book-read-line"></i>@article.ChannelName</span>
+                        <span class="rtime infoLeft"><i class="iconfont icon-calendar-2-line"></i>@($"{article.Created:yyyy年M月d日 HH:mm}")</span>
+                        <span><i class="iconfont icon-user-3-line"></i>@article.Author</span>
+                    </div>
+                </div>
+                <div class="entry-thumb">
+                    <a class="focus hidden" href="/p/@article.Id" title="@article.Title">
+                        @if (@article.File != null)
+                        {
+                            <img loading="auto" src="@Path.Combine(article.File.Path, article.File.Name)" alt="@article.Title" title="@article.Title">
+                        }
+                    </a>
+                </div>
+            </article>
+        }
+        <div class="pagenavi flex">
+            <a class="load-more" @onclick="GetArticles">阅读更多</a>
+        </div>
+    </section>
+}
+else
+{
+    <section class="site-content container">
+        <span class="trem-state">姿势不对？换个词搜一下~</span>
+        <span class="trem-info">抱歉，没有找到“@q”的相关内容</span>
+        <form method="get" class="vice-search" action="/search">
+            <input type="search" class="field" placeholder="输入关键词进行搜索…" name="q" required>
+            <button type="submit" class="search-submit"><i class="iconfont icon-search-2-line"></i></button>
+        </form>
+    </section>
+}
 
 @code {
-    public string? word;
-    private int page = 1;
-    private ArticleQueryModel query = new () { PageSize = 20 };
-    private List<ArticleListModel> articles = new ();
+    public string? q;
+    private int total = 0;
+    private ArticleQueryModel query = new() { PageSize = 20 };
+    private List<ArticleListModel> articles = new();
 
 
     protected override async Task OnInitializedAsync()
     {
         var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
-        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(nameof(word), out var p))
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(nameof(q), out var p))
         {
-            word = p.First();
+            q = p.First();
         }
 
         await GetArticles();
@@ -56,9 +81,10 @@
 
     private async Task GetArticles()
     {
-        query.Keyword = word?.Trim();
-        query.PageIndex = page++;
-        var data = (await _api.GetArticlesAsync(query)).Data;
-        articles.AddRange(data);
+        query.Keyword = q?.Trim();
+        query.PageIndex = query.PageIndex++;
+        var data = (await _api.GetArticlesAsync(query));
+        total = data.Total;
+        articles.AddRange(data.Data);
     }
 }

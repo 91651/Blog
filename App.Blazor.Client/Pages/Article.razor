@@ -16,7 +16,7 @@
 </HeadContent>
 
 
-<div class="site-content common-container">
+<div class="site-content container">
     <article class="post-content">
         <div class="post-header">
             <h1 class="post-title">@article.Title</h1>
@@ -39,7 +39,7 @@
         <div class="nav-box previous nav_box_previous">
             <a href="/p/@prevArticle?.Id" style="background-image: url(https://static.yumus.cn/wp-content/uploads/2023/04/28aa7b0630db12d9df0043160e1a7e5f.png/turn);">
                 <div class="prev_info">
-                    <span><i class="iconfont icon-arrow-left-s-line"></i>@(prevArticle?.Title ?? "已经是第一篇")</span>
+                    <span><i class="iconfont icon-arrow-left-s-line"></i>@(string.IsNullOrWhiteSpace(prevArticle?.Title) ? "已经是第一篇": "上一篇")</span>
                     <p>@prevArticle?.Title</p>
                 </div>
             </a>
@@ -47,7 +47,7 @@
         <div class="nav-box next nav_box_next">
             <a href="https://www.yumus.cn/software/2293.html" style="background-image: url(https://static.yumus.cn/wp-content/uploads/2023/04/a5670bbf799102c98faba340914d81b0.png/turn);">
                 <div class="prev_info">
-                    <span>@(nextArticle?.Title ?? "已经是最后一篇")<i class="iconfont icon-arrow-right-s-line"></i></span>
+                    <span>@(string.IsNullOrWhiteSpace(nextArticle?.Title) ? "已经是最后一篇" : "下一篇")<i class="iconfont icon-arrow-right-s-line"></i></span>
                     <p>@nextArticle?.Title</p>
                 </div>
             </a>
@@ -57,7 +57,6 @@
 
 <script src="/lib/highlight.js@11.10.0/highlight.min.js"></script>
 <script src="/lib/highlight.js@11.10.0/highlightjs-line-numbers-2.8.0.min.js"></script>
-
 <script>
     hljs.highlightAll();
     document.querySelectorAll('code.hljs').forEach(function (block) {

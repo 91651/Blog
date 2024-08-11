@@ -224,6 +224,16 @@ blockquote p {
     justify-content: space-between
 }
 
+
+.post-main ::deep {
+    pre .hljs table tr td.hljs-ln-numbers .hljs-ln-n {
+        padding: 0 8px;
+        color: #5a5a5a;
+        text-align: center;
+        font-weight: 300
+    }
+} 
+
 .nav-box {
     position: relative;
     width: calc(50% - 8px)
