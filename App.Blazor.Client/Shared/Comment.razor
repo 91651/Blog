@@ -1,0 +1,117 @@
+﻿<CascadingValue Value="this" IsFixed="@true">
+    <div class="ant-comment">
+        <div class="ant-comment-inner">
+            @if ((Avatar != null || AvatarTemplate != null) && (Content != null || ContentTemplate != null))
+            {
+                <div class="ant-comment-avatar">
+                    @if (AvatarTemplate != null)
+                    {
+                        @AvatarTemplate
+                    }
+                    else
+                    {
+                        <Avatar Src="@Avatar" />
+
+                    }
+                </div>
+                <div class="ant-comment-content">
+                    <div class="ant-comment-content-author">
+                        @if (Author != null || AuthorTemplate != null)
+                        {
+                            <span class="ant-comment-content-author-name">
+
+                                @if (AuthorTemplate != null)
+                                {
+                                    @AuthorTemplate
+                                }
+                                else
+                                {
+                                    <a>@Author</a>
+                                }
+                            </span>
+                        }
+
+                        @if (Datetime != null || DatetimeTemplate != null)
+                        {
+                            <span class="ant-comment-content-author-time">
+                                @if (DatetimeTemplate != null)
+                                {
+                                    @DatetimeTemplate
+                                }
+                                else
+                                {
+                                    <span>@Datetime</span>
+                                }
+                            </span>
+                        }
+                    </div>
+                    <div class="ant-comment-content-detail">
+                        @if (ContentTemplate != null)
+                        {
+                            @ContentTemplate
+
+                        }
+                        else
+                        {
+                            <p>@Content</p>
+                        }
+                    </div>
+                    @if (Actions.Count > 0)
+                    {
+                        <ul class="ant-comment-actions">
+                            @foreach (RenderFragment action in Actions)
+                            {
+                                <li>@action</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </div>
+        <div class="ant-comment-nested">
+            @ChildContent
+        </div>
+    </div>
+</CascadingValue>
+
+@code{
+    [Parameter]
+    public string Author { get; set; }
+
+    [Parameter]
+    public RenderFragment AuthorTemplate { get; set; }
+
+    [Parameter]
+    public string Avatar { get; set; }
+
+    [Parameter]
+    public RenderFragment AvatarTemplate { get; set; }
+
+    [Parameter]
+    public string Content { get; set; }
+
+    [Parameter]
+    public RenderFragment ContentTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Datetime { get; set; }
+
+    [Parameter]
+    public RenderFragment DatetimeTemplate { get; set; }
+
+    [Parameter]
+    public IList<RenderFragment> Actions { get; set; } = new List<RenderFragment>();
+
+    [Parameter]
+    public string Placement { get; set; } = "left";
+
+    private bool RightAvatar => Placement?.Equals("right", StringComparison.InvariantCultureIgnoreCase) == true;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

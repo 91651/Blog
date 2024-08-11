@@ -23,4 +23,12 @@
     <ProjectReference Include="..\Framework\App.Captcha\App.Captcha.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Shared\GoTop - 复制.razor.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Shared\Comments - 复制.razor.scss" />
+  </ItemGroup>
+
 </Project>
