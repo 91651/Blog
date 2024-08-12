@@ -1,1 +1,113 @@
-﻿<Comment></Comment>
+﻿@using App.Business.Model
+@using App.Blazor.Client.Data
+@inject IDataProviderApi _api
+
+
+<Comment Avatar="AA">
+    <ContentTemplate>
+        @GetEditor(comment)
+    </ContentTemplate>
+</Comment>
+@CommentContent(comments)
+@if (IsShowCaptcha)
+{
+    @captcha
+}
+
+
+
+@code {
+    [Parameter]
+    public string OwnerId { get; set; }
+    private List<CommentModel> comments = new List<CommentModel>();
+    private CommentModel comment = new CommentModel();
+    private string replyId;
+    private CommentModel replyComment = new CommentModel();
+    public RenderFragment captcha;
+    public bool IsShowCaptcha;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetComments();
+    }
+
+    private async Task GetComments()
+    {
+        comments = await _api.GetCommentsAsync(OwnerId, default);
+    }
+
+    private void SubmitComment(CommentModel comment, string pid)
+    {
+        IsShowCaptcha = true;
+        captcha =
+            @<Template>
+                <Captcha OnSucceed="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />
+            </Template>;
+    }
+
+
+    private async Task CaptchaSucceed(CommentModel comment, string pid, string captchaCode)
+    {
+        IsShowCaptcha = false;
+        StateHasChanged();
+        comment.OwnerId = OwnerId;
+        comment.ParentId = pid;
+        var result = await _api.AddCommentAsync(comment, captchaCode);
+        if (result)
+        {
+         replyId = default;
+         comment = new CommentModel();
+         await GetComments();
+
+        }
+    }
+
+    private void ReplyComment(CommentModel comment)
+    {
+        replyComment = new CommentModel();
+        replyId = comment.Id;
+    }
+
+
+    RenderFragment CommentContent(List<CommentModel> DataSource) =>
+        @<div>
+            @foreach (var item in DataSource)
+            {
+                <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")" Author="@item.Author" Content="@item.Content" Actions="@(new []{replyAction(item)})">
+                    <DatetimeTemplate>
+                        @dateTime(item.Created)
+                    </DatetimeTemplate>
+                    <ChildContent>@CommentContent(item.Comments)</ChildContent>
+                </Comment>
+                @if (item.Id == replyId)
+                {
+                    <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")">
+                        <ContentTemplate>
+                            @(GetEditor(replyComment, item.Id))
+                        </ContentTemplate>
+                    </Comment>
+                }
+            }
+        </div>;
+
+    RenderFragment replyAction(CommentModel comment) =>
+        @<Template>
+            <button @onclick="() => ReplyComment(comment)">回复</button>
+
+
+        </Template>;
+
+    RenderFragment GetEditor(CommentModel model, string pid = null)
+    {
+        return
+        @<div>
+            
+        </div>;
+    }
+
+    RenderFragment dateTime(DateTime dateTime) =>
+    @<span>
+        dateTime
+    </span>;
+}
+
