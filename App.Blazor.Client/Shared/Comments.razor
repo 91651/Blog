@@ -2,6 +2,30 @@
 @using App.Blazor.Client.Data
 @inject IDataProviderApi _api
 
+<style>
+
+    .comments h3{
+        position: relative;
+        padding: 0 0 0 12px;
+        font-weight: 700;
+
+    }
+
+    .comments h3:before{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        width: 4px;
+        border-radius: 10px;
+        background: var(--themeColor);
+        content: "";
+    }
+</style>
+<div class="comments">
+    <h3>评论</h3>
+</div>
 
 <Comment Avatar="AA">
     <ContentTemplate>

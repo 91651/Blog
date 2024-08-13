@@ -1,18 +1,52 @@
-﻿<CascadingValue Value="this" IsFixed="@true">
+﻿<style>
+    .ant-avatar {
+        color: #fff;
+        background: #ccc;
+        border-radius: 50%;
+    }
+
+    .ant-avatar-lg {
+        border-radius: 50%;
+    }
+
+    .ant-avatar-lg {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+    }
+
+    .ant-avatar {
+        padding: 0;
+        display: inline-block;
+        color: #fff;
+        text-align: center;
+        background: #ccc;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 50%;
+    }
+
+    .ant-avatar-lg-string, .ant-avatar-sm-string, .ant-avatar-string {
+        position: absolute;
+        transform-origin: 0 center;
+        left: 50%;
+    }
+</style>
+<CascadingValue Value="this" IsFixed="@true">
     <div class="ant-comment">
         <div class="ant-comment-inner">
             @if ((Avatar != null || AvatarTemplate != null) && (Content != null || ContentTemplate != null))
             {
                 <div class="ant-comment-avatar">
-                    @if (AvatarTemplate != null)
-                    {
-                        @AvatarTemplate
-                    }
-                    else
-                    {
-                        <Avatar Src="@Avatar" />
-
-                    }
+                    <span class="ant-avatar ant-avatar-lg" style=" background-color: #f56a00; vertical-align: middle;">
+                        <!--!-->
+                        <span class="ant-avatar-string" style="transform: scale(1) translateX(-50%);" _bl_731="">
+                            <!--!-->
+                            U
+                        </span><!--!-->
+                    </span>
                 </div>
                 <div class="ant-comment-content">
                     <div class="ant-comment-content-author">

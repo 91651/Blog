@@ -11,7 +11,21 @@
 <HeadContent>
     <meta name="description" content="人生百态，爱我所爱！">
 </HeadContent>
+<style>
+    .icon {
+        margin: 0 5px 0 0;
+        width: 14px;
+        height: 14px;
+        fill: var(--entryConColor)
+    }
 
+    .info {
+        margin: 0 20px 0 0;
+        vertical-align: middle;
+        display: inline-flex;
+        align-items: center;
+    }
+</style>
 <section class="site-content container">
     @foreach (var article in articles)
     {
@@ -24,9 +38,26 @@
                     @article.Summary
                 </div>
                 <div class="entry-info">
-                    <span class="infoLeft"><i class="iconfont icon-book-read-line"></i>@article.ChannelName</span>
-                    <span class="rtime infoLeft"><i class="iconfont icon-calendar-2-line"></i>@($"{article.Created:yyyy年M月d日 HH:mm}")</span>
-                    <span><i class="iconfont icon-user-3-line"></i>@article.Author</span>
+                    <span class="info">
+                        <svg class="icon" viewBox="0 0 1024 1024"><path d="M85.333 170.368A42.667 42.667 0 0 1 127.66 128H896.34c23.382 0 42.326 18.987 42.326 42.368v683.264A42.667 42.667 0 0 1 896.34 896H127.66a42.368 42.368 0 0 1-42.326-42.368V170.368z m384 42.965H170.667v597.334h298.666V213.333z m85.334 0v597.334h298.666V213.333H554.667z m42.666 85.334h213.334V384H597.333v-85.333z m0 128h213.334V512H597.333v-85.333z"></path></svg>
+                        @article.ChannelName
+                    </span>
+                    <span class="info">
+                        <svg class="icon" viewBox="0 0 1024 1024"><path d="M725.333 128H896a42.667 42.667 0 0 1 42.667 42.667v682.666A42.667 42.667 0 0 1 896 896H128a42.667 42.667 0 0 1-42.667-42.667V170.667A42.667 42.667 0 0 1 128 128h170.667V42.667H384V128h256V42.667h85.333V128z m128 341.333H170.667v341.334h682.666V469.333zM640 213.333H384v85.334h-85.333v-85.334h-128V384h682.666V213.333h-128v85.334H640v-85.334zM256 554.667h85.333V640H256v-85.333z m213.333 0h85.334V640h-85.334v-85.333z m213.334 0H768V640h-85.333v-85.333z"></path></svg>
+                        @($"{article.Created:yyyy年M月d日 HH:mm}")
+                    </span>
+                    <span class="info">
+                        <svg class="icon" viewBox="0 0 1024 1024"><path d="M853.333 938.667H768v-85.334a128 128 0 0 0-128-128H384a128 128 0 0 0-128 128v85.334h-85.333v-85.334A213.333 213.333 0 0 1 384 640h256a213.333 213.333 0 0 1 213.333 213.333v85.334zM512 554.667a256 256 0 1 1 0-512 256 256 0 0 1 0 512z m0-85.334A170.667 170.667 0 1 0 512 128a170.667 170.667 0 0 0 0 341.333z"></path></svg>
+                        @article.Author
+                    </span>
+                    <span class="info">
+                        <svg class="icon" viewBox="0 0 1024 1024"><path d="M512 160c320 0 512 352 512 352S832 864 512 864 0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288 52.608 79.872 211.456 288 436.8 288 225.28 0 384.128-208.064 436.8-288-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448 224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160-71.744-160-160-160"></path></svg>
+                        @article.Viewed
+                    </span>
+                    <span class="info">
+                        <svg class="icon" viewBox="0 0 1024 1024"><path d="M806.9 783.2H500.6c-13.3 0-24-10.7-24-24s10.7-24 24-24h306.3c37.6 0 68.1-34.1 68.1-76v-380c0-41.9-30.6-76-68.1-76H217.2c-37.6 0-68.1 34.1-68.1 76v380c0 41.9 30.6 76 68.1 76H344c13.3 0 24 10.7 24 24s-10.7 24-24 24H217.2c-64 0-116.1-55.6-116.1-124v-380c0-68.4 52.1-124 116.1-124h589.7c64 0 116.1 55.6 116.1 124v380c0 68.4-52.1 124-116.1 124z" p-id="5743"></path><path d="M336.6 910.2c-7.2 0-14.2-3.2-19-9.3-8.1-10.5-6.3-25.5 4.2-33.7l162-126c10.5-8.1 25.5-6.3 33.7 4.2 8.1 10.5 6.3 25.5-4.2 33.7l-162 126c-4.3 3.5-9.5 5.1-14.7 5.1z" p-id="5744"></path><path d="M303 468.7m-60 0a60 60 0 1 0 120 0 60 60 0 1 0-120 0Z" p-id="5745"></path><path d="M512 469.7m-60 0a60 60 0 1 0 120 0 60 60 0 1 0-120 0Z" p-id="5746"></path><path d="M721 468.7m-60 0a60 60 0 1 0 120 0 60 60 0 1 0-120 0Z"></path></svg>
+                        @article.CommentCount
+                    </span>
                 </div>
             </div>
             <div class="entry-thumb">
