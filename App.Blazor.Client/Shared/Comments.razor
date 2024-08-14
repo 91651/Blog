@@ -2,37 +2,17 @@
 @using App.Blazor.Client.Data
 @inject IDataProviderApi _api
 
-<style>
-
-    .comments h3{
-        position: relative;
-        padding: 0 0 0 12px;
-        font-weight: 700;
-
-    }
-
-    .comments h3:before{
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        margin: auto;
-        width: 4px;
-        border-radius: 10px;
-        background: var(--themeColor);
-        content: "";
-    }
-</style>
 <div class="comments">
     <h3>评论</h3>
+
+    <Comment Avatar="@Name">
+        <ContentTemplate>
+            @GetEditor(comment)
+        </ContentTemplate>
+    </Comment>
+    @CommentContent(comments)
 </div>
 
-<Comment Avatar="AA">
-    <ContentTemplate>
-        @GetEditor(comment)
-    </ContentTemplate>
-</Comment>
-@CommentContent(comments)
 @if (IsShowCaptcha)
 {
     @captcha
@@ -43,6 +23,7 @@
 @code {
     [Parameter]
     public string OwnerId { get; set; }
+    public string Name { get; set; } = "Hi";
     private List<CommentModel> comments = new List<CommentModel>();
     private CommentModel comment = new CommentModel();
     private string replyId;
@@ -105,7 +86,7 @@
                 </Comment>
                 @if (item.Id == replyId)
                 {
-                    <Comment Avatar="@(@"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")">
+                    <Comment Avatar="Hi">
                         <ContentTemplate>
                             @(GetEditor(replyComment, item.Id))
                         </ContentTemplate>
@@ -125,7 +106,96 @@
     {
         return
         @<div>
-            
+        <div style="
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: var(--tb--white);
+            position: relative;
+        ">
+            <textarea placeholder="良言一句三冬暖，恶语伤人六月寒。" style="
+        width: 100%;
+        resize: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border: none;
+        font-size: 14px;
+        padding: 10px 12px;
+        outline: 0;
+        color: #666;
+        height: 77px;
+        border-radius: 6px;
+        background-color: var(--tb--white);
+        display: block;
+    "></textarea>
+            <div style="
+            background-color: #fbfbfb;
+            height: 36px;
+            border-radius: 0 0 6px 6px;
+            border-top: solid 1px #f2f2f2; ">
+
+                <button style="
+                background: var(--themeColor);
+                border: none;
+                padding: 0px;
+                width: 50px;
+                height: 37px;
+                color: #fff;
+                outline: 0;
+                cursor: pointer;
+                border-radius: 0 0 0 6px;
+                font-size: 14px;">
+                    昵称
+                </button><input placeholder="昵称(必填)" @bind="@Name" required style="
+                background: #fbfbfb;
+                border: none;
+                padding: 0px;
+                height: 36px;
+                outline: 0;
+                border-radius: 6px;
+                font-size: 14px;
+                min-width: 50px;
+                margin: 0 10px;">
+
+                <button style="
+                background: var(--themeColor);
+                border: none;
+                padding: 0px;
+                width: 50px;
+                height: 37px;
+                color: #fff;
+                outline: 0;
+                cursor: pointer;
+                font-size: 14px;">
+                    邮箱
+                </button><input placeholder="邮箱(必填)" type="email" required style="
+                background: #fbfbfb;
+                border: none;
+                padding: 0px;
+                height: 36px;
+                outline: 0;
+                border-radius: 6px;
+                font-size: 14px;
+                margin: 0 10px;">
+
+
+                <button style="
+            position: absolute;
+            right: -1px;
+            bottom: -1px;
+                background: #007bff;
+            border: none;
+            padding: 0px;
+            width: 100px;
+            height: 37px;
+            color: #fff;
+            outline: 0;
+            cursor: pointer;
+            border-radius: 0 0 6px 0;
+            font-size: 14px;" type="submit">
+                    提交评论
+                </button>
+            </div>
+        </div>
         </div>;
     }
 

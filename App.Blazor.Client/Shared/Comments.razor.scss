@@ -1,0 +1,54 @@
+.comments ::deep {
+    h3 {
+        position: relative;
+        padding: 0 0 0 12px;
+        font-weight: 700;
+    }
+
+    h3:before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        width: 4px;
+        border-radius: 10px;
+        background: var(--themeColor);
+        content: "";
+    }
+
+    .ant-avatar {
+        color: #fff;
+        background: #ccc;
+        border-radius: 50%;
+    }
+
+    .ant-avatar-lg {
+        border-radius: 50%;
+    }
+
+    .ant-avatar-lg {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+    }
+
+    .ant-avatar {
+        padding: 0;
+        display: inline-block;
+        color: #fff;
+        text-align: center;
+        background: #ccc;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 50%;
+    }
+
+    .ant-avatar-lg-string, .ant-avatar-sm-string, .ant-avatar-string {
+        position: absolute;
+        transform-origin: 0 center;
+        left: 50%;
+    }
+}
