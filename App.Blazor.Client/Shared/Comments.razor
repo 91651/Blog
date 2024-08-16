@@ -28,7 +28,7 @@
     private string replyId;
     private CommentModel replyComment = new CommentModel();
     public RenderFragment captcha;
-    public bool IsShowCaptcha;
+    public bool IsShowCaptcha = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,7 +43,7 @@
     private void SubmitComment(CommentModel comment, string pid)
     {
         IsShowCaptcha = true;
-        captcha = @<Captcha OnSucceed="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />;
+        captcha = @<Captcha OnFinish="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />;
     }
 
 

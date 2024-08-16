@@ -68,7 +68,7 @@ services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
-builder.Services.AddSlideCaptcha(builder.Configuration).ReplaceValidator<BaseValidator>();
+builder.Services.AddSlideCaptcha(builder.Configuration);
 
 services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) =>
 {
