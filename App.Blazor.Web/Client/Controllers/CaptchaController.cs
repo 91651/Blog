@@ -1,7 +1,6 @@
-using System.Text.Json;
-using App.Captcha;
+using Lazy.SlideCaptcha.Core;
+using Lazy.SlideCaptcha.Core.Validator;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace App.Blazor.Web.Client.Controllers
 {
@@ -9,35 +8,23 @@ namespace App.Blazor.Web.Client.Controllers
     [Route("api/[controller]")]
     public class CaptchaController : ControllerBase
     {
-        private readonly IMemoryCache _memoryCache;
-        public CaptchaController(IMemoryCache memoryCache)
+        private readonly ICaptcha _captcha;
+
+        public CaptchaController(ICaptcha captcha)
         {
-            _memoryCache = memoryCache;
+            _captcha = captcha;
         }
 
-        [HttpGet]
-        public Task<CaptchaModel> GenerateCaptcha()
+        [HttpGet("gen")]
+        public CaptchaData Generate()
         {
-            var captcha = new ImageCaptcha().Generate();
-            var point = JsonSerializer.Deserialize<Point>(JsonSerializer.Serialize(captcha.Point));
-            _memoryCache.Set(nameof(ImageCaptcha), point, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });
-            captcha.Point.X = default;
-            captcha.Point.Y = default;
-            return Task.FromResult(captcha);
+            return _captcha.Generate();
         }
 
-        [HttpPost]
-        public Task<string> VerifyCaptcha(Point point)
+        [HttpPost("check")]
+        public ValidateResult Validate([FromQuery] string id, SlideTrack track)
         {
-            var p = _memoryCache.Get<Point>(nameof(ImageCaptcha));
-            _memoryCache.Remove(nameof(ImageCaptcha));
-            var code = ImageCaptcha.CaptchaVerify(p, point);
-            if (!string.IsNullOrWhiteSpace(code))
-            {
-                _memoryCache.Set(code, true);
-                return Task.FromResult(code);
-            }
-            return Task.FromResult(string.Empty);
+            return _captcha.Validate(id, track);
         }
     }
 }

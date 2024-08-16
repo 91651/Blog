@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="BC.Microsoft.DependencyInjection.Plus" Version="1.0.3" />
+    <PackageReference Include="Lazy.SlideCaptcha.Core" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0-preview.6.24328.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.0-preview.6.24328.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-preview.6.24327.4" />
@@ -22,6 +23,10 @@
     <ProjectReference Include="..\App.Business.Services\App.Business.Services.csproj" />
     <ProjectReference Include="..\Framework\App.Captcha\App.Captcha.csproj" />
     <ProjectReference Include="..\Framework\App.EFCore\App.EFCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
 </Project>

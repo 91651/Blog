@@ -8,6 +8,7 @@ using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
 using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
+using Lazy.SlideCaptcha.Core.Validator;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +46,8 @@ services.AddControllersWithViews(opt =>
 {
     opt.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
 });
+services.AddDistributedMemoryCache();
+
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
 services.AddServerSideBlazor();
@@ -65,7 +68,10 @@ services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
-services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) => {
+builder.Services.AddSlideCaptcha(builder.Configuration).ReplaceValidator<BaseValidator>();
+
+services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) =>
+{
     var server = sp.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();
     var baseAddress = addressFeature.Addresses.Last();

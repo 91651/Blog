@@ -11,117 +11,203 @@ https://juejin.cn/post/7309761475526475810
 https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-captcha *@
 
 <div class="captcha-container">
-    <div class="slidercaptcha">
-        <div class="captcha-header">
-            <span>请完成安全验证!</span>
-        </div>
-        <div class="captcha-body">
-            <div style="position: relative; width: 280px; margin: 0px auto;">
-                <canvas @ref="canvasBack" width="278" height="155" @ondrop="Drop" ondragover="event.preventDefault();" /><i class="refreshIcon fa fa-redo" />
-                <canvas @ref="canvasBlock" width="50" height="50" class="block" style="background-color: aqua; left:@(point.X)px; top:@(point.Y)px; " draggable="true" @ondragstart="DragStart" />
-                <div class="sliderContainer @(Slider.SliderStatus == SliderStatus.Succeed ? "sliderContainer_success" : (Slider.SliderStatus == SliderStatus.Failed ? "sliderContainer_fail" : ""))">
-                    <div class="sliderbg" />
-                    <div class="sliderMask">
-                        @*<div class="slider" style="left: @(left)px; top:@(top)px; "
-                            >
-                            <i class="mdi mdi-arrow-right-thick sliderIcon" />
-                            </div>*@
-                    </div>
-                    <span class="sliderText" style="@(active ? "display:none" : "" )">@Slider.Text</span>
+    <div class="captcha">
+    <div class="captcha__main" style="@ImgWrapperStyle">
+        <img v-if="src" src="@Src" class="captcha_background" alt="background" @ref="background" />
+        <img v-if="SliderSrc" src="@SliderSrc" class="captcha_slider" alt="slider" @ref="slider" class="@SliderClass" />
+        @if (ShowVerifyTip)
+        {
+            <div class="captcha_message">
+                <div class="captcha_message__icon">
+                    @if (IsPassing)
+                    {
+                        <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                            <g stroke="#fff" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22.776 4.073A13.2 13.2 0 0 0 14 .75C6.682.75.75 6.682.75 14S6.682 27.25 14 27.25 27.25 21.318 27.25 14c0-.284-.009-.566-.027-.845"></path>
+                                <path d="M7 12.5l7 7 13-13"></path>
+                            </g>
+                        </svg>
+                    }
+                    else
+                    {
+                        <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                            <g stroke="#fff" stroke-width="1.5" fill="none" fill-rule="evenodd">
+                                <circle cx="14" cy="14" r="13.25"></circle>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.75 8.75l10.5 10.5M19.25 8.75l-10.5 10.5"></path>
+                            </g>
+                        </svg>
+                    }
                 </div>
+                <div class="captcha_message__text">@VerifyTip</div>
             </div>
+        }
+        @if (ShowGenerateLoading)
+        {
+            <div class="captcha_message loadding">
+                <div class="captcha_message__icon captcha_message__icon--loadding"></div>
+                <div class="captcha_message__text">加载中...</div>
+            </div>
+        }
+        @if (ShowVerifyLoading)
+        {
+            <div class="captcha_message">
+                <div class="captcha_message__icon captcha_message__icon--loadding"></div>
+                <div class="captcha_message__text"></div>
+            </div>
+        }
+    </div>
+    <div class="captcha__bar" style="@DragVerifyStyle" @ref="dragVerify">
+        <div class="captcha_progress_bar" class="@ProgressBarClass" style="@ProgressBarStyle"></div>
+        <div class="captcha_progress_bar__text" style="@TextStyle">@Text</div>
+        <div class="captcha_handler" class="@HandlerClass" style="@HandlerStyle" @ref="handler" @onmousedown="HandleDragStart" @ontouchstart="HandleDragStart">
+            <svg style="@HandlerSvgStyle" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="819">
+                <path d="M500.864 545.728a47.744 47.744 0 0 0 6.72-48.896 24.704 24.704 0 0 0-4.48-8.384L240.256 193.088a34.24 34.24 0 0 0-28.608-17.408 34.24 34.24 0 0 0-25.856 12.864 46.592 46.592 0 0 0 0 59.52l238.08 264.512-238.08 264.512a46.592 46.592 0 0 0-1.088 59.52 32 32 0 0 0 50.56 0l265.6-290.88z" p-id="820"></path>
+                <path d="M523.84 248.064l236.992 264.512-238.08 264.512a46.592 46.592 0 0 0 0 59.52 32 32 0 0 0 50.56 0l265.6-292.608a47.744 47.744 0 0 0 6.72-48.832 24.704 24.704 0 0 0-4.48-8.448L578.304 191.36a34.24 34.24 0 0 0-55.552-2.816 46.592 46.592 0 0 0 1.088 59.52z" p-id="821"></path>
+            </svg>
         </div>
     </div>
+    @if (ShowRefresh)
+    {
+        <div class="captcha__actions">
+            <a class="captcha__action" @onclick="HandleRefresh">
+                <svg fill="#505050" width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10,4 C12.0559549,4 13.9131832,5.04358655 15.0015086,6.68322231 L15,5.5 C15,5.22385763 15.2238576,5 15.5,5 C15.7761424,5 16,5.22385763 16,5.5 L16,8.5 C16,8.77614237 15.7761424,9 15.5,9 L12.5,9 C12.2238576,9 12,8.77614237 12,8.5 C12,8.22385763 12.2238576,8 12.5,8 L14.5842317,8.00000341 C13.7999308,6.20218044 12.0143541,5 10,5 C7.23857625,5 5,7.23857625 5,10 C5,12.7614237 7.23857625,15 10,15 C11.749756,15 13.3431487,14.0944653 14.2500463,12.6352662 C14.3958113,12.4007302 14.7041063,12.328767 14.9386423,12.4745321 C15.1731784,12.6202971 15.2451415,12.9285921 15.0993765,13.1631281 C14.0118542,14.9129524 12.0990688,16 10,16 C6.6862915,16 4,13.3137085 4,10 C4,6.6862915 6.6862915,4 10,4 Z" fill-rule="nonzero"></path>
+                </svg>
+                <span class="captcha__action__text">刷新</span>
+            </a>
+        </div>
+    }
+</div>
+
 </div>
 
 
 @code {
-    [Parameter]
-    public bool IsShow { get; set; }
-    [Parameter]
-    public Func<string, Task> OnSucceed { get; set; }
-    private ElementReference canvasBack;
-    private ElementReference canvasBlock;
-    private bool active;
-    private const int offset = 2;
-    private App.Captcha.Point point = new() { X = offset, Y = offset };
-    private App.Captcha.Point defaultPosition = new();
-    private ISlider Slider = new SliderInitial();
+    [Parameter] public int Width { get; set; } = 340;
+    [Parameter] public int Height { get; set; } = 212;
+    [Parameter] public int BarHeight { get; set; } = 40;
+    [Parameter] public int HandlerIconWidth { get; set; } = 16;
+    [Parameter] public int HandlerIconHeight { get; set; } = 16;
+    [Parameter] public string Background { get; set; } = "#eee";
+    [Parameter] public bool Circle { get; set; } = false;
+    [Parameter] public string Radius { get; set; } = "4px";
+    [Parameter] public string Text { get; set; } = "按住滑块拖动";
+    [Parameter] public string ProgressBarBg { get; set; } = "#76c61d";
+    [Parameter] public string SuccessTip { get; set; } = "验证通过，超过80%用户";
+    [Parameter] public string FailTip { get; set; } = "验证未通过，拖动滑块将悬浮图像正确合并";
+    [Parameter] public bool ShowRefresh { get; set; } = false;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private bool IsMoving { get; set; } = false;
+    private bool IsPassing { get; set; } = false;
+    private bool IsFinish { get; set; } = false;
+    private bool ShowVerifyTip { get; set; } = false;
+    private bool ShowVerifyLoading { get; set; } = false;
+    private bool ShowGenerateLoading { get; set; } = false;
+    private string Src { get; set; }
+    private string SliderSrc { get; set; }
+    private int X { get; set; }
+    private int Y { get; set; }
+    private List<(int x, int y, long t)> Tracks { get; set; } = new List<(int x, int y, long t)>();
+    private DateTime? StartSlidingTime { get; set; }
+
+    private ElementReference background;
+    private ElementReference slider;
+    private ElementReference handler;
+    private ElementReference dragVerify;
+
+    private string ImgWrapperStyle => $"width: {Width}px; height: {Height}px; position: relative; overflow: hidden;";
+    private string DragVerifyStyle => $"width: {Width}px; height: {BarHeight}px; line-height: {BarHeight}px; background: {Background}; border-radius: {(Circle ? (BarHeight / 2) + "px" : Radius)};";
+    private string ProgressBarStyle => $"background: {ProgressBarBg}; height: {BarHeight}px; border-radius: {(Circle ? (BarHeight / 2) + "px 0 0 " + (BarHeight / 2) + "px" : Radius)};";
+    private string TextStyle => $"height: {BarHeight}px; width: {Width}px;";
+    private string HandlerStyle => $"width: {BarHeight}px; height: {BarHeight - 2}px; background: white; margin: 1px;";
+    private string HandlerSvgStyle => $"width: {HandlerIconWidth}px; height: {HandlerIconHeight}px;";
+    private string SliderClass => IsOk ? "goFirst" : IsKeep ? "goKeep" : string.Empty;
+    private string HandlerClass => IsOk ? "goFirst" : string.Empty;
+    private string ProgressBarClass => IsOk ? "goFirst2" : string.Empty;
+    private string VerifyTip => IsPassing ? SuccessTip : FailTip;
+
+    protected override void OnInitialized()
+    {
+        DragVerifyStyle = $"--textColor: #333; --width: {Math.Floor((decimal)Width / 2)}px; --pwidth: {-Math.Floor((decimal)Width / 2)}px;";
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await CaptchaInit();
+            await InvokeAsync(StateHasChanged);
         }
     }
-
-    private void DragStart(DragEventArgs e)
+    public void Dispose()
     {
-        defaultPosition.X = (int)e.ClientX;
-        defaultPosition.Y = (int)e.ClientY;
-        active = true;
+        RemoveEventListeners();
     }
 
-    private async Task Drop(DragEventArgs e)
+    private async void HandleDragStart(MouseEventArgs e)
     {
-        active = false;
-        point.X = (int)e.ClientX - defaultPosition.X + offset;
-        point.Y = (int)e.ClientY - defaultPosition.Y + offset;
-        var result = await _api.VerifyCaptchaAsync(point);
-        if (!string.IsNullOrWhiteSpace(result))
+        if (!IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
         {
-            Slider = new SliderSucceed();
-            OnSucceed?.Invoke(result);
+            await JSRuntime.InvokeVoidAsync("AddDragEventListeners", DotNetObjectReference.Create(this));
+            IsMoving = true;
+            StartSlidingTime = DateTime.Now;
+            X = (int)e.ClientX;
+            Y = (int)e.ClientY;
         }
-        else
+    }
+
+    private void HandleDragMoving(int clientX, int clientY)
+    {
+        if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
         {
-            Slider = new SliderFailed();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            await CaptchaInit();
+            var _x = clientX - X;
+            var _y = clientY - Y;
+
+            handler.Style.Left = $"{_x}px";
+            ProgressBarStyle = $"{_x + BarHeight / 2}px";
+            slider.Style.Left = $"{_x}px";
+
+            Tracks.Add((_x, _y, (DateTime.Now - StartSlidingTime.Value).Milliseconds));
+        }
+    }
+
+    private void HandleDragFinish()
+    {
+        if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
+        {
+            IsMoving = false;
+            IsFinish = true;
+            RemoveEventListeners();
+
+            // Emit finish event equivalent
+            // Here, you should call the appropriate API to verify the position
 
         }
     }
 
-    private async Task CaptchaInit()
+    private void HandleRefresh()
     {
-        active = false;
-        Slider = new SliderInitial();
-        point = new App.Captcha.Point() { X = offset, Y = offset };
-        defaultPosition = new App.Captcha.Point();
-        var captcha = await _api.GenerateCaptchaAsync();
-        await JSRuntime.InvokeAsync<Task>("appjs.canvas.drawImage", canvasBack, captcha.NormalImg);
-        await JSRuntime.InvokeAsync<Task>("appjs.canvas.drawImage", canvasBlock, captcha.SlideImg);
+        Reset();
+        // Emit refresh event equivalent
+        // Call API to get new images here
     }
 
-    class SliderInitial : ISlider
+    private void Reset()
     {
-        public SliderStatus SliderStatus { get; set; } = SliderStatus.Initial;
-        public string Text { get; set; } = "拖动图案到缺口完成验证";
+        X = 0;
+        Y = 0;
+        Tracks.Clear();
+        IsMoving = false;
+        IsFinish = false;
+        ShowGenerateLoading = false;
+        ShowVerifyLoading = false;
+        ShowVerifyTip = false;
+        IsPassing = false;
+        ProgressBarStyle = "width: 0;";
+        slider.Style.Left = "0px";
+        handler.Style.Left = "0px";
     }
 
-    class SliderSucceed : ISlider
+    private void RemoveEventListeners()
     {
-        public SliderStatus SliderStatus { get; set; } = SliderStatus.Succeed;
-        public string Text { get; set; } = "验证通过";
-    }
-
-    class SliderFailed : ISlider
-    {
-        public SliderStatus SliderStatus { get; set; } = SliderStatus.Failed;
-        public string Text { get; set; } = "再次一次";
-    }
-
-    interface ISlider
-    {
-        SliderStatus SliderStatus { get; set; }
-        string Text { get; set; }
-    }
-
-    enum SliderStatus
-    {
-        Initial,
-        Succeed,
-        Failed
+        JSRuntime.InvokeVoidAsync("RemoveDragEventListeners");
     }
 }
