@@ -50,6 +50,8 @@
     private async Task CaptchaSucceed(CommentModel comment, string pid, string captchaCode)
     {
         IsShowCaptcha = false;
+
+
         StateHasChanged();
         comment.OwnerId = OwnerId;
         comment.ParentId = pid;

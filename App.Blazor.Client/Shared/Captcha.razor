@@ -3,7 +3,7 @@
 @using App.Blazor.Client.Data
 
 @inject IJSRuntime JSRuntime
-@inject IDataProviderApi _api
+@inject HttpClient HTTP
 
 @* https://github.com/pojianbing/LazySlideCaptcha
 https://gitee.com/LongbowEnterprise/SliderCaptcha
@@ -15,8 +15,8 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         <div class="captcha-wrap">
             <div class="captcha">
                 <div class="captcha__main" style="@ImgWrapperStyle">
-                    <img v-if="src" src="@Src" class="captcha_background" alt="background" @ref="background" />
-                    <img v-if="SliderSrc" src="@SliderSrc" class="captcha_slider" alt="slider" @ref="slider" />
+                    <img src="@Src" class="captcha_background" alt="background" />
+                    <img src="@SliderSrc" class="captcha_slider @(IsOk ? "goFirst" : "") @(IsKeep ? "goKeep" : "")" style="@($"left:{SliderLeft}px;")" alt="slider" />
                     @if (ShowVerifyTip)
                     {
                         <div class="captcha_message">
@@ -40,7 +40,7 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
                                     </svg>
                                 }
                             </div>
-                            <div class="captcha_message__text">@VerifyTip</div>
+                            <div class="captcha_message__text">@(IsPassing ? SuccessTip : FailTip)</div>
                         </div>
                     }
                     @if (ShowGenerateLoading)
@@ -58,11 +58,11 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
                         </div>
                     }
                 </div>
-                <div class="captcha__bar" style="@DragVerifyStyle" @ref="dragVerify">
-                    <div class="captcha_progress_bar" style="@ProgressBarStyle"></div>
+                <div class="captcha__bar" style="@($"width: {Width}px; height: {BarHeight}px; line-height: {BarHeight}px; background: {Background}; border-radius: {(Circle ? (BarHeight / 2) + "px" : Radius)}; --textColor: #333; --width: {Math.Floor((decimal)Width / 2)}px; --pwidth: {-Math.Floor((decimal)Width / 2)}px;")">
+                    <div class="captcha_progress_bar @(IsOk ? "goFirst2" : "")" style="@($"background: {ProgressBarBg}; height: {BarHeight}px; border-radius: {(Circle ? (BarHeight / 2) + "px 0 0 " + (BarHeight / 2) + "px" : Radius)}; width:{ProgressBarWidth}px;")"></div>
                     <div class="captcha_progress_bar__text" style="@TextStyle">@Text</div>
-                    <div class="captcha_handler" style="@HandlerStyle" @onmousedown="HandleDragStart" @ontouchstart="HandleTouchStart">
-                        <svg style="@HandlerSvgStyle" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="819">
+                    <div class="captcha_handler @(IsOk ? "goFirst" : "")" style="@($"width: {BarHeight}px; height: {BarHeight - 2}px; background: white; margin: 1px; left:{HandlerLeft}px")" @onmousedown="HandleDragStart" @ontouchstart="HandleTouchStart" @onmousemove="HandleDragMoving">
+                        <svg style="@($"width: {HandlerIconWidth}px; height: {HandlerIconHeight}px;")" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="819">
                             <path d="M500.864 545.728a47.744 47.744 0 0 0 6.72-48.896 24.704 24.704 0 0 0-4.48-8.384L240.256 193.088a34.24 34.24 0 0 0-28.608-17.408 34.24 34.24 0 0 0-25.856 12.864 46.592 46.592 0 0 0 0 59.52l238.08 264.512-238.08 264.512a46.592 46.592 0 0 0-1.088 59.52 32 32 0 0 0 50.56 0l265.6-290.88z" p-id="820"></path>
                             <path d="M523.84 248.064l236.992 264.512-238.08 264.512a46.592 46.592 0 0 0 0 59.52 32 32 0 0 0 50.56 0l265.6-292.608a47.744 47.744 0 0 0 6.72-48.832 24.704 24.704 0 0 0-4.48-8.448L578.304 191.36a34.24 34.24 0 0 0-55.552-2.816 46.592 46.592 0 0 0 1.088 59.52z" p-id="821"></path>
                         </svg>
@@ -81,7 +81,7 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
                 }
             </div>
         </div>
-        
+
     </div>
     <div class="captcha-mask"></div>
 </div>
@@ -110,55 +110,67 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
     private bool IsKeep { get; set; } = false;
     private bool IsPassing { get; set; } = false;
     private bool IsFinish { get; set; } = false;
+    private List<(int x, int y, long t)> Tracks { get; set; } = new List<(int x, int y, long t)>();
+    private DateTime? StartSlidingTime { get; set; }
     private bool ShowVerifyTip { get; set; } = false;
     private bool ShowVerifyLoading { get; set; } = false;
     private bool ShowGenerateLoading { get; set; } = false;
     private string Src { get; set; }
     private string SliderSrc { get; set; }
-    
-    private List<(int x, int y, long t)> Tracks { get; set; } = new List<(int x, int y, long t)>();
-    private DateTime? StartSlidingTime { get; set; }
 
-    private ElementReference background;
-    private ElementReference slider;
-    private ElementReference handler;
-    private ElementReference dragVerify;
+    private int HandlerLeft = 0;
+    private int ProgressBarWidth = 0;
+    private int SliderLeft = 0;
+
 
     private string ImgWrapperStyle => $"width: {Width}px; height: {Height}px; position: relative; overflow: hidden;";
-    private string DragVerifyStyle => $"width: {Width}px; height: {BarHeight}px; line-height: {BarHeight}px; background: {Background}; border-radius: {(Circle ? (BarHeight / 2) + "px" : Radius)};";
-    private string ProgressBarStyle => $"background: {ProgressBarBg}; height: {BarHeight}px; border-radius: {(Circle ? (BarHeight / 2) + "px 0 0 " + (BarHeight / 2) + "px" : Radius)};";
     private string TextStyle => $"height: {BarHeight}px; width: {Width}px;";
-    private string HandlerStyle => $"width: {BarHeight}px; height: {BarHeight - 2}px; background: white; margin: 1px;";
-    private string HandlerSvgStyle => $"width: {HandlerIconWidth}px; height: {HandlerIconHeight}px;";
-    private string SliderClass => IsOk ? "goFirst" : IsKeep ? "goKeep" : string.Empty;
-    private string HandlerClass => IsOk ? "goFirst" : string.Empty;
-    private string ProgressBarClass => IsOk ? "goFirst2" : string.Empty;
-    private string VerifyTip => IsPassing ? SuccessTip : FailTip;
 
-    protected override void OnInitialized()
+
+    private void StartRequestGenerate()
     {
-        // DragVerifyStyle = $"--textColor: #333; --width: {Math.Floor((decimal)Width / 2)}px; --pwidth: {-Math.Floor((decimal)Width / 2)}px;";
+        Reset();
+        ShowGenerateLoading = true;
+    }
+
+    private void EndRequestGenerate(string src, string sliderSrc)
+    {
+        ShowGenerateLoading = false;
+        Src = src;
+        SliderSrc = sliderSrc;
+    }
+
+    private void StartRequestVerify()
+    {
+        ShowVerifyLoading = true;
+    }
+
+    private void EndRequestVerify(bool isPassing)
+    {
+        IsPassing = isPassing;
+        ShowVerifyLoading = false;
+        ShowVerifyTip = true;
+    }
+
+    private void Reset()
+    {
+        X = 0;
+        Y = 0;
+        Tracks.Clear();
+        IsMoving = false;
+        IsFinish = false;
+        ShowGenerateLoading = false;
+        ShowVerifyLoading = false;
+        ShowVerifyTip = false;
+        IsPassing = false;
+        // todo
     }
 
 
-
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    private void HandleDragStart(MouseEventArgs e)
     {
-        if (firstRender)
+        if (!IsPassing && !string.IsNullOrWhiteSpace(Src) && !string.IsNullOrWhiteSpace(SliderSrc) && !IsFinish)
         {
-            await InvokeAsync(StateHasChanged);
-        }
-    }
-    public void Dispose()
-    {
-        RemoveEventListeners();
-    }
-
-    private async void HandleDragStart(MouseEventArgs e)
-    {
-        if (!IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
-        {
-            await JSRuntime.InvokeVoidAsync("AddDragEventListeners", DotNetObjectReference.Create(this));
             IsMoving = true;
             StartSlidingTime = DateTime.Now;
             X = (int)e.ClientX;
@@ -166,28 +178,27 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         }
     }
 
-    private async void HandleTouchStart(TouchEventArgs e)
+    private void HandleTouchStart(TouchEventArgs e)
     {
-        if (!IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
+        if (!IsPassing && !string.IsNullOrWhiteSpace(Src) && !string.IsNullOrWhiteSpace(SliderSrc) && !IsFinish)
         {
-            await JSRuntime.InvokeVoidAsync("AddDragEventListeners", DotNetObjectReference.Create(this));
             IsMoving = true;
             StartSlidingTime = DateTime.Now;
-            // X = (int)e.ClientX;
-            // Y = (int)e.ClientY;
+            X = (int)e.Touches[0].PageX;
+            Y = (int)e.Touches[0].PageY;
         }
     }
 
-    private void HandleDragMoving(int clientX, int clientY)
+    private void HandleDragMoving(MouseEventArgs e)
     {
         if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
         {
-            var _x = clientX - X;
-            var _y = clientY - Y;
+            var _x = (int)e.ClientX - X;
+            var _y = (int)e.ClientY - Y;
 
-            // handler.Style.Left = $"{_x}px";
-            // ProgressBarStyle = $"{_x + BarHeight / 2}px";
-            // slider.Style.Left = $"{_x}px";
+            HandlerLeft = _x;
+            ProgressBarWidth = _x + BarHeight / 2;
+            SliderLeft = _x;
 
             Tracks.Add((_x, _y, (DateTime.Now - StartSlidingTime.Value).Milliseconds));
         }
@@ -199,7 +210,6 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         {
             IsMoving = false;
             IsFinish = true;
-            RemoveEventListeners();
 
             // Emit finish event equivalent
             // Here, you should call the appropriate API to verify the position
@@ -214,24 +224,19 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         // Call API to get new images here
     }
 
-    private void Reset()
+    protected override async void OnAfterRender(bool firstRender)
     {
-        X = 0;
-        Y = 0;
-        Tracks.Clear();
-        IsMoving = false;
-        IsFinish = false;
-        ShowGenerateLoading = false;
-        ShowVerifyLoading = false;
-        ShowVerifyTip = false;
-        IsPassing = false;
-        // ProgressBarStyle = "width: 0;";
-        // slider.Style.Left = "0px";
-        // handler.Style.Left = "0px";
+        await Init();
+        base.OnAfterRender(firstRender);
     }
 
-    private void RemoveEventListeners()
+    public async Task Init()
     {
-        JSRuntime.InvokeVoidAsync("RemoveDragEventListeners");
+        StartRequestGenerate();
+        var data = await HTTP.GetFromJsonAsync<(string id, string backgroundImage, string sliderImage)>("/api/captcha/gen");
+        EndRequestGenerate(data.backgroundImage, data.sliderImage);
     }
+
+    
+
 }
