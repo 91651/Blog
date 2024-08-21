@@ -1,6 +1,7 @@
 ﻿using App.Business.Model;
-using App.Captcha;
 using App.EFCore.DynamicLinq;
+using Lazy.SlideCaptcha.Core;
+using Lazy.SlideCaptcha.Core.Validator;
 using Refit;
 
 namespace App.Blazor.Client.Data
@@ -36,9 +37,9 @@ namespace App.Blazor.Client.Data
 
         #region Captcha Api
         [Get("/api/Captcha")]
-        Task<CaptchaModel> GenerateCaptchaAsync();
+        Task<CaptchaData> GenerateCaptchaAsync();
         [Post("/api/captcha")]
-        Task<string> VerifyCaptchaAsync(Point point);
+        Task<string> VerifyCaptchaAsync([Query] string id, SlideTrack track);
         #endregion
 
     }

@@ -127,25 +127,25 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
     private string TextStyle => $"height: {BarHeight}px; width: {Width}px;";
 
 
-    private void StartRequestGenerate()
+    public void StartRequestGenerate()
     {
         Reset();
         ShowGenerateLoading = true;
     }
 
-    private void EndRequestGenerate(string src, string sliderSrc)
+    public void EndRequestGenerate(string src, string sliderSrc)
     {
         ShowGenerateLoading = false;
         Src = src;
         SliderSrc = sliderSrc;
     }
 
-    private void StartRequestVerify()
+    public void StartRequestVerify()
     {
         ShowVerifyLoading = true;
     }
 
-    private void EndRequestVerify(bool isPassing)
+    public void EndRequestVerify(bool isPassing)
     {
         IsPassing = isPassing;
         ShowVerifyLoading = false;
@@ -222,19 +222,6 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         Reset();
         // Emit refresh event equivalent
         // Call API to get new images here
-    }
-
-    protected override async void OnAfterRender(bool firstRender)
-    {
-        await Init();
-        base.OnAfterRender(firstRender);
-    }
-
-    public async Task Init()
-    {
-        StartRequestGenerate();
-        var data = await HTTP.GetFromJsonAsync<(string id, string backgroundImage, string sliderImage)>("/api/captcha/gen");
-        EndRequestGenerate(data.backgroundImage, data.sliderImage);
     }
 
     

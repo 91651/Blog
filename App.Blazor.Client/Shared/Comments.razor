@@ -40,10 +40,17 @@
         comments = await _api.GetCommentsAsync(OwnerId, default);
     }
 
-    private void SubmitComment(CommentModel comment, string pid)
+    private async void SubmitComment(CommentModel comment, string pid)
     {
+        var data = await _api.GenerateCaptchaAsync();
         IsShowCaptcha = true;
-        captcha = @<Captcha OnFinish="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />;
+        Captcha _captcha = default!;
+        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnFinish="(string captchaCode) => CaptchaSucceed(comment, pid, captchaCode)" />;
+        StateHasChanged();
+        _captcha.StartRequestGenerate();
+        _captcha.EndRequestGenerate(data.BackgroundImage, data.SliderImage);
+        StateHasChanged();
+
     }
 
 

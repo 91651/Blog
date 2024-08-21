@@ -8,7 +8,6 @@ using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
 using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
-using Lazy.SlideCaptcha.Core.Validator;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;

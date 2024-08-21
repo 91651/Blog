@@ -15,13 +15,13 @@ namespace App.Blazor.Web.Client.Controllers
             _captcha = captcha;
         }
 
-        [HttpGet("gen")]
+        [HttpGet]
         public CaptchaData Generate()
         {
             return _captcha.Generate();
         }
 
-        [HttpPost("check")]
+        [HttpPost]
         public ValidateResult Validate([FromQuery] string id, SlideTrack track)
         {
             return _captcha.Validate(id, track);
