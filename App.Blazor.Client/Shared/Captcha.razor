@@ -61,7 +61,7 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
                 <div class="captcha__bar" style="@($"width: {Width}px; height: {BarHeight}px; line-height: {BarHeight}px; background: {Background}; border-radius: {(Circle ? (BarHeight / 2) + "px" : Radius)}; --textColor: #333; --width: {Math.Floor((decimal)Width / 2)}px; --pwidth: {-Math.Floor((decimal)Width / 2)}px;")">
                     <div class="captcha_progress_bar @(IsOk ? "goFirst2" : "")" style="@($"background: {ProgressBarBg}; height: {BarHeight}px; border-radius: {(Circle ? (BarHeight / 2) + "px 0 0 " + (BarHeight / 2) + "px" : Radius)}; width:{ProgressBarWidth}px;")"></div>
                     <div class="captcha_progress_bar__text" style="@TextStyle">@Text</div>
-                    <div class="captcha_handler @(IsOk ? "goFirst" : "")" style="@($"width: {BarHeight}px; height: {BarHeight - 2}px; background: white; margin: 1px; left:{HandlerLeft}px")" @onmousedown="HandleDragStart" @ontouchstart="HandleTouchStart" @onmousemove="HandleDragMoving">
+                    <div class="captcha_handler @(IsOk ? "goFirst" : "")" style="@($"width: {BarHeight}px; height: {BarHeight - 2}px; background: white; margin: 1px; left:{HandlerLeft}px")" @onmousedown="HandleDragStart" @onmousemove="HandleDragMoving" @onmouseup="HandleDragFinish" @ontouchstart="HandleTouchStart">
                         <svg style="@($"width: {HandlerIconWidth}px; height: {HandlerIconHeight}px;")" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="819">
                             <path d="M500.864 545.728a47.744 47.744 0 0 0 6.72-48.896 24.704 24.704 0 0 0-4.48-8.384L240.256 193.088a34.24 34.24 0 0 0-28.608-17.408 34.24 34.24 0 0 0-25.856 12.864 46.592 46.592 0 0 0 0 59.52l238.08 264.512-238.08 264.512a46.592 46.592 0 0 0-1.088 59.52 32 32 0 0 0 50.56 0l265.6-290.88z" p-id="820"></path>
                             <path d="M523.84 248.064l236.992 264.512-238.08 264.512a46.592 46.592 0 0 0 0 59.52 32 32 0 0 0 50.56 0l265.6-292.608a47.744 47.744 0 0 0 6.72-48.832 24.704 24.704 0 0 0-4.48-8.448L578.304 191.36a34.24 34.24 0 0 0-55.552-2.816 46.592 46.592 0 0 0 1.088 59.52z" p-id="821"></path>
@@ -204,13 +204,23 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         }
     }
 
-    private void HandleDragFinish()
+    private void HandleDragFinish(MouseEventArgs e)
     {
         if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
         {
             IsMoving = false;
             IsFinish = true;
-
+            OnFinish.Invoke("1");
+            // OnFinish.Invoke(new
+            // {
+            //     // backgroundImageWidth: this.$refs.background.offsetWidth,
+            //     // backgroundImageHeight: this.$refs.background.offsetHeight,
+            //     // sliderImageWidth: this.$refs.slider.offsetWidth,
+            //     // sliderImageHeight: this.$refs.slider.offsetHeight,
+            //     // startTime: StartSlidingTime,
+            //     // endTime: DateTime.Now,
+            //     // tracks: Tracks,
+            // });
             // Emit finish event equivalent
             // Here, you should call the appropriate API to verify the position
 
