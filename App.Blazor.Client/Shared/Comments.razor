@@ -57,17 +57,17 @@
     private async void SubmitComment(CommentModel comment, string pid)
     {
         Captcha _captcha = default!;
-        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnRefresh="()=> GenerateCaptchaAsync(_captcha)" OnFinish="(SlideTrack captchaCode) => CaptchaSucceed(_captcha, comment, pid, captchaCode)" />;
+        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnRefresh="()=> GenerateCaptchaAsync(_captcha)" OnFinish="(SlideTrack captchaCode) => CaptchaFinish(_captcha, comment, pid, captchaCode)" />;
         IsShowCaptcha = true;
         await Task.Yield();
         await GenerateCaptchaAsync(_captcha);
     }
 
 
-    private async Task CaptchaSucceed(Captcha _captcha, CommentModel comment, string pid, SlideTrack captchaCode)
+    private async Task CaptchaFinish(Captcha _captcha, CommentModel comment, string pid, SlideTrack slideTrack)
     {
         _captcha.StartRequestVerify();
-        var resp = await _api.VerifyCaptchaAsync<SlideTrack, ValidateResult>(requestId, captchaCode);
+        var resp = await _api.VerifyCaptchaAsync<SlideTrack, ValidateResult>(requestId, slideTrack);
         var validateResult = resp.Result == ValidateResult.ValidateResultType.Success;
         _captcha.EndRequestVerify(validateResult);
         if (!validateResult)
@@ -81,14 +81,14 @@
 
         comment.OwnerId = OwnerId;
         comment.ParentId = pid;
-        // var result = await _api.AddCommentAsync(comment, captchaCode);
-        // if (result)
-        // {
-        //      replyId = default;
-        //      comment = new CommentModel();
-        //      await GetComments();
-
-        // }
+        var result = await _api.AddCommentAsync(comment, requestId);
+        if (result)
+        {
+            replyId = default;
+            comment = new CommentModel();
+            await GetComments();
+            StateHasChanged();
+        }
     }
 
     private void ReplyComment(CommentModel comment)

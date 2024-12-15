@@ -20,13 +20,8 @@ namespace App.Business.Services
             _commentRepository = commentRepository;
         }
 
-        public async Task<bool> AddCommentAsync(CommentModel model, string captchaCode)
+        public async Task<bool> AddCommentAsync(CommentModel model)
         {
-            var validation = _memoryCache.Get<bool>(captchaCode);
-            if (!validation)
-            {
-                return false;
-            }
             if (!string.IsNullOrWhiteSpace(model.ParentId))
             {
                 var existComment = _commentRepository.GetAll().Any(c => c.Id == model.ParentId);

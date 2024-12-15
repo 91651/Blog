@@ -2,6 +2,7 @@ using App.Business.Model;
 using App.Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace App.Blazor.Web.Client.Controllers
 {
@@ -9,10 +10,12 @@ namespace App.Blazor.Web.Client.Controllers
     [Route("api/[controller]")]
     public class CommentController : ControllerBase
     {
+        private readonly IMemoryCache _memoryCache;
         private readonly ICommentService _commentService;
 
-        public CommentController(ICommentService articleService)
+        public CommentController(IMemoryCache memoryCache, ICommentService articleService)
         {
+            _memoryCache = memoryCache;
             _commentService = articleService;
         }
 
@@ -25,7 +28,12 @@ namespace App.Blazor.Web.Client.Controllers
         [HttpPost]
         public Task<bool> AddComments(CommentModel model, string captchaCode)
         {
-            return _commentService.AddCommentAsync(model, captchaCode);
+            var validation = _memoryCache.TryGetValue<bool>($"captcha-{captchaCode}", out var isValid);
+            if (!validation || !isValid)
+            {
+                return Task.FromResult(false);
+            }
+            return _commentService.AddCommentAsync(model);
         }
     }
 }
