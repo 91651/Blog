@@ -1,5 +1,8 @@
 ﻿@using App.Business.Model
 @using App.Blazor.Client.Data
+@using Lazy.SlideCaptcha.Core
+@using Lazy.SlideCaptcha.Core.Validator
+
 @inject IDataProviderApi _api
 
 <div class="comments">
@@ -28,7 +31,8 @@
     private string replyId;
     private CommentModel replyComment = new CommentModel();
     public RenderFragment captcha;
-    public bool IsShowCaptcha = true;
+    public bool IsShowCaptcha = false;
+    public string requestId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,38 +44,51 @@
         comments = await _api.GetCommentsAsync(OwnerId, default);
     }
 
+    private async Task GenerateCaptchaAsync(Captcha captcha)
+    {
+        captcha.StartRequestGenerate();
+        StateHasChanged();
+        var data = await _api.GenerateCaptchaAsync<CaptchaData>();
+        requestId = data.Id;
+        captcha.EndRequestGenerate(data.BackgroundImage, data.SliderImage);
+        StateHasChanged();
+    }
+
     private async void SubmitComment(CommentModel comment, string pid)
     {
-        var data = await _api.GenerateCaptchaAsync();
-        IsShowCaptcha = true;
         Captcha _captcha = default!;
-        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnFinish="(string captchaCode) => CaptchaSucceed(_captcha, comment, pid, captchaCode)" />;
-        StateHasChanged();
-        _captcha.StartRequestGenerate();
-        _captcha.EndRequestGenerate(data.BackgroundImage, data.SliderImage);
-        StateHasChanged();
-
+        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnRefresh="()=> GenerateCaptchaAsync(_captcha)" OnFinish="(SlideTrack captchaCode) => CaptchaSucceed(_captcha, comment, pid, captchaCode)" />;
+        IsShowCaptcha = true;
+        await Task.Yield();
+        await GenerateCaptchaAsync(_captcha);
     }
 
 
-    private async Task CaptchaSucceed(Captcha _captcha, CommentModel comment, string pid, string captchaCode)
+    private async Task CaptchaSucceed(Captcha _captcha, CommentModel comment, string pid, SlideTrack captchaCode)
     {
-        // IsShowCaptcha = false;
-        
         _captcha.StartRequestVerify();
-        _captcha.EndRequestVerify(true);
+        var resp = await _api.VerifyCaptchaAsync<SlideTrack, ValidateResult>(requestId, captchaCode);
+        var validateResult = resp.Result == ValidateResult.ValidateResultType.Success;
+        _captcha.EndRequestVerify(validateResult);
+        if (!validateResult)
+        {
+            await Task.Delay(1000);
+            await GenerateCaptchaAsync(_captcha);
+            return;
+        }
+        IsShowCaptcha = false;
         StateHasChanged();
 
         comment.OwnerId = OwnerId;
         comment.ParentId = pid;
-        var result = await _api.AddCommentAsync(comment, captchaCode);
-        if (result)
-        {
-             replyId = default;
-             comment = new CommentModel();
-             await GetComments();
+        // var result = await _api.AddCommentAsync(comment, captchaCode);
+        // if (result)
+        // {
+        //      replyId = default;
+        //      comment = new CommentModel();
+        //      await GetComments();
 
-        }
+        // }
     }
 
     private void ReplyComment(CommentModel comment)

@@ -1,9 +1,13 @@
 ﻿@using System.Text.Json
 @using App.Captcha
 @using App.Blazor.Client.Data
+@using JSInterop
+@using Lazy.SlideCaptcha.Core.Validator
+
 
 @inject IJSRuntime JSRuntime
 @inject HttpClient HTTP
+@inject IJSInteropModule _jsInterop
 
 @* https://github.com/pojianbing/LazySlideCaptcha
 https://gitee.com/LongbowEnterprise/SliderCaptcha
@@ -15,8 +19,8 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         <div class="captcha-wrap">
             <div class="captcha">
                 <div class="captcha__main" style="@ImgWrapperStyle">
-                    <img src="@Src" class="captcha_background" alt="background" />
-                    <img src="@SliderSrc" class="captcha_slider @(IsOk ? "goFirst" : "") @(IsKeep ? "goKeep" : "")" style="@($"left:{SliderLeft}px;")" alt="slider" />
+                    <img @ref="EleBackground" src="@Src" class="captcha_background" alt="background" />
+                    <img @ref="EleSlider" src="@SliderSrc" class="captcha_slider @(IsOk ? "goFirst" : "") @(IsKeep ? "goKeep" : "")" style="@($"left:{SliderLeft}px;")" alt="slider" />
                     @if (ShowVerifyTip)
                     {
                         <div class="captcha_message">
@@ -71,7 +75,7 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
                 @if (ShowRefresh)
                 {
                     <div class="captcha__actions">
-                        <a class="captcha__action" @onclick="HandleRefresh">
+                        <a class="captcha__action" @onclick="Refresh">
                             <svg fill="#505050" width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10,4 C12.0559549,4 13.9131832,5.04358655 15.0015086,6.68322231 L15,5.5 C15,5.22385763 15.2238576,5 15.5,5 C15.7761424,5 16,5.22385763 16,5.5 L16,8.5 C16,8.77614237 15.7761424,9 15.5,9 L12.5,9 C12.2238576,9 12,8.77614237 12,8.5 C12,8.22385763 12.2238576,8 12.5,8 L14.5842317,8.00000341 C13.7999308,6.20218044 12.0143541,5 10,5 C7.23857625,5 5,7.23857625 5,10 C5,12.7614237 7.23857625,15 10,15 C11.749756,15 13.3431487,14.0944653 14.2500463,12.6352662 C14.3958113,12.4007302 14.7041063,12.328767 14.9386423,12.4745321 C15.1731784,12.6202971 15.2451415,12.9285921 15.0993765,13.1631281 C14.0118542,14.9129524 12.0990688,16 10,16 C6.6862915,16 4,13.3137085 4,10 C4,6.6862915 6.6862915,4 10,4 Z" fill-rule="nonzero"></path>
                             </svg>
@@ -88,7 +92,8 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
 
 
 @code {
-    [Parameter] public Func<string, Task> OnFinish { get; set; }
+    [Parameter] public Func<SlideTrack, Task> OnFinish { get; set; }
+    [Parameter] public Func<Task> OnRefresh { get; set; }
     [Parameter] public int Width { get; set; } = 340;
     [Parameter] public int Height { get; set; } = 212;
     [Parameter] public int BarHeight { get; set; } = 40;
@@ -103,6 +108,9 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
     [Parameter] public string FailTip { get; set; } = "验证未通过，拖动滑块将悬浮图像正确合并";
     [Parameter] public bool ShowRefresh { get; set; } = false;
 
+    private ElementReference EleBackground;
+    private ElementReference EleSlider;
+
     private bool IsMoving { get; set; } = false;
     private int X { get; set; }
     private int Y { get; set; }
@@ -110,8 +118,8 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
     private bool IsKeep { get; set; } = false;
     private bool IsPassing { get; set; } = false;
     private bool IsFinish { get; set; } = false;
-    private List<(int x, int y, long t)> Tracks { get; set; } = new List<(int x, int y, long t)>();
-    private DateTime? StartSlidingTime { get; set; }
+    private List<Track> Tracks { get; set; } = new List<Track>();
+    private DateTime StartSlidingTime { get; set; }
     private bool ShowVerifyTip { get; set; } = false;
     private bool ShowVerifyLoading { get; set; } = false;
     private bool ShowGenerateLoading { get; set; } = false;
@@ -163,7 +171,9 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
         ShowVerifyLoading = false;
         ShowVerifyTip = false;
         IsPassing = false;
-        // todo
+        ProgressBarWidth = 0;
+        SliderLeft = 0;
+        HandlerLeft = 0;
     }
 
 
@@ -196,42 +206,46 @@ https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-
             var _x = (int)e.ClientX - X;
             var _y = (int)e.ClientY - Y;
 
-            HandlerLeft = _x;
-            ProgressBarWidth = _x + BarHeight / 2;
-            SliderLeft = _x;
+            if (_x > 0)
+            {
+                HandlerLeft = _x;
+                ProgressBarWidth = _x + BarHeight / 2;
+                SliderLeft = _x;
+            }
 
-            Tracks.Add((_x, _y, (DateTime.Now - StartSlidingTime.Value).Milliseconds));
+            Tracks.Add(new Track { X = _x, Y = _y, T = (DateTime.Now - StartSlidingTime).Milliseconds});
         }
     }
 
-    private void HandleDragFinish(MouseEventArgs e)
+    private async void HandleDragFinish(MouseEventArgs e)
     {
         if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
         {
             IsMoving = false;
             IsFinish = true;
-            OnFinish.Invoke("1");
-            // OnFinish.Invoke(new
-            // {
-            //     // backgroundImageWidth: this.$refs.background.offsetWidth,
-            //     // backgroundImageHeight: this.$refs.background.offsetHeight,
-            //     // sliderImageWidth: this.$refs.slider.offsetWidth,
-            //     // sliderImageHeight: this.$refs.slider.offsetHeight,
-            //     // startTime: StartSlidingTime,
-            //     // endTime: DateTime.Now,
-            //     // tracks: Tracks,
-            // });
-            // Emit finish event equivalent
+            var background = await _jsInterop.GetElementInfo(EleBackground);
+            var slider = await _jsInterop.GetElementInfo(EleSlider);
+            var info = new SlideTrack
+            {
+                BackgroundImageWidth = (int)background.OffsetWidth,
+                BackgroundImageHeight = (int)background.OffsetHeight,
+                SliderImageWidth = (int)slider.OffsetWidth,
+                SliderImageHeight = (int)slider.OffsetHeight,
+                StartTime = StartSlidingTime,
+                EndTime = DateTime.Now,
+                Tracks = Tracks
+            };
+
+            OnFinish.Invoke(info);
             // Here, you should call the appropriate API to verify the position
 
         }
     }
 
-    private void HandleRefresh()
+    private void Refresh()
     {
         Reset();
-        // Emit refresh event equivalent
-        // Call API to get new images here
+        OnRefresh();
     }
 
     

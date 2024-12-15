@@ -24,7 +24,8 @@ namespace App.Blazor.Web.Client.Controllers
         [HttpPost]
         public ValidateResult Validate([FromQuery] string id, SlideTrack track)
         {
-            return _captcha.Validate(id, track);
+            var validateResult = _captcha.Validate(id, track);
+            return validateResult;
         }
     }
 }

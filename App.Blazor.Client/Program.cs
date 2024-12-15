@@ -1,5 +1,6 @@
 using App.Blazor.Client.Data;
 using App.Blazor.Client.Shared;
+using JSInterop;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Refit;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
@@ -18,5 +19,6 @@ public static class ServiceExtensions
     {
         services.AddHotKeys2();
         services.AddScoped<MaskService>();
+        services.AddJSInterop();
     }
 }

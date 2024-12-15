@@ -9,19 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="AspNetCore.SassCompiler" Version="1.77.8" />
+	<PackageReference Include="AspNetCore.SassCompiler" Version="1.83.0" />
 	<PackageReference Include="Jiuban" Version="2.10.23" />
-	<PackageReference Include="Lazy.SlideCaptcha.Core" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0-preview.6.24328.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0-preview.6.24328.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.0-preview.6.24328.4" />
-	<PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
+	<PackageReference Include="Lazy.SlideCaptcha.Core" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.0" />
+	<PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
 	<PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\App.Business.Model\App.Business.Model.csproj" />
     <ProjectReference Include="..\Framework\App.Captcha\App.Captcha.csproj" />
+    <ProjectReference Include="..\Framework\JSInterop\JSInterop.csproj" />
   </ItemGroup>
 
 </Project>
