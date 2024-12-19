@@ -1,10 +1,12 @@
-﻿<CascadingValue Value="this" IsFixed="@true">
+﻿@using System.Globalization
+
+<CascadingValue Value="this" IsFixed="@true">
     <div class="ant-comment">
         <div class="ant-comment-inner">
             @if ((Avatar != null || AvatarTemplate != null) && (Content != null || ContentTemplate != null))
             {
                 <div class="ant-comment-avatar">
-                    <span class="ant-avatar ant-avatar-lg" style=" background-color: #f56a00; vertical-align: middle;">
+                    <span class="ant-avatar" style=" background-color: @GetBackgroundColor(Author); vertical-align: middle;">
                         <!--!-->
                         <span class="ant-avatar-string" style="transform: scale(1) translateX(-50%);">
                             <!--!-->
@@ -107,9 +109,23 @@
     public string Placement { get; set; } = "left";
 
     private bool RightAvatar => Placement?.Equals("right", StringComparison.InvariantCultureIgnoreCase) == true;
+    private string[] AvatarColors = { "#f56a00", "#7265e6", "#ffbf00", "#00a2ae" };
+
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+    }
+
+    private string GetBackgroundColor(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "#ccc";
+        }
+
+        char firstLetter = name.ToUpper(CultureInfo.InvariantCulture)[0];
+        int colorIndex = (firstLetter - 'A') % AvatarColors.Length;
+        return AvatarColors[colorIndex];
     }
 }
