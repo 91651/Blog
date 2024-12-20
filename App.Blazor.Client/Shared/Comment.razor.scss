@@ -14,8 +14,7 @@ $comment-actions-margin-bottom: inherit;
 $comment-actions-margin-top: 12px;
 $comment-content-detail-p-margin-bottom: inherit;
 
-
-.ant-comment {
+::deep .comment {
     position: relative;
     background-color: $comment-bg;
 

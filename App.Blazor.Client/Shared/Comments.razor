@@ -25,14 +25,14 @@
 
 @code {
     [Parameter]
-    public string OwnerId { get; set; }
+    public string OwnerId { get; set; } = default!;
     private List<CommentModel> comments = new List<CommentModel>();
     private CommentModel comment = new CommentModel() { Author = "Hi" };
-    private string replyId;
+    private string? replyId;
     private CommentModel replyComment = new CommentModel();
-    public RenderFragment captcha;
+    public RenderFragment captcha = default!;
     public bool IsShowCaptcha = false;
-    public string requestId;
+    public string requestId = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,7 +54,7 @@
         StateHasChanged();
     }
 
-    private async void SubmitComment(CommentModel comment, string pid)
+    private async void SubmitComment(CommentModel comment, string? pid)
     {
         Captcha _captcha = default!;
         captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnRefresh="()=> GenerateCaptchaAsync(_captcha)" OnFinish="(SlideTrack captchaCode) => CaptchaFinish(_captcha, comment, pid, captchaCode)" />;
@@ -64,7 +64,7 @@
     }
 
 
-    private async Task CaptchaFinish(Captcha _captcha, CommentModel comment, string pid, SlideTrack slideTrack)
+    private async Task CaptchaFinish(Captcha _captcha, CommentModel comment, string? pid, SlideTrack slideTrack)
     {
         _captcha.StartRequestVerify();
         var resp = await _api.VerifyCaptchaAsync<SlideTrack, ValidateResult>(requestId, slideTrack);
@@ -121,7 +121,7 @@
 
     RenderFragment replyAction(CommentModel comment) => @<span @onclick="() => ReplyComment(comment)">回复</span>;
 
-    RenderFragment GetEditor(CommentModel model, string pid = null)
+    RenderFragment GetEditor(CommentModel model, string? pid = null)
     {
         return
         @<div>

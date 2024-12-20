@@ -14,32 +14,23 @@
   background: var(--themeColor);
   content: "";
 }
-.comments ::deep .ant-avatar {
+.comments ::deep .comment-avatar {
   color: #fff;
   background: #ccc;
   border-radius: 50%;
 }
-.comments ::deep .ant-avatar-lg {
-  border-radius: 50%;
-}
-.comments ::deep .ant-avatar-lg {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 50%;
-}
-.comments ::deep .ant-avatar {
+.comments ::deep .comment-avatar {
   padding: 0;
   display: inline-block;
   color: #fff;
   text-align: center;
   background: #ccc;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
   border-radius: 50%;
 }
-.comments ::deep .ant-avatar-lg-string, .comments ::deep .ant-avatar-sm-string, .comments ::deep .ant-avatar-string {
+.comments ::deep .avatar-string {
   position: absolute;
   transform-origin: 0 center;
   left: 50%;

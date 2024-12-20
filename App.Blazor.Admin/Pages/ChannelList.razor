@@ -92,7 +92,7 @@
     private ArticleQueryModel query = new ();
     private ChannelModel channel = new ChannelModel{ State = 1 };
     private List<ChannelTreeModel> channels = new();
-    private Form<ChannelModel> editForm;
+    private Form<ChannelModel> editForm = default!;
     private bool isShowEditModal = false;
 
     protected override async Task OnInitializedAsync()
@@ -109,12 +109,7 @@
         }
     }
 
-    private async Task Query()
-    {
-
-    }
-
-    private async Task Edit(ChannelModel? channel = default)
+    private void Edit(ChannelModel? channel = default)
     {
         if (channel != null)
         {
@@ -179,7 +174,7 @@
         }
     }
 
-    private async Task HandleOk(MouseEventArgs e)
+    private void HandleOk(MouseEventArgs e)
     {
         editForm.Submit();
     }

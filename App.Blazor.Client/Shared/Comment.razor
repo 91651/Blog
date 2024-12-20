@@ -1,24 +1,24 @@
 ﻿@using System.Globalization
 
 <CascadingValue Value="this" IsFixed="@true">
-    <div class="ant-comment">
-        <div class="ant-comment-inner">
+    <div class="comment">
+        <div class="comment-inner">
             @if ((Avatar != null || AvatarTemplate != null) && (Content != null || ContentTemplate != null))
             {
-                <div class="ant-comment-avatar">
-                    <span class="ant-avatar" style=" background-color: @GetBackgroundColor(Author); vertical-align: middle;">
+                <div class="comment-avatar">
+                    <span class="comment-avatar" style=" background-color:@GetBackgroundColor(Author); vertical-align: middle;">
                         <!--!-->
-                        <span class="ant-avatar-string" style="transform: scale(1) translateX(-50%);">
+                        <span class="avatar-string" style="transform: scale(1) translateX(-50%);">
                             <!--!-->
                             @Avatar
                         </span><!--!-->
                     </span>
                 </div>
-                <div class="ant-comment-content">
-                    <div class="ant-comment-content-author">
+                <div class="comment-content">
+                    <div class="comment-content-author">
                         @if (Author != null || AuthorTemplate != null)
                         {
-                            <span class="ant-comment-content-author-name">
+                            <span class="comment-content-author-name">
 
                                 @if (AuthorTemplate != null)
                                 {
@@ -33,7 +33,7 @@
 
                         @if (Datetime != null || DatetimeTemplate != null)
                         {
-                            <span class="ant-comment-content-author-time">
+                            <span class="comment-content-author-time">
                                 @if (DatetimeTemplate != null)
                                 {
                                     @DatetimeTemplate
@@ -45,7 +45,7 @@
                             </span>
                         }
                     </div>
-                    <div class="ant-comment-content-detail">
+                    <div class="comment-content-detail">
                         @if (ContentTemplate != null)
                         {
                             @ContentTemplate
@@ -58,7 +58,7 @@
                     </div>
                     @if (Actions.Count > 0)
                     {
-                        <ul class="ant-comment-actions">
+                        <ul class="comment-actions">
                             @foreach (RenderFragment action in Actions)
                             {
                                 <li>@action</li>
@@ -68,7 +68,7 @@
                 </div>
             }
         </div>
-        <div class="ant-comment-nested">
+        <div class="comment-nested">
             @ChildContent
         </div>
     </div>

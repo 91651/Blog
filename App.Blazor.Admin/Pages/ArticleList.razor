@@ -62,18 +62,18 @@
         OnRowClick="OnRowClick"
         OnChange="OnChange">
 
-        <Column @bind-Field="@context.Id">
+        <PropertyColumn Property="c=>c.Id">
             <a>@context.Id</a>
-        </Column>
-        <Column @bind-Field="@context.Title"></Column>
-        <Column @bind-Field="@context.ChannelName">
-        </Column>
-        <Column @bind-Field="@context.UserName">
-        </Column>
-        <Column @bind-Field="@context.Created">
-        </Column>
-        <Column @bind-Field="@context.Updated">
-        </Column>
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.Title"></PropertyColumn>
+        <PropertyColumn Property="c=>c.ChannelName">
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.UserName">
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.Created">
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.Updated">
+        </PropertyColumn>
         <ActionColumn Title="操作">
             <Space>
                 <SpaceItem>
@@ -121,7 +121,7 @@
         await GetArticles();
     }
 
-    private async Task Edit(string id)
+    private void Edit(string id)
     {
         Navigation.NavigateTo($"/admin/article/edit/{id}");
     }

@@ -21,7 +21,6 @@
 <Card Hoverable>
     <Form Model="@model"
           OnFinish="OnFinish"
-          OnFinishFailed="OnFinishFailed"
           LabelColSpan="4"
           WrapperColSpan="16">
         <FormItem Label="标题">
@@ -209,11 +208,6 @@
             }
             await _message.Warn("文章添加失败");
         }
-    }
-
-    private async Task OnFinishFailed()
-    {
-
     }
 
 }

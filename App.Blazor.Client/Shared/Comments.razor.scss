@@ -17,14 +17,14 @@
         content: "";
     }
 
-    .ant-avatar {
+    .comment-avatar {
         color: #fff;
         background: #ccc;
         border-radius: 50%;
     }
 
 
-    .ant-avatar {
+    .comment-avatar {
         padding: 0;
         display: inline-block;
         color: #fff;
@@ -34,5 +34,11 @@
         height: 40px;
         line-height: 40px;
         border-radius: 50%;
+    }
+
+    .avatar-string {
+        position: absolute;
+        transform-origin: 0 center;
+        left: 50%;
     }
 }
