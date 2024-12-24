@@ -41,4 +41,103 @@
         transform-origin: 0 center;
         left: 50%;
     }
+
+    .comment-editor-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        background-color: #fbfbfb;
+        border-radius: 0 0 6px 6px;
+        border-top: solid 1px #f2f2f2;
+
+        .user-label {
+            background: var(--themeColor);
+            border: none;
+            padding: 0px;
+            width: 50px;
+            height: 37px;
+            color: #fff;
+            outline: 0;
+            cursor: pointer;
+            border-radius: 0 0 0 6px;
+            font-size: 14px;
+        }
+
+        .user-input {
+            width: 100%;
+            min-width: 200px;
+            background: #fbfbfb;
+            border: none;
+            padding: 0px;
+            height: 36px;
+            outline: 0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+
+        .email {
+            display: flex;
+            flex: 1.5;
+        }
+
+        .email-label {
+            background: var(--themeColor);
+            border: none;
+            padding: 0px;
+            width: 50px;
+            height: 37px;
+            color: #fff;
+            outline: 0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .email-input {
+            width: 100%;
+            min-width: 200px;
+            background: #fbfbfb;
+            border: none;
+            padding: 0px;
+            height: 36px;
+            outline: 0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 0 10px;
+        }
+
+        .submit-button {
+            background: #007bff;
+            border: none;
+            padding: 0px;
+            width: 100px;
+            height: 37px;
+            color: #fff;
+            outline: 0;
+            cursor: pointer;
+            border-radius: 0 0 6px 0;
+            font-size: 14px;
+        }
+    }
+}
+
+@media (max-width:766px) {
+    .comments ::deep {
+        .comment-editor-actions {
+            flex-direction: column;
+
+            .user-label {
+                border-radius: unset;
+            }
+
+            .email {
+                flex: 1;
+            }
+
+            .submit-button {
+                width: 100%;
+                border-radius: 0 0 6px 6px;
+            }
+        }
+    }
 }

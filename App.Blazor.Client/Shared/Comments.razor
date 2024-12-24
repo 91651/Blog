@@ -148,77 +148,27 @@
             background-color: var(--tb--white);
             display: block;
         "></textarea>
-                <div style="
-                background-color: #fbfbfb;
-                height: 36px;
-                border-radius: 0 0 6px 6px;
-                border-top: solid 1px #f2f2f2; ">
+                <div class="comment-editor-actions">
 
-                    <button type="button" style="
-                    background: var(--themeColor);
-                    border: none;
-                    padding: 0px;
-                    width: 50px;
-                    height: 37px;
-                    color: #fff;
-                    outline: 0;
-                    cursor: pointer;
-                    border-radius: 0 0 0 6px;
-                    font-size: 14px;">
-                        昵称
-                    </button>
-                    
-                    <input placeholder="昵称(必填)" @bind="@model.Author" required style="
-                    background: #fbfbfb;
-                    border: none;
-                    padding: 0px;
-                    height: 36px;
-                    outline: 0;
-                    border-radius: 6px;
-                    font-size: 14px;
-                    min-width: 50px;
-                    margin: 0 10px;">
+                    <div style="display:flex; flex:1">
+                        <button type="button" class="user-label">
+                            昵称
+                        </button>
 
-                    <button type="button" style="
-                    background: var(--themeColor);
-                    border: none;
-                    padding: 0px;
-                    width: 50px;
-                    height: 37px;
-                    color: #fff;
-                    outline: 0;
-                    cursor: pointer;
-                    font-size: 14px;">
-                        邮箱
-                    </button>
-                    
-                    <input placeholder="邮箱(必填)" @bind="@model.Email" type="email" required style="
-                    background: #fbfbfb;
-                    border: none;
-                    padding: 0px;
-                    height: 36px;
-                    outline: 0;
-                    border-radius: 6px;
-                    font-size: 14px;
-                    margin: 0 10px;">
+                        <input placeholder="昵称(必填)" @bind="@model.Author" required class="user-input">
+                    </div>
+                    <div class="email">
+                        <button type="button" class="email-label">
+                            邮箱
+                        </button>
 
-
-                    <button type="submit" style="
-                position: absolute;
-                right: -1px;
-                bottom: -1px;
-                    background: #007bff;
-                border: none;
-                padding: 0px;
-                width: 100px;
-                height: 37px;
-                color: #fff;
-                outline: 0;
-                cursor: pointer;
-                border-radius: 0 0 6px 0;
-                font-size: 14px;" >
-                        提交评论
-                    </button>
+                        <input placeholder="邮箱(必填)" @bind="@model.Email" type="email" required class="email-input">
+                    </div>
+                    <div style="display:flex;">
+                        <button type="submit" class="submit-button">
+                                提交评论
+                            </button>
+                    </div>
                 </div>
             </div>
         </form>
