@@ -1,6 +1,5 @@
 using App.Business.Model;
 using App.Business.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Client.Controllers
@@ -11,9 +10,9 @@ namespace App.Blazor.Web.Client.Controllers
     {
         private readonly IChannelService _channelService;
 
-        public ChannelController(IChannelService articleService)
+        public ChannelController(IChannelService channelService)
         {
-            _channelService = articleService;
+            _channelService = channelService;
         }
 
         [HttpGet("{id}")]
