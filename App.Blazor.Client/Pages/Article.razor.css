@@ -1,27 +1,22 @@
-.post-header, .post-title {
+.post-content ::deep .post-header, .post-content ::deep .post-title {
   margin-bottom: var(--postGlobalMargin);
 }
-
-.post-title {
+.post-content ::deep .post-title {
   font-size: var(--postH1Size);
   line-height: 2;
   word-break: break-all;
 }
-
-.post-info {
+.post-content ::deep .post-info {
   color: var(--entryConColor);
   font-size: 14px;
 }
-
-.post-info .infoLeft {
+.post-content ::deep .post-info .infoLeft {
   margin-right: 20px;
 }
-
-.post-info .iconfont {
+.post-content ::deep .post-info .iconfont {
   margin-right: 5px;
 }
-
-#qrcode {
+.post-content ::deep #qrcode {
   position: absolute;
   z-index: 10;
   visibility: hidden;
@@ -37,56 +32,45 @@
   justify-content: center;
   align-items: center;
 }
-
-.opQrcode:hover ~ #qrcode {
+.post-content ::deep .opQrcode:hover ~ #qrcode {
   visibility: visible;
   opacity: 1;
 }
-
-.post-main {
+.post-content ::deep .post-main {
   line-height: 2;
 }
-
-.post-main figure, .post-main p {
+.post-content ::deep .post-main figure, .post-content ::deep .post-main p {
   margin-bottom: var(--postGlobalMargin);
   max-width: 100%;
 }
-
-.post-main figure {
+.post-content ::deep .post-main figure {
   text-align: left;
 }
-
-.post-main img {
+.post-content ::deep .post-main img {
   display: block;
   margin: 0 auto;
   height: auto;
   max-width: 100%;
 }
-
-.post-main h1, .post-main h2, .post-main h3, .post-main h4, .post-main h5, .post-main h6 {
+.post-content ::deep .post-main h1, .post-content ::deep .post-main h2, .post-content ::deep .post-main h3, .post-content ::deep .post-main h4, .post-content ::deep .post-main h5, .post-content ::deep .post-main h6 {
   position: relative;
   margin-bottom: var(--postGlobalMargin);
   padding: 0 0 0 12px;
   font-weight: 700;
 }
-
-.post-main h1 {
+.post-content ::deep .post-main h1 {
   font-size: 22px;
 }
-
-.post-main h2 {
+.post-content ::deep .post-main h2 {
   font-size: 20px;
 }
-
-.post-main h3 {
+.post-content ::deep .post-main h3 {
   font-size: 18px;
 }
-
-.post-main h4, .post-main h5, .post-main h6 {
+.post-content ::deep .post-main h4, .post-content ::deep .post-main h5, .post-content ::deep .post-main h6 {
   font-size: 16px;
 }
-
-.post-main h1:before, .post-main h2:before, .post-main h3:before, .post-main h4:before, .post-main h5:before, .post-main h6:before {
+.post-content ::deep .post-main h1:before, .post-content ::deep .post-main h2:before, .post-content ::deep .post-main h3:before, .post-content ::deep .post-main h4:before, .post-content ::deep .post-main h5:before, .post-content ::deep .post-main h6:before {
   position: absolute;
   top: 8px;
   bottom: 8px;
@@ -97,44 +81,36 @@
   background: var(--themeColor);
   content: "";
 }
-
-.post-main ol {
+.post-content ::deep .post-main ol {
   counter-reset: sectioncounter;
 }
-
-.post-main ol, .post-main ul {
+.post-content ::deep .post-main ol, .post-content ::deep .post-main ul {
   margin-bottom: var(--postGlobalMargin);
   padding-left: var(--postGlobalMargin);
 }
-
-.post-main ol li, .post-main ul li {
+.post-content ::deep .post-main ol li, .post-content ::deep .post-main ul li {
   color: var(--entryConColor);
   list-style: inherit;
 }
-
-figcaption {
+.post-content ::deep figcaption {
   color: var(--entryConColor);
   text-align: center;
   font-size: 14px;
 }
-
-blockquote p {
+.post-content ::deep blockquote p {
   margin-bottom: 10px !important;
 }
-
-.post-main blockquote {
+.post-content ::deep .post-main blockquote {
   margin-bottom: 30px;
   padding: 10px 20px 20px;
   border-radius: 5px;
   background-color: var(--footerColor);
 }
-
-.post-main blockquote cite {
+.post-content ::deep .post-main blockquote cite {
   color: var(--entryConColor);
   font-style: normal;
 }
-
-.post-main blockquote:before {
+.post-content ::deep .post-main blockquote:before {
   content: "\e61d";
   font-style: normal;
   font-size: 24px;
@@ -142,57 +118,55 @@ blockquote p {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-.post-main hr {
+.post-content ::deep .post-main hr {
   margin-bottom: var(--postGlobalMargin);
   height: 4px;
   border: none;
   background: var(--borderColor);
 }
-
-.post-main video {
+.post-content ::deep .post-main video {
   height: auto;
   max-width: 100%;
   margin-bottom: var(--postGlobalMargin);
 }
-
-.post-main iframe {
+.post-content ::deep .post-main iframe {
   height: calc(var(--headSearchWidth) * 0.5625);
   width: 100%;
   margin-bottom: var(--postGlobalMargin);
 }
-
-.post-main .wp-block-table {
+.post-content ::deep .post-main .wp-block-table {
   width: 100%;
   overflow-x: auto;
 }
-
-.post-main .wp-block-table table {
+.post-content ::deep .post-main .wp-block-table table {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
 }
-
-.post-main .wp-block-table td, .wp-block-table th, .wp-block-table tr {
+.post-content ::deep .post-main .wp-block-table td, .post-content ::deep .wp-block-table th, .post-content ::deep .wp-block-table tr {
   overflow: hidden;
   padding: 6px 12px;
   border: 1px solid var(--borderColor);
   vertical-align: middle;
   white-space: nowrap;
 }
-
-.post-main .wp-block-table tr:nth-child(odd) {
+.post-content ::deep .post-main .wp-block-table tr:nth-child(odd) {
   background: var(--footerColor);
 }
-
-.post-main a {
+.post-content ::deep .post-main a {
   border-bottom: 2px solid var(--themeColor);
 }
-
-.post-main a:hover {
+.post-content ::deep .post-main a:hover {
   box-shadow: inset 0 -10px var(--themeColor);
   -webkit-transition: box-shadow 0.2s linear;
   transition: box-shadow 0.2s linear;
+}
+
+.post-main ::deep pre .hljs table tr td.hljs-ln-numbers .hljs-ln-n {
+  padding: 0 8px;
+  color: #5a5a5a;
+  text-align: center;
+  font-weight: 300;
 }
 
 .post-tag {
@@ -218,17 +192,14 @@ blockquote p {
   color: var(--themeColor);
 }
 
+.notice {
+  padding: 10px;
+}
+
 .post-navigation {
   margin-bottom: var(--postGlobalMargin);
   font-size: 14px;
   justify-content: space-between;
-}
-
-.post-main ::deep pre .hljs table tr td.hljs-ln-numbers .hljs-ln-n {
-  padding: 0 8px;
-  color: #5a5a5a;
-  text-align: center;
-  font-weight: 300;
 }
 
 .nav-box {
