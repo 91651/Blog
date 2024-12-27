@@ -70,12 +70,14 @@
         var resp = await _api.VerifyCaptchaAsync<SlideTrack, ValidateResult>(requestId, slideTrack);
         var validateResult = resp.Result == ValidateResult.ValidateResultType.Success;
         _captcha.EndRequestVerify(validateResult);
+        StateHasChanged();
         if (!validateResult)
         {
             await Task.Delay(1000);
             await GenerateCaptchaAsync(_captcha);
             return;
         }
+        await Task.Delay(1000);
         IsShowCaptcha = false;
         StateHasChanged();
 
