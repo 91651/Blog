@@ -70,7 +70,7 @@
     public bool isMarkdown { get; set; } = true;
     private ArticleModel model = new ArticleModel{ Editor = 1 };
     private List<CascaderNode> channels = new();
-    private string vditorCdn = "/admin/lib/vditor@3.9.7";
+    private string vditorCdn = "/admin/lib/vditor@3.10.8";
     protected override async Task OnInitializedAsync()
     {
         await GetChannels();
