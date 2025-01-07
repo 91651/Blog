@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace App.Blazor.Web.Admin.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "admin")]
     [Area("admin")]
     [Authorize]
     [Route("api/[area]/[controller]")]
@@ -45,7 +46,7 @@ namespace App.Blazor.Web.Admin.Controllers
                     }
                     else
                     {
-                        var path = Path.Combine(_hostEnvironment.ContentRootPath, _configuration["AppSettings:StaticContentPath"]) ;
+                        var path = Path.Combine(_hostEnvironment.ContentRootPath, _configuration["AppSettings:StaticContentPath"]);
                         var uploadPath = _configuration["AppSettings:ImgUploadPath"]; //避免路径敏感，使用"/"
                         var fullPath = Path.GetFullPath(Path.Combine(path, uploadPath));
                         var filename = $"{DateTime.Now.ToString("yyyyMMddHHmmss")}{Path.GetExtension(file.FileName)}";

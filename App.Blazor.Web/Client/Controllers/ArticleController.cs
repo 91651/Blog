@@ -1,14 +1,12 @@
 using App.Business.Model;
 using App.Business.Services;
-using App.DbAccess.Entities.Identity;
 using App.EFCore.DynamicLinq;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Blazor.Web.Client.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "client")]
     [Route("api/[controller]")]
     public class ArticleController : ControllerBase
     {
@@ -44,7 +42,7 @@ namespace App.Blazor.Web.Client.Controllers
         }
 
         [HttpGet]
-        public Task<PageResult<List<ArticleListModel>>> GetArticles([FromQuery]ArticleQueryModel model)
+        public Task<PageResult<List<ArticleListModel>>> GetArticles([FromQuery] ArticleQueryModel model)
         {
             return _articleService.GetArticlesAsync(model);
         }

@@ -8,6 +8,7 @@ namespace App.Blazor.Web.Admin.Controllers
 {
 
     [ApiController]
+    [ApiExplorerSettings(GroupName = "admin")]
     [Area("admin")]
     [Authorize]
     [Route("api/[area]/[controller]")]
@@ -54,7 +55,7 @@ namespace App.Blazor.Web.Admin.Controllers
         [HttpGet("claims")]
         public async Task<IEnumerable<KeyValuePair<string, string>>> GetUserClaims()
         {
-            var result = HttpContext.User.Claims.ToDictionary(s => s.Type, s=> s.Value);
+            var result = HttpContext.User.Claims.ToDictionary(s => s.Type, s => s.Value);
             return await Task.FromResult(result);
         }
     }

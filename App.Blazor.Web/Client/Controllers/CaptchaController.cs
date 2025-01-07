@@ -1,4 +1,3 @@
-using App.Captcha;
 using Lazy.SlideCaptcha.Core;
 using Lazy.SlideCaptcha.Core.Validator;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace App.Blazor.Web.Client.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "client")]
     [Route("api/[controller]")]
     public class CaptchaController : ControllerBase
     {
@@ -29,7 +29,7 @@ namespace App.Blazor.Web.Client.Controllers
         public ValidateResult Validate([FromQuery] string id, SlideTrack track)
         {
             var validateResult = _captcha.Validate(id, track);
-            if(validateResult.Result == ValidateResult.ValidateResultType.Success)
+            if (validateResult.Result == ValidateResult.ValidateResultType.Success)
             {
                 _memoryCache.Set($"captcha-{id}", true, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });
             }

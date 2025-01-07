@@ -1,12 +1,12 @@
 using App.Business.Model;
 using App.Business.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace App.Blazor.Web.Client.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "client")]
     [Route("api/[controller]")]
     public class CommentController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace App.Blazor.Web.Client.Controllers
         }
 
         [HttpGet("owner/{ownerId}")]
-        public Task<List<CommentModel>> GetComments(string ownerId, [FromQuery]string? pid)
+        public Task<List<CommentModel>> GetComments(string ownerId, [FromQuery] string? pid)
         {
             return _commentService.GetCommentsAsync(ownerId, pid);
         }

@@ -8,6 +8,7 @@ using X.Web.Sitemap.Extensions;
 namespace App.Blazor.Web.Client.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "client")]
     [Route("api/[controller]")]
     public class SeoController : ControllerBase
     {

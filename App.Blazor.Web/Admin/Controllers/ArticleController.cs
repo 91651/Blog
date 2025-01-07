@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace App.Blazor.Web.Admin.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "admin")]
     [Area("admin")]
     [Authorize]
     [Route("api/[area]/[controller]")]
