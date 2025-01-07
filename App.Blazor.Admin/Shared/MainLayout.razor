@@ -48,38 +48,58 @@
                     Path = "/admin",
                     Name = "首页",
                     Key = "home",
-                    Icon = "smile"
+                    Icon = "home"
                 },
                 new ()
                 {
-                    Path = "/admin/article",
-                    Name = "文章管理",
-                    Key = "article",
-                    Icon = "book",
+                    Name = "内容管理",
+                    Key = "content",
+                    Icon = "file-text",
                     Children = new MenuDataItem[]
-        {
+                    {   new ()
+                        {
+                            Path = "/admin/channel",
+                            Name = "文章栏目",
+                            Key = "channel",
+                            Icon = "bars"
+                        },
                         new ()
                         {
                             Path = "/admin/article",
-                            Name = "列表",
+                            Name = "文章列表",
                             Key = "article",
-                            Icon = "crown",
+                            Icon = "file-done",
                         },
                         new ()
                         {
                             Path = "/admin/article/edit",
-                            Name = "添加",
+                            Name = "文章添加",
                             Key = "article-add",
-                            Icon = "crown",
+                            Icon = "edit",
                         }
-        }
+                    }
                 },
                 new ()
                 {
-                    Path = "/admin/channel",
-                    Name = "文章栏目",
-                    Key = "channel",
-                    Icon = "smile"
+                    Name = "系统管理",
+                    Key = "system",
+                    Icon = "setting",
+                    Children = new MenuDataItem[]
+                    {   new ()
+                        {
+                            Path = "/admin/role",
+                            Name = "角色管理",
+                            Key = "role",
+                            Icon = "team"
+                        },
+                        new ()
+                        {
+                            Path = "/admin/user",
+                            Name = "用户管理",
+                            Key = "user",
+                            Icon = "user",
+                        }
+                    }
                 }
             };
     }

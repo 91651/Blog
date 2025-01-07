@@ -1,0 +1,16 @@
+
+.search-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    ::deep .form-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        label {
+            white-space: nowrap;
+        }
+    }
+}
