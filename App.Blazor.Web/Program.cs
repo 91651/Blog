@@ -24,7 +24,7 @@ var services = builder.Services;
 
 services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
 services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]));
-services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 services.Configure<IdentityOptions>(options =>
 {
     //配置用户密码策略

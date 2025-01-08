@@ -32,7 +32,7 @@ namespace App.DbAccess.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().ToTable(nameof(User));
-            modelBuilder.Entity<IdentityRole>().ToTable(nameof(Role));
+            modelBuilder.Entity<Role>().ToTable(nameof(Role));
             modelBuilder.Entity<IdentityUserClaim<TKey>>().ToTable(nameof(UserClaim));
             modelBuilder.Entity<IdentityUserRole<TKey>>().ToTable(nameof(UserRole));
             modelBuilder.Entity<IdentityUserLogin<TKey>>().ToTable(nameof(UserLogin));

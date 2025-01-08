@@ -7,15 +7,15 @@ namespace App.Blazor.Admin.Data
     public interface IAdminApiProvider
     {
         #region Role Api
-        [Get("/api/role/{id}")]
+        [Get("/api/admin/role/{id}")]
         Task<ArticleModel> GetRoleAsync(string id);
-        [Get("/api/role")]
+        [Get("/api/admin/role")]
         Task<PageResult<List<RoleModel>>> GetRolesAsync([Query] RoleQueryModel query);
-        [Post("/api/role")]
+        [Post("/api/admin/role")]
         Task<bool> AddRoleAsync(RoleModel model);
-        [Put("/api/role/{id}")]
+        [Put("/api/admin/role/{id}")]
         Task<bool> UpdateRoleAsync(string id, RoleModel model);
-        [Delete("/api/role/{id}")]
+        [Delete("/api/admin/role/{id}")]
         Task<bool> DelRoleAsync(string id);
         #endregion
 

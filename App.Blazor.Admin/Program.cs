@@ -16,7 +16,11 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 var services = builder.Services;
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 services.AddHttpClient(nameof(App.Blazor.Admin), client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)).AddHttpMessageHandler<AppAuthorizationMessageHandler>();
-services.AddRefitClient<IAdminApiProvider>().ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)).AddHttpMessageHandler<AppAuthorizationMessageHandler>(); ;
+services.AddRefitClient<IAdminApiProvider>().ConfigureHttpClient(c => {
+    var uri = new Uri(builder.HostEnvironment.BaseAddress);
+    var baseUrl = uri.GetLeftPart(UriPartial.Authority);
+    c.BaseAddress = new Uri(baseUrl);
+}).AddHttpMessageHandler<AppAuthorizationMessageHandler>();
 services.AddTransient<AppAuthorizationMessageHandler>();
 services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(App.Blazor.Admin)));
 services.AddAuthorizationCore();

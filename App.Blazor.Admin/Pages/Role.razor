@@ -24,10 +24,10 @@
             </Flex>
             <Space Size="@("middle")">
                 <SpaceItem>
-                    <Button>重置</Button>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
                 </SpaceItem>
                 <SpaceItem>
-                    <Button Danger>
+                    <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
                         搜索
                     </Button>
                 </SpaceItem>
@@ -35,32 +35,51 @@
         </Flex>           
     </Card>
     <br />
-    <Table HidePagination="true" DataSource="roles" IndentSize="20" >
-        <PropertyColumn Property="c=>c.Name" />
-        <ActionColumn Title="操作">
-            <Space>
+    <Card Title=@("角色列表")>
+        <Extra>
+            <Space Size="@("middle")">
                 <SpaceItem>
-                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
+                    <Button Danger Icon="@IconType.Outline.Plus" @onclick="() => Edit()">新增</Button>
                 </SpaceItem>
-
                 <SpaceItem>
-                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Search">刷新</Button>
                 </SpaceItem>
             </Space>
-        </ActionColumn>
-    </Table>
+        </Extra>
+        <Body>
+            <Table HidePagination="true" DataSource="roles" IndentSize="20">
+                <PropertyColumn Property="c=>c.Name" />
+                <ActionColumn Title="操作" Width="10%">
+                    <Space>
+                        <SpaceItem>
+                            <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
+                        </SpaceItem>
 
-    <Modal Title="添加栏目" Closable="@false" Visible="isShowEditModal" OnOk="@HandleOk" OnCancel="() => isShowEditModal = false">
-        <Form @ref="@editForm" Model="@role"
-              LabelColSpan="6"
-              WrapperColSpan="16"
+                        <SpaceItem>
+                            <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                        </SpaceItem>
+                    </Space>
+                </ActionColumn>
+            </Table>
+        </Body>
+    </Card>
+
+    <Drawer Closable="true" @bind-Visible="isShowEditModal" Placement="right" Title="@("添加角色")" Width="360">
+        <Form @ref="@editForm" Layout="vertical" Model="@role"
               OnFinish="Submit">
-            <FormItem Label="标题">
+            <FormItem Label="角色名称" Required>
                 <Input @bind-Value="@context.Name" />
             </FormItem>
+            <FormItem>
+                <Flex Justify="@("flex-end")" Align="@("center")" Gap="@("middle")">
+                    <Button @onclick="() => isShowEditModal = false">取消</Button>
+                    <Button Danger Type="@ButtonType.Primary" HtmlType="submit">
+                        确认
+                    </Button>
+                </Flex>
+            </FormItem>
         </Form>
-    </Modal>
-
+    </Drawer>
 </Card>
 
 @code {
@@ -86,11 +105,22 @@
 
     private void Edit(RoleModel? role = default)
     {
+        role = new(); 
         if (role != null)
         {
             this.role = role;
         }
         isShowEditModal = true;
+    }
+
+    private async Task Search()
+    {
+        await GetRoles();
+    }
+
+    private void Reset()
+    {
+        query = new();
     }
 
 

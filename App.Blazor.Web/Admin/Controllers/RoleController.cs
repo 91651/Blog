@@ -70,7 +70,7 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpGet]
-        public Task<PageResult<List<RoleModel>>> GetRoles(RoleQueryModel model)
+        public Task<PageResult<List<RoleModel>>> GetRoles([FromQuery] RoleQueryModel model)
         {
             return _roleService.GetRolesAsync(model);
         }

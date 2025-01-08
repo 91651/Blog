@@ -26,6 +26,8 @@ namespace App.Business.Services.AutoMapper
             CreateMap<Comment, CommentModel>().ReverseMap();
             CreateMap<File, FileModel>().ReverseMap();
             CreateMap<User, UserModel>().ReverseMap();
+            CreateMap<Role, RoleModel>().ReverseMap();
+
         }
     }
 }
