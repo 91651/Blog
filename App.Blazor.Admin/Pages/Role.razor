@@ -2,10 +2,12 @@
 @attribute [Authorize]
 @using System.ComponentModel
 @using AntDesign.TableModels
+@using App.Blazor.Admin.Data
 @using App.Business.Model
 @using App.EFCore.DynamicLinq
 @using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
+
+@inject IAdminApiProvider API
 @inject MessageService _message
 @inject NavigationManager Navigation
 
@@ -13,21 +15,13 @@
 
 <Card>
     <Card>
-        <div class="search-section">
-            <Space Size="@("large")">
-                <SpaceItem>
-                    <div class="form-group">
-                        <label for="name">角色名称</label>
-                        <Input Placeholder="请输入角色名称" @bind-Value="@txtValue" />
-                    </div>
-                </SpaceItem>
-                <SpaceItem>
-                    <div class="form-group">
-                        <label for="name">角色名称</label>
-                        <Input Placeholder="请输入角色名称" @bind-Value="@txtValue" />
-                    </div>
-                </SpaceItem>
-            </Space>
+        <Flex Justify="@("space-between")" Align="@("flex-end")">
+            <Flex Justify="@("start")" Align="@("center")" Gap="@("large")" Wrap="wrap" style="width:100%;">
+                <div class="form-group">
+                    <label for="name">角色名称</label>
+                    <Input Placeholder="请输入角色名称" @bind-Value="@query.Name" />
+                </div>
+            </Flex>
             <Space Size="@("middle")">
                 <SpaceItem>
                     <Button>重置</Button>
@@ -38,162 +32,93 @@
                     </Button>
                 </SpaceItem>
             </Space>
-        </div>
-        
-                           
+        </Flex>           
     </Card>
     <br />
-    <Table HidePagination="true" DataSource="channels" TreeChildren="item => item.Children" IndentSize="20" >
-        <PropertyColumn Property="c=>c.Channel.Title" />
-        <PropertyColumn Property="c=>c.Channel.Description" Width="30%" />
-        <PropertyColumn Property="c=>c.Channel.State">
-            @if (context.Channel.State == 1)
-            {
-                <Tag Color="@PresetColor.Green.ToString()">启用</Tag>
-            }
-            else
-            {
-                <Tag Color="@PresetColor.Red.ToString()">禁用</Tag>
-            }
-        </PropertyColumn>
+    <Table HidePagination="true" DataSource="roles" IndentSize="20" >
+        <PropertyColumn Property="c=>c.Name" />
         <ActionColumn Title="操作">
             <Space>
                 <SpaceItem>
-                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context.Channel)">编辑</Button>
+                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
                 </SpaceItem>
-                @if(context.Channel.State == 1)
-                {
-                    <SpaceItem>
-                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.EyeInvisible" Size="@ButtonSize.Small" @onclick="() => EditState(context.Channel, 2)">禁用</Button>
-                    </SpaceItem>
-                }
-                else
-                {
-                    <SpaceItem>
-                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Eye" Size="@ButtonSize.Small" @onclick="() => EditState(context.Channel, 1)">启用</Button>
-                    </SpaceItem>
-                }
 
                 <SpaceItem>
-                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Channel.Id)">删除</Button>
+                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
                 </SpaceItem>
             </Space>
         </ActionColumn>
     </Table>
 
     <Modal Title="添加栏目" Closable="@false" Visible="isShowEditModal" OnOk="@HandleOk" OnCancel="() => isShowEditModal = false">
-        <Form @ref="@editForm" Model="@channel"
+        <Form @ref="@editForm" Model="@role"
               LabelColSpan="6"
               WrapperColSpan="16"
               OnFinish="Submit">
             <FormItem Label="标题">
-                <Input @bind-Value="@context.Title" />
-            </FormItem>
-            <FormItem Label="上级栏目">
-                <TreeSelect DataSource="channels" @bind-Value="@context.ParentId" Placeholder="默认添加顶级栏目"
-                            AllowClear
-                            TreeDefaultExpandAll
-                            ChildrenExpression="node=>node.DataItem.Children"
-                            TitleExpression="node=>node.DataItem.Channel.Title"
-                            KeyExpression="node=>node.DataItem.Channel.Id"
-                            IsLeafExpression="node=>node.DataItem.Children==null">
-                </TreeSelect>
-            </FormItem>
-            <FormItem Label="描述">
-                <TextArea AllowClear @bind-Value="@context.Description" />
-            </FormItem>
-            <FormItem Label="状态">
-                <Switch Value="context.State == 1 ? true: false" CheckedChildren="启用" UnCheckedChildren="禁用" OnChange="value => context.State = value ? 1 : 2" />
+                <Input @bind-Value="@context.Name" />
             </FormItem>
         </Form>
     </Modal>
-    
+
 </Card>
 
 @code {
-    private string txtValue = "";
-    private ArticleQueryModel query = new ();
-    private ChannelModel channel = new ChannelModel{ State = 1 };
-    private List<ChannelTreeModel> channels = new();
-    private Form<ChannelModel> editForm = default!;
+    private RoleQueryModel query = new();
+    private RoleModel role = new ();
+    private List<RoleModel> roles = new();
+    private Form<RoleModel> editForm = default!;
     private bool isShowEditModal = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetChannels();
+        await GetRoles();
     }
 
-    private async Task GetChannels()
+    private async Task GetRoles()
     {
-        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        var data = await API.GetRolesAsync(query);
         if(data != null)
         {
-            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+            roles = data.Data;
         }
     }
 
-    private void Edit(ChannelModel? channel = default)
+    private void Edit(RoleModel? role = default)
     {
-        if (channel != null)
+        if (role != null)
         {
-            this.channel = channel;
+            this.role = role;
         }
         isShowEditModal = true;
     }
 
-    private async Task EditState(ChannelModel channel, int state)
-    {
-        channel.State = state;
-        var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
-            if (resp.IsSuccessStatusCode)
-            {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目更新成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
-            }
-            await _message.Warn("栏目更新失败");
-    }
 
     private async Task Submit(EditContext editContext)
     {
-        if (!string.IsNullOrWhiteSpace(channel.Id))
+        if (!string.IsNullOrWhiteSpace(role.Id))
         {
-            var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
-            if (resp.IsSuccessStatusCode)
+            var result = await API.UpdateRoleAsync(role.Id, role);
+            if (result)
             {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目更新成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
+                await _message.Success("角色更新成功");
+                isShowEditModal = false;
+                await GetRoles();
+                return;
             }
-            await _message.Warn("栏目更新失败");
+            await _message.Warn("角色更新失败");
         }
         else
         {
-            var resp = await Http.PostAsJsonAsync<ChannelModel>("/api/admin/channel", channel);
-            if (resp.IsSuccessStatusCode)
+            var result = await API.AddRoleAsync(role);
+            if (result)
             {
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目添加成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
+                await _message.Success("角色添加成功");
+                isShowEditModal = false;
+                await GetRoles();
+                return;
             }
-            await _message.Warn("栏目添加失败");
+            await _message.Warn("角色添加失败");
         }
     }
 
@@ -204,13 +129,13 @@
 
     private async Task Del(string id)
     {
-        var resp = await Http.DeleteAsync($"/api/admin/channel/{id}");
-        if (resp.IsSuccessStatusCode)
+        var result = await API.DelRoleAsync(id);
+        if (result)
         {
-            await _message.Success("栏目删除成功");
-            await GetChannels();
+            await _message.Success("角色删除成功");
+            await GetRoles();
             return;
         }
-        await _message.Warn("栏目删除失败");
+        await _message.Warn("角色删除失败");
     }
 }

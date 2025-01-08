@@ -1,16 +1,11 @@
-
-.search-section {
+.form-group {
     display: flex;
-    justify-content: space-between;
+    flex:auto;
     align-items: center;
+    gap: 12px;
+    max-width:360px;
 
-    ::deep .form-group {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-
-        label {
-            white-space: nowrap;
-        }
+    label {
+        white-space: nowrap;
     }
 }

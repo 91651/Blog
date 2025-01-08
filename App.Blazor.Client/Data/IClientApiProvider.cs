@@ -4,7 +4,7 @@ using Refit;
 
 namespace App.Blazor.Client.Data
 {
-    public interface IDataProviderApi
+    public interface IClientApiProvider
     {
         #region Article Api
         [Get("/api/article/{id}")]

@@ -1,21 +1,12 @@
-.search-section {
+.form-group {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.search-section ::deep .form-group {
-  display: flex;
+  flex: auto;
   align-items: center;
   gap: 12px;
-  width: 100%;
+  max-width: 360px;
 }
-.search-section ::deep .form-group label {
+.form-group label {
   white-space: nowrap;
-}
-.search-section ::deep .form-group input {
-  flex-grow: 1;
-  flex-basis: 200px;
-  max-width: 300px;
 }
 
 /*# sourceMappingURL=Role.razor.css.map */

@@ -69,7 +69,7 @@ services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = 
 
 builder.Services.AddSlideCaptcha(builder.Configuration);
 
-services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient((sp, c) =>
+services.AddRefitClient<IClientApiProvider>().ConfigureHttpClient((sp, c) =>
 {
     var server = sp.GetRequiredService<IServer>();
     var addressFeature = server.Features.Get<IServerAddressesFeature>();

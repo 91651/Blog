@@ -8,7 +8,7 @@ using Toolbelt.Blazor.Extensions.DependencyInjection;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 var services = builder.Services;
-services.AddRefitClient<IDataProviderApi>().ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+services.AddRefitClient<IClientApiProvider>().ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 services.AddClientServices();
 
 await builder.Build().RunAsync();
