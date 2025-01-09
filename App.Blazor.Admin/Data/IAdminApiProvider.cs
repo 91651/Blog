@@ -19,5 +19,18 @@ namespace App.Blazor.Admin.Data
         Task<bool> DelRoleAsync(string id);
         #endregion
 
+        #region User Api
+        [Get("/api/admin/user/{id}")]
+        Task<ArticleModel> GetUserAsync(string id);
+        [Get("/api/admin/user")]
+        Task<PageResult<List<UserModel>>> GetUsersAsync([Query] UserQueryModel query);
+        [Post("/api/admin/user")]
+        Task<bool> AddUserAsync(UserModel model);
+        [Put("/api/admin/user/{id}")]
+        Task<bool> UpdateUserAsync(string id, UserModel model);
+        [Delete("/api/admin/user/{id}")]
+        Task<bool> DelUserAsync(string id);
+        #endregion
+
     }
 }

@@ -2,175 +2,166 @@
 @attribute [Authorize]
 @using System.ComponentModel
 @using AntDesign.TableModels
+@using App.Blazor.Admin.Data
 @using App.Business.Model
 @using App.EFCore.DynamicLinq
 @using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
+
+@inject IAdminApiProvider API
 @inject MessageService _message
 @inject NavigationManager Navigation
 
-<PageTitle>Index</PageTitle>
+<PageTitle>用户管理</PageTitle>
 
-<Card>
+<div class="page-container">
     <Card>
-         <Space>
-            <SpaceItem>
-                <Button Danger @onclick="() => Edit()">添加栏目</Button>
-            </SpaceItem>
-         </Space>
-                           
-    </Card>
-    <br />
-    <Table HidePagination="true" DataSource="channels" TreeChildren="item => item.Children" IndentSize="20" >
-        <PropertyColumn Property="c=>c.Channel.Title" />
-        <PropertyColumn Property="c=>c.Channel.Description" Width="30%" />
-        <PropertyColumn Property="c=>c.Channel.State">
-            @if (context.Channel.State == 1)
-            {
-                <Tag Color="@PresetColor.Green.ToString()">启用</Tag>
-            }
-            else
-            {
-                <Tag Color="@PresetColor.Red.ToString()">禁用</Tag>
-            }
-        </PropertyColumn>
-        <ActionColumn Title="操作">
-            <Space>
+        <Flex Justify="FlexJustify.SpaceBetween" Align="FlexAlign.FlexEnd">
+            <Flex Justify="FlexJustify.Start" Align="FlexAlign.Center" Gap="FlexGap.Large" Wrap="FlexWrap.Wrap" style="width:100%;">
+                <div class="form-group">
+                    <label for="name">用户名称</label>
+                    <Input Placeholder="请输入用户名称" @bind-Value="@query.Name" />
+                </div>
+            </Flex>
+            <Space Size="SpaceSize.Middle">
                 <SpaceItem>
-                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context.Channel)">编辑</Button>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
                 </SpaceItem>
-                @if(context.Channel.State == 1)
-                {
-                    <SpaceItem>
-                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.EyeInvisible" Size="@ButtonSize.Small" @onclick="() => EditState(context.Channel, 2)">禁用</Button>
-                    </SpaceItem>
-                }
-                else
-                {
-                    <SpaceItem>
-                        <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Eye" Size="@ButtonSize.Small" @onclick="() => EditState(context.Channel, 1)">启用</Button>
-                    </SpaceItem>
-                }
-
                 <SpaceItem>
-                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Channel.Id)">删除</Button>
+                    <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
+                        搜索
+                    </Button>
                 </SpaceItem>
             </Space>
-        </ActionColumn>
-    </Table>
+        </Flex>
+    </Card>
+    <br />
+    <Card Title=@("用户列表")>
+        <Extra>
+            <Space Size="SpaceSize.Middle">
+                <SpaceItem>
+                    <Button Danger Icon="@IconType.Outline.Plus" @onclick="() => Edit()">新增</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Search">刷新</Button>
+                </SpaceItem>
+            </Space>
+        </Extra>
+        <Body>
+            <Table TableLayout="fixed" TItem="UserModel" DataSource="users.Data" Total="users.Total" RemoteDataSource
+                   @bind-PageIndex="query.PageIndex"
+                   @bind-PageSize="query.PageSize"
+                   OnChange="OnChange" AutoHeight>
+                <PropertyColumn Property="c=>c.UserName" />
+                <ActionColumn Title="操作" Width="180">
+                    <Space>
+                        <SpaceItem>
+                            <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
+                        </SpaceItem>
 
-    <Modal Title="添加栏目" Closable="@false" Visible="isShowEditModal" OnOk="@HandleOk" OnCancel="() => isShowEditModal = false">
-        <Form @ref="@editForm" Model="@channel"
-              LabelColSpan="6"
-              WrapperColSpan="16"
+                        <SpaceItem>
+                            <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                        </SpaceItem>
+                    </Space>
+                </ActionColumn>
+            </Table>
+
+        </Body>
+    </Card>
+
+    <Drawer Closable="true" @bind-Visible="isShowEditModal" Placement="DrawerPlacement.Right" Title="@("添加用户")" Width="360">
+        <Form @ref="@editForm" Layout="FormLayout.Vertical" Model="@user"
               OnFinish="Submit">
-            <FormItem Label="标题">
-                <Input @bind-Value="@context.Title" />
+            <FormItem Label="用户名称" Required>
+                <Input @bind-Value="@context.UserName" />
             </FormItem>
-            <FormItem Label="上级栏目">
-                <TreeSelect DataSource="channels" @bind-Value="@context.ParentId" Placeholder="默认添加顶级栏目"
-                            AllowClear
-                            TreeDefaultExpandAll
-                            ChildrenExpression="node=>node.DataItem.Children"
-                            TitleExpression="node=>node.DataItem.Channel.Title"
-                            KeyExpression="node=>node.DataItem.Channel.Id"
-                            IsLeafExpression="node=>node.DataItem.Children==null">
-                </TreeSelect>
-            </FormItem>
-            <FormItem Label="描述">
-                <TextArea AllowClear @bind-Value="@context.Description" />
-            </FormItem>
-            <FormItem Label="状态">
-                <Switch Value="context.State == 1 ? true: false" CheckedChildren="启用" UnCheckedChildren="禁用" OnChange="value => context.State = value ? 1 : 2" />
+            <FormItem>
+                <Flex Justify="FlexJustify.FlexEnd" Align="FlexAlign.Center" Gap="FlexGap.Middle">
+                    <Button @onclick="() => isShowEditModal = false">取消</Button>
+                    <Button Danger Type="@ButtonType.Primary" HtmlType="submit">
+                        确认
+                    </Button>
+                </Flex>
             </FormItem>
         </Form>
-    </Modal>
-    
-</Card>
+    </Drawer>
+</div>
+
 
 @code {
-    private ArticleQueryModel query = new ();
-    private ChannelModel channel = new ChannelModel{ State = 1 };
-    private List<ChannelTreeModel> channels = new();
-    private Form<ChannelModel> editForm = default!;
+    private UserQueryModel query = new();
+    private UserModel user = new ();
+    private PageResult<List<UserModel>> users = new();
+    private Form<UserModel> editForm = default!;
+    private bool isTableLoading = false;
     private bool isShowEditModal = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetChannels();
+        await GetUsers();
     }
 
-    private async Task GetChannels()
+    private async Task GetUsers()
     {
-        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        isTableLoading = true;
+        var data = await API.GetUsersAsync(query);
         if(data != null)
         {
-            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+            users = data;
         }
+        isTableLoading = false;
     }
 
-    private void Edit(ChannelModel? channel = default)
+    private void Edit(UserModel? user = default)
     {
-        if (channel != null)
+        this.user = new();
+        if (user != null)
         {
-            this.channel = channel;
+            this.user = user;
         }
         isShowEditModal = true;
     }
 
-    private async Task EditState(ChannelModel channel, int state)
+    private async Task Search()
     {
-        channel.State = state;
-        var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
-            if (resp.IsSuccessStatusCode)
-            {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目更新成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
-            }
-            await _message.Warn("栏目更新失败");
+        await GetUsers();
     }
+
+    private void Reset()
+    {
+        query = new();
+    }
+
+    public async Task OnChange(QueryModel<UserModel> queryModel)
+    {
+        await GetUsers();
+    }
+
 
     private async Task Submit(EditContext editContext)
     {
-        if (!string.IsNullOrWhiteSpace(channel.Id))
+        if (!string.IsNullOrWhiteSpace(user.Id))
         {
-            var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
-            if (resp.IsSuccessStatusCode)
+            var result = await API.UpdateUserAsync(user.Id, user);
+            if (result)
             {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目更新成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
+                isShowEditModal = false;
+                await GetUsers();
+                _ = _message.Success("用户更新成功");
+                return;
             }
-            await _message.Warn("栏目更新失败");
+            _ = _message.Warn("用户更新失败");
         }
         else
         {
-            var resp = await Http.PostAsJsonAsync<ChannelModel>("/api/admin/channel", channel);
-            if (resp.IsSuccessStatusCode)
+            var result = await API.AddUserAsync(user);
+            if (result)
             {
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目添加成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
+                isShowEditModal = false;
+                await GetUsers();
+                _ = _message.Success("用户添加成功");
+                return;
             }
-            await _message.Warn("栏目添加失败");
+            _ = _message.Warn("用户添加失败");
         }
     }
 
@@ -181,13 +172,13 @@
 
     private async Task Del(string id)
     {
-        var resp = await Http.DeleteAsync($"/api/admin/channel/{id}");
-        if (resp.IsSuccessStatusCode)
+        var result = await API.DelUserAsync(id);
+        if (result)
         {
-            await _message.Success("栏目删除成功");
-            await GetChannels();
+            await GetUsers();
+            _ = _message.Success("用户删除成功");
             return;
         }
-        await _message.Warn("栏目删除失败");
+        _ = _message.Warn("用户删除失败");
     }
 }

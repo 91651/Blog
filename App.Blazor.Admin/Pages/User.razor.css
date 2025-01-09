@@ -1,0 +1,18 @@
+.page-container .form-group {
+  display: flex;
+  flex: auto;
+  align-items: center;
+  gap: 12px;
+  max-width: 360px;
+}
+.page-container .form-group label {
+  white-space: nowrap;
+}
+.page-container ::deep .ant-pro-page-container {
+  margin: -24px 1px;
+}
+.page-container ::deep .ant-table .ant-table-body {
+  max-height: 200px;
+}
+
+/*# sourceMappingURL=User.razor.css.map */
