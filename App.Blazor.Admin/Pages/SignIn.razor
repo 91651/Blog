@@ -31,7 +31,7 @@
                 <FormItem Label="密码">
                     <InputPassword @bind-Value="@context.Pwd" />
                 </FormItem>
-                <Row Justify="end">
+                <Row Justify="RowJustify.End">
                     <Col Xs="24" Sm="20">
                         @if (!string.IsNullOrWhiteSpace(msg))
                         {
@@ -42,9 +42,9 @@
                     </Col>
                 </Row>
                 <br>
-                <Row Justify="end">
+                <Row Justify="RowJustify.End">
                     <Col Xs="24" Sm="20">
-                    <Row Justify="space-between">
+                    <Row Justify="RowJustify.SpaceBetween">
                         <Col Span="11">
                         <Button Type="@ButtonType.Primary" Block HtmlType="submit">
                             登录

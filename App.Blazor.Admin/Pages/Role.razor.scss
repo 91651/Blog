@@ -1,11 +1,21 @@
-.form-group {
-    display: flex;
-    flex:auto;
-    align-items: center;
-    gap: 12px;
-    max-width:360px;
+.content {
+    .form-group {
+        display: flex;
+        flex: auto;
+        align-items: center;
+        gap: 12px;
+        max-width: 360px;
 
-    label {
-        white-space: nowrap;
+        label {
+            white-space: nowrap;
+        }
+    }
+
+    ::deep {
+        .ant-table {
+            .ant-table-body {
+                max-height: 200px;
+            }
+        }
     }
 }

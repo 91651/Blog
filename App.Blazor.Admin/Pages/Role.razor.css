@@ -1,12 +1,15 @@
-.form-group {
+.content .form-group {
   display: flex;
   flex: auto;
   align-items: center;
   gap: 12px;
   max-width: 360px;
 }
-.form-group label {
+.content .form-group label {
   white-space: nowrap;
+}
+.content ::deep .ant-table .ant-table-body {
+  max-height: 200px;
 }
 
 /*# sourceMappingURL=Role.razor.css.map */
