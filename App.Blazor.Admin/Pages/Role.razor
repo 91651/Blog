@@ -11,81 +11,79 @@
 @inject MessageService _message
 @inject NavigationManager Navigation
 
-<PageTitle>Index</PageTitle>
+<PageTitle>角色管理</PageTitle>
 
-<div class="content">
+<div class="page-container">
     <Card>
-        <Card>
-            <Flex Justify="FlexJustify.SpaceBetween" Align="FlexAlign.FlexEnd">
-                <Flex Justify="FlexJustify.Start" Align="FlexAlign.Center" Gap="FlexGap.Large" Wrap="FlexWrap.Wrap" style="width:100%;">
-                    <div class="form-group">
-                        <label for="name">角色名称</label>
-                        <Input Placeholder="请输入角色名称" @bind-Value="@query.Name" />
-                    </div>
-                </Flex>
-                <Space Size="SpaceSize.Middle">
-                    <SpaceItem>
-                        <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
-                    </SpaceItem>
-                    <SpaceItem>
-                        <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
-                            搜索
-                        </Button>
-                    </SpaceItem>
-                </Space>
+        <Flex Justify="FlexJustify.SpaceBetween" Align="FlexAlign.FlexEnd">
+            <Flex Justify="FlexJustify.Start" Align="FlexAlign.Center" Gap="FlexGap.Large" Wrap="FlexWrap.Wrap" style="width:100%;">
+                <div class="form-group">
+                    <label for="name">角色名称</label>
+                    <Input Placeholder="请输入角色名称" @bind-Value="@query.Name" />
+                </div>
             </Flex>
-        </Card>
-        <br />
-        <Card Title=@("角色列表")>
-            <Extra>
-                <Space Size="SpaceSize.Middle">
-                    <SpaceItem>
-                        <Button Danger Icon="@IconType.Outline.Plus" @onclick="() => Edit()">新增</Button>
-                    </SpaceItem>
-                    <SpaceItem>
-                        <Button Icon="@IconType.Outline.Reload" @onclick="Search">刷新</Button>
-                    </SpaceItem>
-                </Space>
-            </Extra>
-            <Body>
-                <Table TableLayout="fixed" TItem="RoleModel" DataSource="roles.Data" Total="roles.Total" RemoteDataSource
-                       @bind-PageIndex="query.PageIndex"
-                       @bind-PageSize="query.PageSize"
-                       OnChange="OnChange" AutoHeight>
-                    <PropertyColumn Property="c=>c.Name" />
-                    <ActionColumn Title="操作" Width="180">
-                        <Space>
-                            <SpaceItem>
-                                <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
-                            </SpaceItem>
-
-                            <SpaceItem>
-                                <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
-                            </SpaceItem>
-                        </Space>
-                    </ActionColumn>
-                </Table>
-
-            </Body>
-        </Card>
-
-        <Drawer Closable="true" @bind-Visible="isShowEditModal" Placement="DrawerPlacement.Right" Title="@("添加角色")" Width="360">
-            <Form @ref="@editForm" Layout="FormLayout.Vertical" Model="@role"
-                  OnFinish="Submit">
-                <FormItem Label="角色名称" Required>
-                    <Input @bind-Value="@context.Name" />
-                </FormItem>
-                <FormItem>
-                    <Flex Justify="FlexJustify.FlexEnd" Align="FlexAlign.Center" Gap="FlexGap.Middle">
-                        <Button @onclick="() => isShowEditModal = false">取消</Button>
-                        <Button Danger Type="@ButtonType.Primary" HtmlType="submit">
-                            确认
-                        </Button>
-                    </Flex>
-                </FormItem>
-            </Form>
-        </Drawer>
+            <Space Size="SpaceSize.Middle">
+                <SpaceItem>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
+                        搜索
+                    </Button>
+                </SpaceItem>
+            </Space>
+        </Flex>
     </Card>
+    <br />
+    <Card Title=@("角色列表")>
+        <Extra>
+            <Space Size="SpaceSize.Middle">
+                <SpaceItem>
+                    <Button Danger Icon="@IconType.Outline.Plus" @onclick="() => Edit()">新增</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Search">刷新</Button>
+                </SpaceItem>
+            </Space>
+        </Extra>
+        <Body>
+            <Table TableLayout="fixed" TItem="RoleModel" DataSource="roles.Data" Total="roles.Total" RemoteDataSource
+                   @bind-PageIndex="query.PageIndex"
+                   @bind-PageSize="query.PageSize"
+                   OnChange="OnChange" AutoHeight>
+                <PropertyColumn Property="c=>c.Name" />
+                <ActionColumn Title="操作" Width="180">
+                    <Space>
+                        <SpaceItem>
+                            <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
+                        </SpaceItem>
+
+                        <SpaceItem>
+                            <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                        </SpaceItem>
+                    </Space>
+                </ActionColumn>
+            </Table>
+
+        </Body>
+    </Card>
+
+    <Drawer Closable="true" @bind-Visible="isShowEditModal" Placement="DrawerPlacement.Right" Title="@("添加角色")" Width="360">
+        <Form @ref="@editForm" Layout="FormLayout.Vertical" Model="@role"
+              OnFinish="Submit">
+            <FormItem Label="角色名称" Required>
+                <Input @bind-Value="@context.Name" />
+            </FormItem>
+            <FormItem>
+                <Flex Justify="FlexJustify.FlexEnd" Align="FlexAlign.Center" Gap="FlexGap.Middle">
+                    <Button @onclick="() => isShowEditModal = false">取消</Button>
+                    <Button Danger Type="@ButtonType.Primary" HtmlType="submit">
+                        确认
+                    </Button>
+                </Flex>
+            </FormItem>
+        </Form>
+    </Drawer>
 </div>
 
 

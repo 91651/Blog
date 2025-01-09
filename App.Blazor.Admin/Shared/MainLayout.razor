@@ -7,6 +7,7 @@
     <BasicLayout
         Logo="@("https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg")"
         MenuData="MenuData"
+        MenuAccordion
         Theme="MenuTheme.Light">
         <RightContentRender>
             <RightContent OnUserItemSelected="SelectedItem" />
@@ -27,7 +28,7 @@
             <AntDesign.ProLayout.Footer />
         </FooterRender>
         <ChildContent>
-            @Body
+            <ReuseTabs></ReuseTabs>
         </ChildContent>
     </BasicLayout>
     <SettingDrawer />
@@ -45,7 +46,7 @@
             {
                 new ()
                 {
-                    Path = "/admin",
+                    Path = "",
                     Name = "首页",
                     Key = "home",
                     Icon = "home"
@@ -58,21 +59,21 @@
                     Children = new MenuDataItem[]
                     {   new ()
                         {
-                            Path = "/admin/channel",
+                            Path = "channel",
                             Name = "文章栏目",
                             Key = "channel",
                             Icon = "bars"
                         },
                         new ()
                         {
-                            Path = "/admin/article",
+                            Path = "article",
                             Name = "文章列表",
                             Key = "article",
                             Icon = "file-done",
                         },
                         new ()
                         {
-                            Path = "/admin/article/edit",
+                            Path = "article/edit",
                             Name = "文章添加",
                             Key = "article-add",
                             Icon = "edit",
@@ -87,14 +88,14 @@
                     Children = new MenuDataItem[]
                     {   new ()
                         {
-                            Path = "/admin/role",
+                            Path = "role",
                             Name = "角色管理",
                             Key = "role",
                             Icon = "team"
                         },
                         new ()
                         {
-                            Path = "/admin/user",
+                            Path = "user",
                             Name = "用户管理",
                             Key = "user",
                             Icon = "user",

@@ -1,4 +1,4 @@
-.content {
+.page-container {
     .form-group {
         display: flex;
         flex: auto;
@@ -12,6 +12,10 @@
     }
 
     ::deep {
+        .ant-pro-page-container {
+            margin: -24px 1px;
+        }
+
         .ant-table {
             .ant-table-body {
                 max-height: 200px;
