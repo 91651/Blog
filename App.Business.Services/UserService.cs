@@ -2,7 +2,6 @@
 using App.Business.Model;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
-using App.DbAccess.Repositories;
 using App.EFCore.DynamicLinq;
 using AutoMapper;
 
@@ -27,10 +26,22 @@ namespace App.Business.Services
 
         public async Task<PageResult<List<UserModel>>> GetUsersAsync(UserQueryModel model)
         {
-            Expression<Func<User, bool>> ex = t => true;
-            if (!string.IsNullOrWhiteSpace(model.Name))
+            Expression<Func<User, bool>> ex = u => true;
+            if (!string.IsNullOrWhiteSpace(model.UserName))
             {
-                ex = t => t.Id.Contains(model.Name);
+                ex = u => u.Id.Contains(model.UserName);
+            }
+            if (!string.IsNullOrWhiteSpace(model.UserName))
+            {
+                ex = u => u.Id.Contains(model.UserName);
+            }
+            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+            {
+                ex = u => u.Id.Contains(model.PhoneNumber);
+            }
+            if (!string.IsNullOrWhiteSpace(model.Email))
+            {
+                ex = u => u.Id.Contains(model.Email);
             }
             var data = await _db.Users.Where(ex).ToDataSourceResultAsync(model);
             return new PageResult<List<UserModel>>

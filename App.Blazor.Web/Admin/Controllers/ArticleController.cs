@@ -35,9 +35,9 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpDelete("{id}")]
-        public Task<bool> DelArticle(string id)
+        public Task<bool> DeleteArticle(string id)
         {
-            return _articleService.DelArticleAsync(id);
+            return _articleService.DeleteArticleAsync(id);
         }
 
         [HttpPut("{id}")]

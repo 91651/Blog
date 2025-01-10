@@ -76,7 +76,7 @@ namespace App.Blazor.Web.Admin.Controllers
         /// <param name="filename"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<bool> Del(string id, string ownerId)
+        public async Task<bool> Delete(string id, string ownerId)
         {
             var existFile = await _fileServicer.GetFileAsync(id);
             if (existFile != null)

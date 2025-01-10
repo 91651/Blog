@@ -30,13 +30,17 @@ namespace App.Blazor.Web.Admin.Controllers
         [HttpPost]
         public async Task<bool> AddUser(UserModel model)
         {
-            var user = new User { UserName = model.UserName };
+            var user = new User { UserName = model.UserName, PhoneNumber = model.PhoneNumber, Email = model.Email };
             var result = await _userManager.CreateAsync(user);
+            if (!string.IsNullOrWhiteSpace(model.Password) & result.Succeeded)
+            {
+                result = await _userManager.AddPasswordAsync(user, model.Password);
+            }
             return result.Succeeded;
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DelUser(string id)
+        public async Task<bool> DeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -56,7 +60,15 @@ namespace App.Blazor.Web.Admin.Controllers
                 throw new BadHttpRequestException("用户不存在。");
             }
             user.UserName = model.UserName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.Email = model.Email;
             var result = await _userManager.UpdateAsync(user);
+            if (!string.IsNullOrWhiteSpace(model.Password) && result.Succeeded)
+            {
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                result = await _userManager.ResetPasswordAsync(user, resetToken, model.Password);
+            }
+
             return result.Succeeded;
         }
 
@@ -68,7 +80,7 @@ namespace App.Blazor.Web.Admin.Controllers
             {
                 throw new BadHttpRequestException("用户不存在。");
             }
-            var result = new UserModel { Id = user.Id, UserName = user.UserName };
+            var result = new UserModel { Id = user.Id, UserName = user.UserName, PhoneNumber = user.PhoneNumber, Email = user.Email };
             return result;
         }
 

@@ -1,24 +1,21 @@
 .page-container {
     .form-group {
         display: flex;
-        flex: auto;
         align-items: center;
         gap: 12px;
-        max-width: 360px;
 
         label {
+            flex: 0 0 20%;
+            text-align: end;
             white-space: nowrap;
         }
     }
 
     ::deep {
-        .ant-pro-page-container {
-            margin: -24px 1px;
-        }
 
         .ant-table {
             .ant-table-body {
-                max-height: 200px;
+                max-height: 420px;
             }
         }
     }

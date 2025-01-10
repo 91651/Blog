@@ -16,7 +16,7 @@ namespace App.Blazor.Admin.Data
         [Put("/api/admin/role/{id}")]
         Task<bool> UpdateRoleAsync(string id, RoleModel model);
         [Delete("/api/admin/role/{id}")]
-        Task<bool> DelRoleAsync(string id);
+        Task<bool> DeleteRoleAsync(string id);
         #endregion
 
         #region User Api
@@ -29,7 +29,7 @@ namespace App.Blazor.Admin.Data
         [Put("/api/admin/user/{id}")]
         Task<bool> UpdateUserAsync(string id, UserModel model);
         [Delete("/api/admin/user/{id}")]
-        Task<bool> DelUserAsync(string id);
+        Task<bool> DeleteUserAsync(string id);
         #endregion
 
     }

@@ -33,7 +33,7 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<bool> DelRole(string id)
+        public async Task<bool> DeleteRole(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)

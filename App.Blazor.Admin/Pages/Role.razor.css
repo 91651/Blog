@@ -6,13 +6,13 @@
   max-width: 360px;
 }
 .page-container .form-group label {
+  max-width: 20%;
+  flex: 0 0 20%;
+  text-align: end;
   white-space: nowrap;
 }
-.page-container ::deep .ant-pro-page-container {
-  margin: -24px 1px;
-}
 .page-container ::deep .ant-table .ant-table-body {
-  max-height: 200px;
+  max-height: 420px;
 }
 
 /*# sourceMappingURL=Role.razor.css.map */

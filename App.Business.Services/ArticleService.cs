@@ -43,7 +43,7 @@ namespace App.Business.Services
             return entity.Id;
         }
 
-        public async Task<bool> DelArticleAsync(string id)
+        public async Task<bool> DeleteArticleAsync(string id)
         {
             var entity = await _articleRepository.GetByIdAsync(id);
             entity.State = 0;
