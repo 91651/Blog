@@ -1,28 +1,23 @@
 ﻿using System.Linq.Expressions;
 using App.Business.Model;
 using App.DbAccess.Entities;
-using App.DbAccess.Repositories;
+using App.DbAccess.Infrastructure;
 using App.EFCore.DynamicLinq;
 using App.Util;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using File = App.DbAccess.Entities.File;
 
 namespace App.Business.Services
 {
     public class ArticleService : IArticleService
     {
+        private readonly AppDbContext _db;
         private readonly IMapper _mapper;
-        private readonly IRepository<Article> _articleRepository;
-        private readonly IRepository<Channel> _channleRepository;
-        private readonly IRepository<File> _fileRepository;
 
-        public ArticleService(IMapper mapper, IRepository<Article> articleRepository, IRepository<Channel> channleRepository, IRepository<File> fileRepository)
+        public ArticleService(AppDbContext db, IMapper mapper)
         {
+            _db = db;
             _mapper = mapper;
-            _articleRepository = articleRepository;
-            _channleRepository = channleRepository;
-            _fileRepository = fileRepository;
         }
 
         public async Task<string> AddArticleAsync(ArticleModel model)
@@ -32,44 +27,44 @@ namespace App.Business.Services
             model.State = 1;
             var entity = _mapper.Map<Article>(model);
             entity.Id = Guid.NewGuid().ToString(10);
-            await _articleRepository.AddAsync(entity);
+            await _db.Articles.AddAsync(entity);
             //包含的文件处理
             if (model.Files != null)
             {
-                await _fileRepository.GetAll().Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
+                await _db.Files.Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
             }
 
-            await _articleRepository.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             return entity.Id;
         }
 
         public async Task<bool> DeleteArticleAsync(string id)
         {
-            var entity = await _articleRepository.GetByIdAsync(id);
+            var entity = await _db.Articles.FindAsync(id);
             entity.State = 0;
-            var rows = await _articleRepository.SaveChangesAsync();
+            var rows = await _db.SaveChangesAsync();
             return rows > 0;
         }
         public async Task<bool> UpdateArticleAsync(ArticleModel model)
         {
             model.Updated = DateTime.Now;
             var entity = _mapper.Map<Article>(model);
-            _articleRepository.Update(entity);
-            _articleRepository.Entry(entity).Property(nameof(entity.Created)).IsModified = false;
-            _articleRepository.Entry(entity).Property(nameof(entity.UserId)).IsModified = false;
+            _db.Articles.Update(entity);
+            _db.Entry(entity).Property(nameof(entity.Created)).IsModified = false;
+            _db.Entry(entity).Property(nameof(entity.UserId)).IsModified = false;
             //包含的文件处理
             if (model.Files != null)
             {
-                await _fileRepository.GetAll().Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
+                await _db.Files.Where(f => model.Files.Contains(f.Id)).ForEachAsync(f => f.OwnerId = entity.Id);
             }
 
-            var rows = await _articleRepository.SaveChangesAsync();
+            var rows = await _db.SaveChangesAsync();
             return rows > 0;
         }
 
         public async Task<ArticleModel> GetArticleAsync(string id)
         {
-            var query = _articleRepository.GetAll().Where(a => a.Id.EndsWith(id));
+            var query = _db.Articles.Where(a => a.Id.EndsWith(id));
             var model = await _mapper.ProjectTo<ArticleModel>(query).FirstOrDefaultAsync();
             return model;
         }
@@ -95,7 +90,7 @@ namespace App.Business.Services
             {
                 ex = ex.And(t => t.Title.Contains(model.Keyword) || t.SubTitle.Contains(model.Keyword) || t.Summary.Contains(model.Keyword) || t.Content.Contains(model.Keyword));
             }
-            var data = await _articleRepository.GetAll().Include(i => i.Channel).Include(i => i.User).Include(i => i.Comments).Include(i => i.Files).Where(ex).ToDataSourceResultAsync(model);
+            var data = await _db.Articles.Include(i => i.Channel).Include(i => i.User).Include(i => i.Comments).Include(i => i.Files).Where(ex).ToDataSourceResultAsync(model);
             return new PageResult<List<ArticleListModel>>
             {
                 Data = _mapper.Map<List<ArticleListModel>>(data.Data),
@@ -105,23 +100,23 @@ namespace App.Business.Services
 
         public async Task<ArticleModel> GetPrevArticleAsync(string id)
         {
-            var article = await _articleRepository.GetByIdAsync(id);
-            var entity = await _articleRepository.GetAll().Where(a => a.ChannelId == article.ChannelId && a.Updated < article.Updated).OrderByDescending(o => o.Updated).FirstOrDefaultAsync();
+            var article = await _db.Articles.FindAsync(id);
+            var entity = await _db.Articles.Where(a => a.ChannelId == article.ChannelId && a.Updated < article.Updated).OrderByDescending(o => o.Updated).FirstOrDefaultAsync();
             var model = _mapper.Map<ArticleModel>(entity);
             return model;
         }
-        public async Task<ArticleModel> GetNextArticleAsync(string Id)
+        public async Task<ArticleModel> GetNextArticleAsync(string id)
         {
-            var article = await _articleRepository.GetByIdAsync(Id);
-            var entity = await _articleRepository.GetAll().Where(a => a.ChannelId == article.ChannelId && a.Updated > article.Updated).OrderBy(o => o.Updated).FirstOrDefaultAsync();
+            var article = await _db.Articles.FindAsync(id);
+            var entity = await _db.Articles.Where(a => a.ChannelId == article.ChannelId && a.Updated > article.Updated).OrderBy(o => o.Updated).FirstOrDefaultAsync();
             var model = _mapper.Map<ArticleModel>(entity);
             return model;
         }
         public async Task<int> UpdateArticleViewedAsync(string id)
         {
-            var article = await _articleRepository.GetByIdAsync(id);
+            var article = await _db.Articles.FindAsync(id);
             article.Viewed++;
-            await _articleRepository.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             return article.Viewed;
         }
     }

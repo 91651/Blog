@@ -6,7 +6,6 @@ using App.Blazor.Web.Middleware;
 using App.Business.Services.AutoMapper;
 using App.DbAccess.Entities.Identity;
 using App.DbAccess.Infrastructure;
-using App.DbAccess.Repositories;
 using BC.Microsoft.DependencyInjection.Plus;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -25,6 +24,7 @@ var services = builder.Services;
 services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
 services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]));
 services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
 services.Configure<IdentityOptions>(options =>
 {
     //配置用户密码策略
@@ -39,6 +39,16 @@ services.ConfigureApplicationCookie(o =>
     o.Cookie.SameSite = SameSiteMode.None;
     o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     o.Cookie.HttpOnly = true;
+    o.Events.OnRedirectToLogin = (context) =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+    o.Events.OnRedirectToAccessDenied = (context) =>
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
 });
 services.AddMemoryCache();
 services.AddControllersWithViews(opt =>
@@ -51,20 +61,12 @@ services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
 services.AddServerSideBlazor();
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
-services.AddAuthentication().AddCookie(o =>
-{
-    o.Events.OnRedirectToLogin = (context) =>
-    {
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        return Task.CompletedTask;
-    };
-});
+services.AddAuthentication().AddCookie();
 services.AddEndpointsApiExplorer();
 services.AddRouting(options => options.LowercaseUrls = true);
 services.AddOpenApiDocument();
 services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(origin => true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
-services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 services.AddScopedFromAssembly(nameof(App.Business.Services), o => o.Matching = true);
 
 builder.Services.AddSlideCaptcha(builder.Configuration);

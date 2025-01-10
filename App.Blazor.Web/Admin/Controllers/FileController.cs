@@ -82,7 +82,7 @@ namespace App.Blazor.Web.Admin.Controllers
             if (existFile != null)
             {
                 var isMultipleOwner = await _fileServicer.IsMultipleOwnerAsync(id, ownerId);
-                var result = await _fileServicer.DelFileAsync(existFile.Id);
+                var result = await _fileServicer.DeleteFileAsync(existFile.Id);
                 if (!isMultipleOwner && result)
                 {
                     var filename = existFile.Name;
