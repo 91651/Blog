@@ -1,0 +1,28 @@
+@media screen and (min-width: 850px) {
+  .NewYear {
+    width: 150px;
+    height: 200px;
+    display: inline-block;
+    background: url(https://img.alicdn.com/imgextra/i1/2210123621994/O1CN01mCJxMU1QbImPZHBHZ_!!2210123621994.webp) no-repeat 50%/100%;
+    vertical-align: middle;
+    position: fixed;
+    left: 85%;
+    top: 60px;
+    z-index: 999;
+    cursor: pointer;
+    animation: new-year 1.2s ease-in-out 0s infinite alternate;
+    margin-left: -1px;
+    transform-origin: 50% 0;
+    pointer-events: none;
+  }
+}
+@keyframes new-year {
+  0% {
+    transform: rotate(10deg);
+  }
+  100% {
+    transform: rotate(-10deg);
+  }
+}
+
+/*# sourceMappingURL=NewYear2025.razor.css.map */
