@@ -172,7 +172,7 @@
 
     private async Task Del(string id)
     {
-        var result = await API.DelRoleAsync(id);
+        var result = await API.DeleteRoleAsync(id);
         if (result)
         {
             await GetRoles();

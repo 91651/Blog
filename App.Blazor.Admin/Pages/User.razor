@@ -15,24 +15,38 @@
 
 <div class="page-container">
     <Card>
-        <Flex Justify="FlexJustify.SpaceBetween" Align="FlexAlign.FlexEnd">
-            <Flex Justify="FlexJustify.Start" Align="FlexAlign.Center" Gap="FlexGap.Large" Wrap="FlexWrap.Wrap" style="width:100%;">
+        <GridRow Gutter="(16, 16)">
+            <GridCol Span="24" Md="12" Lg="6">
                 <div class="form-group">
                     <label for="name">用户名称</label>
-                    <Input Placeholder="请输入用户名称" @bind-Value="@query.Name" />
+                    <Input Placeholder="请输入用户名称" @bind-Value="@query.UserName" />
                 </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">手机号</label>
+                    <Input Placeholder="手机号" @bind-Value="@query.PhoneNumber" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">邮箱</label>
+                    <Input Placeholder="请输入邮箱" @bind-Value="@query.Email" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">邮箱</label>
+                    <Input Placeholder="请输入邮箱" @bind-Value="@query.Email" />
+                </div>
+            </GridCol>
+            <Flex Justify="FlexJustify.FlexEnd" FlexCss="auto" Gap="FlexGap.Middle">
+                <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
+                <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
+                    搜索
+                </Button>
             </Flex>
-            <Space Size="SpaceSize.Middle">
-                <SpaceItem>
-                    <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
-                </SpaceItem>
-                <SpaceItem>
-                    <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
-                        搜索
-                    </Button>
-                </SpaceItem>
-            </Space>
-        </Flex>
+        </GridRow>
     </Card>
     <br />
     <Card Title=@("用户列表")>
@@ -52,6 +66,8 @@
                    @bind-PageSize="query.PageSize"
                    OnChange="OnChange" AutoHeight>
                 <PropertyColumn Property="c=>c.UserName" />
+                <PropertyColumn Property="c=>c.PhoneNumber" />
+                <PropertyColumn Property="c=>c.Email" />
                 <ActionColumn Title="操作" Width="180">
                     <Space>
                         <SpaceItem>
@@ -73,6 +89,17 @@
               OnFinish="Submit">
             <FormItem Label="用户名称" Required>
                 <Input @bind-Value="@context.UserName" />
+            </FormItem>
+            <FormItem Label="手机号">
+                <Input @bind-Value="@context.PhoneNumber" />
+            </FormItem>
+            <FormItem Label="邮箱">
+                <Input @bind-Value="@context.Email" />
+            </FormItem>
+            <FormItem Label="密码">
+                <Input @bind-Value="@context.Password" />
+                <p></p>
+                <Alert Type="@AlertType.Warning" ShowIcon="true" Message="输入密码，将更新为新密码" />
             </FormItem>
             <FormItem>
                 <Flex Justify="FlexJustify.FlexEnd" Align="FlexAlign.Center" Gap="FlexGap.Middle">
@@ -172,7 +199,7 @@
 
     private async Task Del(string id)
     {
-        var result = await API.DelUserAsync(id);
+        var result = await API.DeleteUserAsync(id);
         if (result)
         {
             await GetUsers();

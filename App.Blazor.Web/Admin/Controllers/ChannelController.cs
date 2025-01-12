@@ -26,9 +26,9 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpDelete("{id}")]
-        public Task<bool> DelChannel(string Id)
+        public Task<bool> DeleteChannel(string Id)
         {
-            return _channelService.DelChannelAsync(Id);
+            return _channelService.DeleteChannelAsync(Id);
         }
 
         [HttpPut("{id}")]
