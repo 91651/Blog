@@ -1,4 +1,4 @@
-using App.Business.Model;
+﻿using App.Business.Model;
 using App.Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +26,9 @@ namespace App.Blazor.Web.Admin.Controllers
         }
 
         [HttpDelete("{id}")]
-        public Task<bool> DeleteChannel(string Id)
+        public Task<bool> DeleteChannel(string id)
         {
-            return _channelService.DeleteChannelAsync(Id);
+            return _channelService.DeleteChannelAsync(id);
         }
 
         [HttpPut("{id}")]

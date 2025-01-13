@@ -1,4 +1,4 @@
-using System.Text.Encodings.Web;
+锘縰sing System.Text.Encodings.Web;
 using System.Text.Unicode;
 using AntDesign.ProLayout;
 using App.Blazor.Admin;
@@ -16,7 +16,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 var services = builder.Services;
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 services.AddHttpClient(nameof(App.Blazor.Admin), client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)).AddHttpMessageHandler<AppAuthorizationMessageHandler>();
-services.AddRefitClient<IAdminApiProvider>().ConfigureHttpClient(c => {
+services.AddRefitClient<IAdminApiProvider>().ConfigureHttpClient(c =>
+{
     var uri = new Uri(builder.HostEnvironment.BaseAddress);
     var baseUrl = uri.GetLeftPart(UriPartial.Authority);
     c.BaseAddress = new Uri(baseUrl);
@@ -30,7 +31,7 @@ services.AddSingleton<AuthenticationStateProvider>(p => p.GetRequiredService<App
 services.AddAntDesign();
 services.Configure<ProSettings>(x =>
 {
-    x.Title = "内容管理后台";
+    x.Title = "鍐呭绠＄悊鍚庡彴";
     x.NavTheme = "light";
     x.Layout = "mix";
     x.PrimaryColor = "daybreak";

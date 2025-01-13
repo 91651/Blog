@@ -1,4 +1,4 @@
-using Lazy.SlideCaptcha.Core;
+﻿using Lazy.SlideCaptcha.Core;
 using Lazy.SlideCaptcha.Core.Validator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;

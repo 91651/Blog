@@ -1,4 +1,4 @@
-.logo:before {
+﻿.logo:before {
     line-height:36px;
     font-size: 22px;
     content: "\9047\89C1\65F6\5149";
@@ -6,4 +6,10 @@
 
 .site-header .iconButton {
     cursor: pointer;
+}
+
+.icon {
+    margin: 0 5px 0 0;
+    width: 16px;
+    height: 16px;
 }

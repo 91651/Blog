@@ -1,4 +1,4 @@
-
+﻿
 export function addClass(element, classname) {
     if (element && element.classList) {
         element.classList.add(classname);

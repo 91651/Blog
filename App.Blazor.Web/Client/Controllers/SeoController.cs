@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using App.Business.Model;
 using App.Business.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,7 @@ namespace App.Blazor.Web.Client.Controllers
             // home
             sitemap.Add(new Url
             {
-                ChangeFrequency = ChangeFrequency.Yearly,
+                ChangeFrequency = ChangeFrequency.Daily,
                 Location = baseUrl,
                 Priority = 1.0,
                 TimeStamp = DateTime.Now.Date
