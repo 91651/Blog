@@ -1,4 +1,4 @@
-using App.Business.Model;
+Ôªøusing App.Business.Model;
 using App.Business.Services;
 using App.DbAccess.Entities.Identity;
 using App.EFCore.DynamicLinq;
@@ -38,7 +38,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                throw new BadHttpRequestException("Ω«…´≤ª¥Ê‘⁄°£");
+                throw new BadHttpRequestException("ËßíËâ≤‰∏çÂ≠òÂú®„ÄÇ");
             }
             var result = await _roleManager.DeleteAsync(role);
             return result.Succeeded;
@@ -50,7 +50,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var role = await _roleManager.FindByIdAsync(model.Id);
             if (role == null)
             {
-                throw new BadHttpRequestException("Ω«…´≤ª¥Ê‘⁄°£");
+                throw new BadHttpRequestException("ËßíËâ≤‰∏çÂ≠òÂú®„ÄÇ");
             }
             role.Name = model.Name;
             var result = await _roleManager.UpdateAsync(role);
@@ -63,7 +63,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                throw new BadHttpRequestException("Ω«…´≤ª¥Ê‘⁄°£");
+                throw new BadHttpRequestException("ËßíËâ≤‰∏çÂ≠òÂú®„ÄÇ");
             }
             var result = new RoleModel { Id = role.Id, Name = role.Name };
             return result;

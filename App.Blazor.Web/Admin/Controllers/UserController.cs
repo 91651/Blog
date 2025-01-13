@@ -1,4 +1,4 @@
-using App.Business.Model;
+Ôªøusing App.Business.Model;
 using App.Business.Services;
 using App.DbAccess.Entities.Identity;
 using App.EFCore.DynamicLinq;
@@ -45,7 +45,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                throw new BadHttpRequestException("”√ªß≤ª¥Ê‘⁄°£");
+                throw new BadHttpRequestException("Áî®Êà∑‰∏çÂ≠òÂú®„ÄÇ");
             }
             var result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
@@ -57,7 +57,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var user = await _userManager.FindByIdAsync(model.Id);
             if (user == null)
             {
-                throw new BadHttpRequestException("”√ªß≤ª¥Ê‘⁄°£");
+                throw new BadHttpRequestException("Áî®Êà∑‰∏çÂ≠òÂú®„ÄÇ");
             }
             user.UserName = model.UserName;
             user.PhoneNumber = model.PhoneNumber;
@@ -78,7 +78,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                throw new BadHttpRequestException("”√ªß≤ª¥Ê‘⁄°£");
+                throw new BadHttpRequestException("Áî®Êà∑‰∏çÂ≠òÂú®„ÄÇ");
             }
             var result = new UserModel { Id = user.Id, UserName = user.UserName, PhoneNumber = user.PhoneNumber, Email = user.Email };
             return result;

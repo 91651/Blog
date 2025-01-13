@@ -1,4 +1,4 @@
-using App.Business.Model;
+ï»¿using App.Business.Model;
 using App.DbAccess.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +29,7 @@ namespace App.Blazor.Web.Admin.Controllers
             var user = await _userManager.FindByNameAsync(model.Name);
             if (user == null)
             {
-                return Unauthorized("ÓÃ»§ĞÅÏ¢²»´æÔÚ£¬Çë¼ì²éÄúÊäÈëµÄÕË»§¡£");
+                return Unauthorized("ç”¨æˆ·ä¿¡æ¯ä¸å­˜åœ¨ï¼Œè¯·æ£€æŸ¥æ‚¨è¾“å…¥çš„è´¦æˆ·ã€‚");
             }
             var signIn = await _signInManager.PasswordSignInAsync(user, model.Pwd, false, false);
             if (signIn.Succeeded)
@@ -38,11 +38,11 @@ namespace App.Blazor.Web.Admin.Controllers
             }
             else if (signIn.IsLockedOut)
             {
-                return Unauthorized("ÓÃ»§ÒÑ¾­±»Ëø¶¨£¬ÇëÁªÏµ¹ÜÀíÔ±½âËø¡£");
+                return Unauthorized("ç”¨æˆ·å·²ç»è¢«é”å®šï¼Œè¯·è”ç³»ç®¡ç†å‘˜è§£é”ã€‚");
             }
             else
             {
-                return Unauthorized("ÓÃ»§Ãû»òÃÜÂë´íÎó¡£");
+                return Unauthorized("ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯ã€‚");
             }
         }
 

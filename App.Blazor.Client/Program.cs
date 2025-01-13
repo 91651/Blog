@@ -1,4 +1,4 @@
-using App.Blazor.Client.Data;
+﻿using App.Blazor.Client.Data;
 using App.Blazor.Client.Shared;
 using JSInterop;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
