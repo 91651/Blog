@@ -1,6 +1,9 @@
 ﻿@page "/speedtest"
 @rendermode InteractiveAuto
 
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
 
 <PageTitle>网速测试 | 遇见时光-1023.org.cn</PageTitle>
@@ -36,8 +39,8 @@
             <div class="form-group">
                 <label class="form-label">测试地址</label>
                 <div class="form-control-wrap">
-                    <select id="select" onchange="document.getElementById('link').value=this.options[this.selectedIndex].value;setCookie('select',this.selectedIndex,365);" type="text" class="form-control">
-                        <option value="" id="diy">自定义</option>
+                    <select type="text" class="form-control" @onchange="(ChangeEventArgs e) =>{SelectedUrl = e.Value?.ToString(); TestUrl = SelectedUrl;}">
+                        <option>自定义</option>
                         <option selected="selected" value="https://wppkg.baidupcs.com/issue/netdisk/apk/BaiduNetdisk_10.1.02.apk">百度CDN [高速]</option>
                         <option value="https://kodo-toolbox.qiniu.com/kodo-browser-Linux-x64-v1.0.17.zip">七牛云CDN [高速]</option>
                         <option value="https://img.alicdn.com/imgextra/i1/O1CN01xA4P9S1JsW2WEg0e1_!!6000000001084-2-tps-2880-560.png">阿里CDN</option>
@@ -53,7 +56,7 @@
                         <option value="https://cachefly.cachefly.net/100mb.test">Cachefly Test [Global]</option>
                         <option value="https://speed.cloudflare.com/__down?bytes=1073741824">Cloudflare Speed [Global]</option>
                     </select>
-                    <input value="" oninput="document.getElementById('select').selectedIndex=0;document.getElementById('diy').value=this.value;setCookie('diy',this.value,365);setCookie('select',0,365);" type="text" id="link" placeholder="请输入下载链接" autocomplete="off" class="form-control">
+                    <input @oninput="HandleInput" type="text" placeholder="请输入下载链接" autocomplete="off" class="form-control">
                 </div>
             </div>
             <div class="form-group">
@@ -69,7 +72,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="botton_clicked();" type="button" id="do" class="btn btn-dim btn-outline-secondary btn-block card-link">
+            <button type="button" class="btn btn-dim btn-outline-secondary btn-block card-link" @onclick="ToggleTest">
                 开始
             </button>
             <div class="row mt-4">
@@ -81,7 +84,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">总流量<a id="showMax"></a></div>
-                    <div class="stat-value" id="total">-</div>
+                    <div class="stat-value">@(TotalDownload)</div>
                 </div>
                 <div class="col-sm-12 col-md-4 border stat">
                     <div class="text-info">
@@ -90,8 +93,8 @@
                             </path>
                         </svg>
                     </div>
-                    <div class="stat-title" id="describe">实时速度</div>
-                    <div class="stat-value text-info" id="speed">-</div>
+                    <div class="stat-title">实时速度</div>
+                    <div class="stat-value text-info">@("Description")</div>
                 </div>
                 <div class="col-sm-12 col-md-4 border stat">
                     <div class="text-dark">
@@ -110,12 +113,12 @@
             <h6><em class="icon ni ni-info"></em>出口地址</h6>
             <div class="accordion-inner">
                 <li class="nk-menu-item ">
-                    <a class="text-waring" style="pointer-events:none;" id="ipcn">Loading...</a>
-                    <a class="text-waring" style="pointer-events:none;float: right;" id="laycn">13ms</a>
+                    <a class="text-waring" style="pointer-events:none;">@(ChinaIpInfo)</a>
+                    <a class="text-waring" style="pointer-events:none;float: right;">@(ChinaLatency)</a>
                 </li>
                 <li class="nk-menu-item ">
-                    <a style="pointer-events:none;" id="ipgb">4.240.84.214 印度 Microsoft Azure</a>
-                    <a style="pointer-events: none; float: right; color: green;" id="laygb">175ms</a>
+                    <a style="pointer-events:none;">@(GlobalIpInfo)</a>
+                    <a style="pointer-events: none; float: right; color: green;">@(GlobalLatency)</a>
                 </li>
             </div>
         </div>
@@ -123,5 +126,197 @@
 </div>
 
 @code {
-    
+    private string? SelectedUrl { get; set; } = "";
+    private string? TestUrl { get; set; } = "";
+    // 状态变量
+    private bool IsRunning = false;
+    private int MaxThreads = 1;
+    private string ButtonText = "开始";
+    private string Description = "实时速度";
+
+    // 下载统计
+    private long LastTotalDownload = 0;
+    private long TotalDownload = 0;
+    private double RealTimeSpeed = 0;
+    private double RealTimeMbps = 0;
+
+    // IP 信息
+    private string ChinaIpInfo = "获取中...";
+    private string GlobalIpInfo = "获取中...";
+    private string ChinaLatency = "-ms";
+    private string GlobalLatency = "-ms";
+
+    // 线程下载数据
+    private List<long> ThreadDownloads = new();
+
+    // 开始时间
+    private DateTime StartTime;
+
+    // 切换测试状态
+    private async void ToggleTest()
+    {
+        if (IsRunning)
+        {
+            StopTest();
+        }
+        else
+        {
+            await StartTest();
+        }
+    }
+
+    // 开始测试
+    private async Task StartTest()
+    {
+        if (string.IsNullOrWhiteSpace(TestUrl) || !Uri.IsWellFormedUriString(TestUrl, UriKind.Absolute))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "链接不合法");
+            return;
+        }
+
+        // 初始化状态
+        IsRunning = true;
+        ButtonText = "停止";
+        Description = "实时速度";
+        StartTime = DateTime.Now;
+        TotalDownload = 0;
+        ThreadDownloads = Enumerable.Repeat(0L, MaxThreads).ToList();
+
+        // 启动线程
+        for (int i = 0; i < MaxThreads; i++)
+        {
+            _ = DownloadThread(i);
+        }
+
+        // 启动统计
+        _ = CalculateSpeed();
+    }
+
+    // 停止测试
+    private void StopTest()
+    {
+        IsRunning = false;
+        ButtonText = "开始";
+        Description = "平均速度";
+    }
+
+    // 下载线程
+    private async Task DownloadThread(int index)
+    {
+        while (IsRunning)
+        {
+            try
+            {
+                var response = await Http.GetAsync(TestUrl, HttpCompletionOption.ResponseHeadersRead);
+                var stream = await response.Content.ReadAsStreamAsync();
+
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+
+                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    if (!IsRunning) break;
+
+                    ThreadDownloads[index] += bytesRead;
+                }
+            }
+            catch
+            {
+                // 重试
+                if (IsRunning) await Task.Delay(1000);
+            }
+        }
+    }
+
+    // 计算速度
+    private async Task CalculateSpeed()
+    {
+        while (IsRunning)
+        {
+            await Task.Delay(1000);
+
+            long currentTotal = ThreadDownloads.Sum();
+            RealTimeSpeed = (currentTotal - LastTotalDownload) / 1024.0; // KB/s
+            RealTimeMbps = RealTimeSpeed * 8 / 1024.0; // Mbps
+            LastTotalDownload = currentTotal;
+
+            StateHasChanged();
+        }
+
+        // 平均速度
+        long finalTotal = ThreadDownloads.Sum();
+        RealTimeSpeed = finalTotal / (DateTime.Now - StartTime).TotalSeconds / 1024.0;
+        RealTimeMbps = RealTimeSpeed * 8 / 1024.0;
+
+        StateHasChanged();
+    }
+
+    // 获取 IP 信息
+    protected override async Task OnInitializedAsync()
+    {
+        _ = FetchIpInfo();
+        _ = FetchLatency();
+    }
+
+    private async Task FetchIpInfo()
+    {
+        while (true)
+        {
+            try
+            {
+                var chinaInfo = await Http.GetFromJsonAsync<IpInfo>("https://forge.speedtest.cn/api/location/info");
+                ChinaIpInfo = $"{chinaInfo?.Ip} {chinaInfo?.Province} {chinaInfo?.City} {chinaInfo?.Isp}";
+
+                var globalInfo = await Http.GetFromJsonAsync<IpInfo>("https://api-ipv4.ip.sb/geoip");
+                GlobalIpInfo = $"{globalInfo?.Ip} {globalInfo?.Country} {globalInfo?.Isp}";
+            }
+            catch
+            {
+                ChinaIpInfo = "获取失败";
+                GlobalIpInfo = "获取失败";
+            }
+
+            await Task.Delay(5000);
+        }
+    }
+
+    private async Task FetchLatency()
+    {
+        while (true)
+        {
+            try
+            {
+                var start = DateTime.Now;
+                await Http.GetAsync("https://connectivitycheck.platform.hicloud.com/generate_204");
+                ChinaLatency = $"{(DateTime.Now - start).TotalMilliseconds}ms";
+            }
+            catch
+            {
+                ChinaLatency = "-ms";
+            }
+
+            try
+            {
+                var start = DateTime.Now;
+                await Http.GetAsync("https://cp.cloudflare.com/");
+                GlobalLatency = $"{(DateTime.Now - start).TotalMilliseconds}ms";
+            }
+            catch
+            {
+                GlobalLatency = "-ms";
+            }
+
+            await Task.Delay(1000);
+        }
+    }
+
+    // IP 信息模型
+    private class IpInfo
+    {
+        public string Ip { get; set; }
+        public string Province { get; set; }
+        public string City { get; set; }
+        public string Isp { get; set; }
+        public string Country { get; set; }
+    }
 }
