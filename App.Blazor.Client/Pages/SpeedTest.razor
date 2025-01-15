@@ -3,6 +3,7 @@
 
 @using System.Net.Http.Json
 @using System.Net.Http.Headers
+@using System.Globalization
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
@@ -85,7 +86,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">总流量<a id="showMax"></a></div>
-                    <div class="stat-value">@(AllDownSum)</div>
+                    <div class="stat-value">@(AllDownSum == null ? "-" : FormatSpeed(AllDownSum ?? 0, new[] { "B", "KB", "MB", "GB", "TB", "PB" }, new[] { 0, 0, 1, 2, 2, 2 }))</div>
                 </div>
                 <div class="col-sm-12 col-md-4 border stat">
                     <div class="text-info">
@@ -95,7 +96,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">实时速度</div>
-                    <div class="stat-value text-info">@(RealTimeSpeed.ToString() ?? "-")</div>
+                    <div class="stat-value text-info">@(RealTimeSpeed == null ? "-" : FormatSpeed(RealTimeSpeed ?? 0, new[] { "B/s", "KB/s", "MB/s", "GB/s", "TB/s", "PB/s" }, new[] { 0, 0, 1, 2, 2, 2 }))</div>
                 </div>
                 <div class="col-sm-12 col-md-4 border stat">
                     <div class="text-dark">
@@ -104,7 +105,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">带宽</div>
-                    <div class="stat-value">@(RealTimeMbps.ToString() ?? "-")</div>
+                    <div class="stat-value">@(RealTimeMbps == null ? "-" : FormatSpeed(RealTimeMbps ?? 0, new[] { "Bps", "Kbps", "Mbps", "Gbps", "Tbps", "Pbps" }, new[] { 0, 0, 0, 2, 2, 2 }))</div>
                 </div>
             </div>
         </div>
@@ -138,7 +139,7 @@
 
     // 下载统计
     private long Maximum = 0;
-    private long AllDownSum = 0;
+    private long? AllDownSum = 0;
     private long LastTotalDownload = 0;
     private double? RealTimeSpeed;
     private double? RealTimeMbps;
@@ -156,7 +157,7 @@
     private DateTime StartTime;
 
     // 切换测试状态
-    private async void ToggleTest()
+    private async Task ToggleTest()
     {
         if (IsRunning)
         {
@@ -164,7 +165,7 @@
         }
         else
         {
-            await StartTest();
+            Task.Run( StartTest);
         }
     }
 
@@ -194,10 +195,6 @@
         {
             var http = new HttpClient();
             http.DefaultRequestHeaders.Referrer = null;
-            http.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoStore = true
-            };
             var response = await http.GetAsync(TestUrl, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
@@ -226,6 +223,7 @@
 
         // 启动统计
         _ = CalculateSpeed();
+        _ = CalculateTotal();
     }
 
     // 停止测试
@@ -284,6 +282,36 @@
         RealTimeMbps = RealTimeSpeed * 8 / 1024.0;
 
         StateHasChanged();
+    }
+
+    private async Task CalculateTotal()
+    {
+        long currentTotal = ThreadDownloads.Sum();
+        AllDownSum += currentTotal;
+        if (AllDownSum >= Maximum && Maximum != 0)
+        {
+            IsRunning = false;
+        }
+        if (IsRunning)
+        {
+            await Task.Delay(100);
+            await CalculateTotal();
+        }
+    }
+
+    private string FormatSpeed(double num, string[] des, int[] flo)
+    {
+        double cnum = num;
+        int totalIndex = 0;
+
+        while (cnum >= 1024)
+        {
+            if (totalIndex == des.Length - 1) break;
+            cnum /= 1024;
+            totalIndex++;
+        }
+
+        return cnum.ToString($"F{flo[totalIndex]}", CultureInfo.InvariantCulture) + des[totalIndex];
     }
 
     // 获取 IP 信息
