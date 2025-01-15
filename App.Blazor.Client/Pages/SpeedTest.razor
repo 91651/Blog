@@ -2,6 +2,7 @@
 @rendermode InteractiveAuto
 
 @using System.Net.Http.Json
+@using System.Net.Http.Headers
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
@@ -14,22 +15,22 @@
 
 <style>
     .stat {
-        width: 100%;
-        column-gap: 1rem;
-        padding: 1rem 1.5rem;
+    width: 100%;
+    column-gap: 1rem;
+    padding: 1rem 1.5rem;
     }
 
     .stat-title {
-        white-space: nowrap;
-        opacity: .6;
+    white-space: nowrap;
+    opacity: .6;
     }
 
     .stat-value {
-        white-space: nowrap;
-        grid-column-start: 1;
-        font-size: 1.8rem;
-        font-weight: 700;
-        line-height: 2.5rem
+    white-space: nowrap;
+    grid-column-start: 1;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 2.5rem
     }
 </style>
 <div class="container">
@@ -39,8 +40,8 @@
             <div class="form-group">
                 <label class="form-label">测试地址</label>
                 <div class="form-control-wrap">
-                    <select type="text" class="form-control" @onchange="(ChangeEventArgs e) =>{SelectedUrl = e.Value?.ToString(); TestUrl = SelectedUrl;}">
-                        <option>自定义</option>
+                    <select type="text" class="form-control" @bind="SelectedUrl" @bind:after="() =>{TestUrl = SelectedUrl;}">
+                        <option value="">自定义</option>
                         <option selected="selected" value="https://wppkg.baidupcs.com/issue/netdisk/apk/BaiduNetdisk_10.1.02.apk">百度CDN [高速]</option>
                         <option value="https://kodo-toolbox.qiniu.com/kodo-browser-Linux-x64-v1.0.17.zip">七牛云CDN [高速]</option>
                         <option value="https://img.alicdn.com/imgextra/i1/O1CN01xA4P9S1JsW2WEg0e1_!!6000000001084-2-tps-2880-560.png">阿里CDN</option>
@@ -56,7 +57,7 @@
                         <option value="https://cachefly.cachefly.net/100mb.test">Cachefly Test [Global]</option>
                         <option value="https://speed.cloudflare.com/__down?bytes=1073741824">Cloudflare Speed [Global]</option>
                     </select>
-                    <input @oninput="HandleInput" type="text" placeholder="请输入下载链接" autocomplete="off" class="form-control">
+                    <input @bind="TestUrl" @oninput='() => {SelectedUrl = "";}' type="text" placeholder="请输入下载链接" autocomplete="off" class="form-control">
                 </div>
             </div>
             <div class="form-group">
@@ -72,8 +73,8 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-dim btn-outline-secondary btn-block card-link" @onclick="ToggleTest">
-                开始
+            <button type="button" class="btn btn-dim btn-outline-secondary btn-block card-link" disabled="@IsTaskDisabled" @onclick="ToggleTest">
+                @(TaskText ?? "开始")
             </button>
             <div class="row mt-4">
                 <div class="col-sm-12 col-md-4 border stat" onclick="inputMax=prompt(&quot;请输入流量上限(GB)\n不填为不设置上限&quot;,&quot;&quot;);if(inputMax !== null)setMax(inputMax)">
@@ -84,7 +85,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">总流量<a id="showMax"></a></div>
-                    <div class="stat-value">@(TotalDownload)</div>
+                    <div class="stat-value">@(AllDownSum)</div>
                 </div>
                 <div class="col-sm-12 col-md-4 border stat">
                     <div class="text-info">
@@ -94,7 +95,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">实时速度</div>
-                    <div class="stat-value text-info">@("Description")</div>
+                    <div class="stat-value text-info">@(RealTimeSpeed.ToString() ?? "-")</div>
                 </div>
                 <div class="col-sm-12 col-md-4 border stat">
                     <div class="text-dark">
@@ -103,7 +104,7 @@
                         </svg>
                     </div>
                     <div class="stat-title">带宽</div>
-                    <div class="stat-value" id="mbps">-</div>
+                    <div class="stat-value">@(RealTimeMbps.ToString() ?? "-")</div>
                 </div>
             </div>
         </div>
@@ -131,14 +132,16 @@
     // 状态变量
     private bool IsRunning = false;
     private int MaxThreads = 1;
-    private string ButtonText = "开始";
+    private string? TaskText = "开始";
+    private bool IsTaskDisabled = false;
     private string Description = "实时速度";
 
     // 下载统计
+    private long Maximum = 0;
+    private long AllDownSum = 0;
     private long LastTotalDownload = 0;
-    private long TotalDownload = 0;
-    private double RealTimeSpeed = 0;
-    private double RealTimeMbps = 0;
+    private double? RealTimeSpeed;
+    private double? RealTimeMbps;
 
     // IP 信息
     private string ChinaIpInfo = "获取中...";
@@ -168,18 +171,51 @@
     // 开始测试
     private async Task StartTest()
     {
+        if(AllDownSum >= Maximum && Maximum != 0)
+        {
+            AllDownSum = 0;
+        }
         if (string.IsNullOrWhiteSpace(TestUrl) || !Uri.IsWellFormedUriString(TestUrl, UriKind.Absolute))
         {
             await JSRuntime.InvokeVoidAsync("alert", "链接不合法");
             return;
         }
 
+        if (!TestUrl.StartsWith("https://"))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "由于浏览器安全限制，请使用https协议");
+            return;
+        }
+
+        TaskText = "正在检验链接...";
+        IsTaskDisabled = true;
+
+        try
+        {
+            var http = new HttpClient();
+            http.DefaultRequestHeaders.Referrer = null;
+            http.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            {
+                NoStore = true
+            };
+            var response = await http.GetAsync(TestUrl, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+        } catch (Exception e)
+        {
+            TaskText = default;
+            IsTaskDisabled = false;
+            await JSRuntime.InvokeVoidAsync("alert", "该链接不可用，如果你能够正常访问该链接，那么很有可能是浏览器的跨域限制");
+            StateHasChanged();
+            return;
+        }
+
         // 初始化状态
         IsRunning = true;
-        ButtonText = "停止";
+        TaskText = "停止";
         Description = "实时速度";
         StartTime = DateTime.Now;
-        TotalDownload = 0;
+        AllDownSum = 0;
         ThreadDownloads = Enumerable.Repeat(0L, MaxThreads).ToList();
 
         // 启动线程
@@ -196,8 +232,7 @@
     private void StopTest()
     {
         IsRunning = false;
-        ButtonText = "开始";
-        Description = "平均速度";
+        TaskText = default;
     }
 
     // 下载线程
@@ -254,30 +289,15 @@
     // 获取 IP 信息
     protected override async Task OnInitializedAsync()
     {
-        _ = FetchIpInfo();
-        _ = FetchLatency();
+        // await GetIpInfo();
+        // _ = FetchLatency();
     }
 
-    private async Task FetchIpInfo()
+    private async Task GetIpInfo()
     {
-        while (true)
-        {
-            try
-            {
-                var chinaInfo = await Http.GetFromJsonAsync<IpInfo>("https://forge.speedtest.cn/api/location/info");
-                ChinaIpInfo = $"{chinaInfo?.Ip} {chinaInfo?.Province} {chinaInfo?.City} {chinaInfo?.Isp}";
-
-                var globalInfo = await Http.GetFromJsonAsync<IpInfo>("https://api-ipv4.ip.sb/geoip");
-                GlobalIpInfo = $"{globalInfo?.Ip} {globalInfo?.Country} {globalInfo?.Isp}";
-            }
-            catch
-            {
-                ChinaIpInfo = "获取失败";
-                GlobalIpInfo = "获取失败";
-            }
-
-            await Task.Delay(5000);
-        }
+        Http.DefaultRequestHeaders.Add("referrerPolicy", "no-referrer");
+        var globalInfo = await Http.GetFromJsonAsync<IpInfo>("https://api-ipv4.ip.sb/geoip");
+        GlobalIpInfo = $"{globalInfo?.Ip} {globalInfo?.Country} {globalInfo?.Isp}";
     }
 
     private async Task FetchLatency()
@@ -306,7 +326,7 @@
                 GlobalLatency = "-ms";
             }
 
-            await Task.Delay(1000);
+            await Task.Delay(5000);
         }
     }
 
