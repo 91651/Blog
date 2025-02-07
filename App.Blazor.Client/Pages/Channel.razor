@@ -4,12 +4,14 @@
 
 @using App.Business.Model
 @using App.Blazor.Client.Data
+@inject NavigationManager NavManager
 @inject PersistentComponentState _componentState
 @inject IClientApiProvider _api
 
 <PageTitle>@channel?.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
     <meta name="description" content="@channel?.Title">
+    <link rel="canonical" href="@(new Uri(new Uri(NavManager.BaseUri), $"/c/{id}"))" />
 </HeadContent>
 
 @if (articles.Any())
