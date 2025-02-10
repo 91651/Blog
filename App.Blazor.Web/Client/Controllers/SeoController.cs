@@ -49,7 +49,7 @@ namespace App.Blazor.Web.Client.Controllers
             // page
             foreach (var channel in channels)
             {
-                var query = new ArticleQueryModel { ChannelId = channel.Id };
+                var query = new ArticleQueryModel { ChannelId = channel.Id, PageSize = int.MaxValue };
                 var articles = await _articleService.GetArticlesAsync(query);
                 foreach (var article in articles.Data)
                 {
