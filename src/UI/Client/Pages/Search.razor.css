@@ -1,98 +1,15 @@
-.article-list-section {
-  overflow: hidden;
-  margin-bottom: 20px;
-  padding: 20px;
-  background: #FFF;
-  -webkit-box-shadow: 0 2px 5px 0 rgba(146, 146, 146, 0.1);
-  -moz-box-shadow: 0 2px 5px 0 rgba(146, 146, 146, 0.1);
-  box-shadow: 0 2px 5px 0 rgba(146, 146, 146, 0.1);
-  -webkit-transition: all 0.6s ease;
-  -moz-transition: all 0.6s ease;
-  -o-transition: all 0.6s ease;
-  transition: all 0.6s ease;
-  position: relative;
+.info {
+  margin: 0 20px 0 0;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
 }
-.article-list-section :before {
-  position: absolute;
-  content: "";
-  width: 5px;
-  height: 26px;
-  background: #3690cf;
-  left: 0;
-  top: 20px;
-}
-.article-list-section .article-pic {
-  float: left;
-  width: 30%;
-  max-height: 170px;
-  margin-right: 20px;
-  display: block;
-  overflow: hidden;
-}
-.article-list-section .article-pic img {
-  width: 100%;
-  height: auto;
-  -webkit-transition: all 0.6s ease;
-  -moz-transition: all 0.6s ease;
-  -o-transition: all 0.6s ease;
-  transition: all 0.6s ease;
-  margin-bottom: 10px;
-}
-.article-list-section .article-pic :hover img {
-  transform: scale(1.1);
-}
-.article-list-section .article-title {
-  margin: 0 0 10px 0;
-  font-size: 20px;
-  overflow: hidden;
-}
-.article-list-section :hover .article-title a {
-  color: #3690cf;
-}
-.article-list-section .article-summary {
-  font-size: 14px;
-  color: #566573;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  margin-top: 20px;
-}
-.article-list-section .article-info {
-  overflow: hidden;
-  margin-top: 30px;
-  display: block;
-}
-.article-list-section .article-info li {
-  float: left;
-  font-size: 12px;
-  padding: 0 0 0 20px;
-  margin: 0 15px 0 0;
-  color: #748594;
-  line-height: 1.5;
-  display: inline-block;
-}
-.article-list-section .article-info li a {
-  color: #748594;
-}
-.article-list-section .article-info li a:hover {
-  color: #000;
-}
-.article-list-section .article-info .author {
-  background: url(/img/auicon.jpg) no-repeat 0 0;
-}
-.article-list-section .article-info .channel {
-  background: url(/img/auicon.jpg) no-repeat top -23px left;
-}
-.article-list-section .article-info .time {
-  background: url(/img/auicon.jpg) no-repeat top -44px left;
-}
-.article-list-section .article-info .views {
-  background: url(/img/auicon.jpg) no-repeat top -64px left;
-}
-.article-list-section .article-info .hot {
-  background: url(/img/auicon.jpg) no-repeat top -85px left;
+
+.icon {
+  margin: 0 5px 0 0;
+  width: 14px;
+  height: 14px;
+  fill: var(--entryConColor);
 }
 
 /*# sourceMappingURL=Search.razor.css.map */
