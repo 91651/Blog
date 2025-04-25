@@ -27,7 +27,7 @@
     }
 </style>
 <section class="site-content container">
-    @foreach (var article in articles)
+    @foreach (var article in data.Articles)
     {
         <article class="hasThumb flex">
             <div class="article-content">
@@ -71,22 +71,22 @@
         </article>
     }
     <div class="pagenavi flex">
-        <a class="load-more" @onclick="GetArticles">阅读更多</a>
+        <a class="load-more" @onclick="GetArticles">@loadMoreText</a>
     </div>
 </section>
 
 @code {
-    private int page = 1;
     private ArticleQueryModel query = new() {  PageSize = 20 };
-    private List<ArticleListModel> articles = new ();
+    private string loadMoreText = "阅读更多";
+    private (List<ArticleListModel> Articles, int Page) data = (new List<ArticleListModel>(), 1);
 
 
     protected override async Task OnInitializedAsync()
     {
         _componentState.RegisterOnPersisting(PersistArticles);
-        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var data) && data != null)
+        if (_componentState.TryTakeFromJson<(List<ArticleListModel> articles, int page)>(nameof(data), out var _data) && _data != default)
         {
-            articles = data;
+            data = _data;
 
         }
         else
@@ -98,14 +98,18 @@
 
     private Task PersistArticles()
     {
-        _componentState.PersistAsJson(nameof(articles), articles);
+        _componentState.PersistAsJson(nameof(data), data);
         return Task.CompletedTask;
     }
 
     private async Task GetArticles()
     {
-        query.PageIndex = page++;
-        var data = (await _api.GetArticlesAsync(query)).Data;
-        articles.AddRange(data);
+        query.PageIndex = data.Page++;
+        var result = (await _api.GetArticlesAsync(query));
+        data.Articles.AddRange(result.Data);
+        if (data.Articles.Count >= result.Total)
+        {
+            loadMoreText = "没有更多内容了！";
+        }
     }
 }
