@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="src/Core/Model/Blog.Model.csproj" />
+    <Project Path="src/Core/Service/Blog.Service.csproj" />
+  </Folder>
+  <Folder Name="/Data/">
+    <Project Path="src/Data/Blog.Data.csproj" />
+  </Folder>
+  <Folder Name="/Framework/">
+    <Project Path="src/Framework/EFCore/EFCore.csproj" />
+    <Project Path="src/Framework/JsInterop/JsInterop.csproj" />
+    <Project Path="src/Framework/Util/Util.csproj" />
+    <Project Path="src/Framework/Vditor/Vditor.csproj" />
+  </Folder>
+  <Folder Name="/UI/">
+    <Project Path="src/UI/Admin/Blog.Admin.csproj" />
+    <Project Path="src/UI/Client/Blog.Client.csproj" />
+  </Folder>
+  <Project Path="src/Web/Blog.Web.csproj" />
+</Solution>

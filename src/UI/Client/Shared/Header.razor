@@ -1,0 +1,137 @@
+﻿@rendermode InteractiveAuto
+
+@using Blog.Model
+@using Blog.Client.Data
+
+@inject IJSRuntime JS
+@inject IClientApiProvider API
+@inject MaskService MaskService
+
+<script>
+    document.documentElement.classList.toggle('dark',localStorage.getItem("isDarkTheme") === "1");
+</script>
+<header class="site-header flex">
+    <div class="header-container container flex">
+        <div class="openMenu iconButton mobile" @onclick="ShowMenu"><i class="iconfont icon-menu-2-line"></i></div>
+        <div class="header-logo"><a class="logo" href="/" rel="home" title="遇见时光"></a></div>
+        <nav class="header-menu @(isShowMenu? "open-header-menu" : "")">
+            <div class="goDarkm iconButton menuButton mobile" @onclick="SwitchMode"><i class="iconfont icon-lightbulb-flash-line"></i></div>
+            <div class="closeMenu iconButton menuButton mobile" @onclick="HideMenu"><i class="iconfont icon-close-line"></i></div>
+            <ul class="gore flex">
+                <li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item menu-item-home">
+                    <a href="/" aria-current="page">
+                        <svg class="icon">
+                            <use xlink:href="#icon-home" />
+                        </svg>
+                        首页
+                    </a>
+                </li>
+                <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children @(subMenusVisible.ContainsKey(0) && subMenusVisible[0] ? "open-menu-item-has-children" : "")">
+                    <a href="#">
+                        <svg class="icon">
+                            <use xlink:href="#icon-channel" />
+                        </svg>
+                        内容类别
+                    </a>
+                    <span class="menu-sign @(subMenusVisible.ContainsKey(0) && subMenusVisible[0] ? "open-menu-sign" : "")" @onclick="() => ToggleSubMenu(0)"></span>
+                    <ul class="sub-menu">
+                        @foreach (var channel in channels)
+                        {
+                            <li class="menu-item menu-item-type-taxonomy menu-item-object-category"><a href="/c/@channel.Id">@channel.Title</a></li>
+                        }
+                    </ul>
+                </li>
+                <li class="menu-item menu-item-type-taxonomy menu-item-object-category">
+                    <a href="timeline">
+                        <svg class="icon">
+                            <use xlink:href="#icon-times" />
+                        </svg>
+                        时光轴
+                    </a>
+                </li>
+                <li class="menu-item menu-item-type-taxonomy menu-item-object-category">
+                    <a href="https://yunge.app">
+                        <svg class="icon">
+                            <use xlink:href="#icon-yunge" />
+                        </svg>
+                        云鸽-传输助手
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="@(isShowSearch ? "site-search" : "site-search none")">
+            <form method="get" class="site-form flex" action="/search">
+                <input type="search" class="field" placeholder="输入关键词进行搜索…" maxlength="2048" required name="q" @onblur="HideSearch" @ref="search">
+                <div class="closeFind iconButton" @onclick="HideSearch"><i class="iconfont icon-close-line"></i></div>
+            </form>
+        </div>
+        <div class="goDark iconButton" @onclick="SwitchMode"><i class="iconfont icon-lightbulb-flash-line"></i></div>
+        <div class="goFind iconButton" @onclick="ShowSearch"><i class="iconfont icon-search-2-line"></i></div>
+    </div>
+</header>
+
+@code {
+    private ElementReference search = default!;
+    private bool isShowMenu = false;
+    private bool isDark = false;
+    private bool isShowSearch = false;
+    private Dictionary<int, bool> subMenusVisible = new Dictionary<int, bool>();
+    private List<ChannelModel> channels = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await GetChannels();
+    }
+
+    private async Task SwitchMode()
+    {
+        isDark = !isDark;
+        await JS.InvokeVoidAsync(isDark ? "document.documentElement.classList.add" : "document.documentElement.classList.remove", "dark");
+        await JS.InvokeVoidAsync("localStorage.setItem", "isDarkTheme", Convert.ToInt32(isDark));
+
+    }
+
+    private async Task ShowSearch()
+    {
+        isShowSearch = true;
+        await Task.Run(() => search.FocusAsync());
+    }
+
+    private void HideSearch()
+    {
+        isShowSearch = false;
+    }
+
+    private void ShowMenu()
+    {
+        isShowMenu = true;
+        MaskService.Show();
+        MaskService.OnHide = () => { isShowMenu = false; subMenusVisible.Clear(); StateHasChanged(); };
+    }
+
+    private void HideMenu()
+    {
+        isShowMenu = false;
+        MaskService.Hide();
+    }
+
+    private void ToggleSubMenu(int index)
+    {
+        if (subMenusVisible.ContainsKey(index))
+        {
+            subMenusVisible[index] = !subMenusVisible[index];
+        }
+        else
+        {
+            subMenusVisible[index] = true;
+        }
+    }
+
+
+    private async Task GetChannels()
+    {
+        var data = await API.GetChannelsAsync();
+        channels = data ?? channels;
+    }
+}

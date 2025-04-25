@@ -1,0 +1,150 @@
+﻿@page "/article"
+@attribute [Authorize]
+@using System.ComponentModel
+@using AntDesign.TableModels
+@using Blog.Model
+@using EFCore.DynamicLinq
+@using Microsoft.AspNetCore.Authorization
+@inject HttpClient Http
+@inject MessageService _message
+@inject NavigationManager Navigation
+
+<PageTitle>Index</PageTitle>
+
+<Card Hoverable>
+    <Card>
+            <Space Wrap>
+                <SpaceItem>
+                    <InputGroup Compact Style="min-width:280px; padding:10px 0;">
+                        <lable class="search-label">序号:</lable> 
+                        <Input @bind-Value="@query.Id"  />
+                    </InputGroup>
+                </SpaceItem>
+                <SpaceItem>
+                    <InputGroup Compact Style="min-width:280px; padding:10px 0;">
+                        <lable class="search-label">关键字:</lable> 
+                        <Input @bind-Value="@query.Keyword" />
+                    </InputGroup>
+                </SpaceItem>
+                <SpaceItem>
+                    <InputGroup Compact Style="min-width:280px; padding:10px 0;">
+                        <lable class="search-label">栏目:</lable> 
+                        <TreeSelect
+                                DataSource="channels"
+                                @bind-Value="@query.ChannelId"
+                                Placeholder="默认"
+                                AllowClear
+                                TreeDefaultExpandAll
+                                ChildrenExpression="node=>node.DataItem.Children"
+                                TitleExpression="node=>node.DataItem.Channel.Title"
+                                KeyExpression="node=>node.DataItem.Channel.Id"
+                                IsLeafExpression="node=>node.DataItem.Children==null">
+                        </TreeSelect>
+                    </InputGroup>
+                </SpaceItem>
+                <SpaceItem>
+                    <Space>
+                        <SpaceItem>
+                             <Button Type="@ButtonType.Primary" @onclick="Query">查询</Button>
+                        </SpaceItem>
+                        <SpaceItem>
+                            <Button Danger @onclick="() => Edit(string.Empty)">新建</Button>
+                         </SpaceItem>
+                    </Space>
+                </SpaceItem>
+            </Space>
+    </Card>
+    <br />
+    <Table TItem="ArticleListModel" Bordered=@true DataSource="@data.Data"
+        Total="data.Total" RemoteDataSource
+       @bind-PageIndex="query.PageIndex"
+       @bind-PageSize="query.PageSize"
+        OnRowClick="OnRowClick"
+        OnChange="OnChange">
+
+        <PropertyColumn Property="c=>c.Id">
+            <a>@context.Id</a>
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.Title"></PropertyColumn>
+        <PropertyColumn Property="c=>c.ChannelName">
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.UserName">
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.Created">
+        </PropertyColumn>
+        <PropertyColumn Property="c=>c.Updated">
+        </PropertyColumn>
+        <ActionColumn Title="操作">
+            <Space>
+                <SpaceItem>
+                    <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context.Id)">编辑</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </Table>
+</Card>
+
+@code {
+    private ArticleQueryModel query = new ();
+    private PageResult<List<ArticleListModel>>? data = new();
+    private List<ChannelTreeModel> channels = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetArticles();
+        await GetChannels();
+    }
+
+    private async Task GetArticles()
+    {
+        var resp = await Http.PostAsJsonAsync<ArticleQueryModel>("/api/admin/article/query", query);
+        if(resp != null)
+        {
+            data = await resp.Content.ReadFromJsonAsync<PageResult<List<ArticleListModel>>>();
+        }
+    }
+
+    private async Task GetChannels()
+    {
+        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        if(data != null)
+        {
+            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+        }
+    }
+
+    private async Task Query()
+    {
+        await GetArticles();
+    }
+
+    private void Edit(string id)
+    {
+        Navigation.NavigateTo($"/admin/article/edit/{id}");
+    }
+
+    private async Task Del(string id)
+    {
+        var resp = await Http.DeleteAsync($"/api/admin/article/{id}");
+        if (resp.IsSuccessStatusCode)
+        {
+            await _message.Success("文章删除成功");
+            await GetArticles();
+            return;
+        }
+        await _message.Warn("文章删除失败");
+    }
+
+    void OnRowClick(RowData<ArticleListModel> row)
+    {
+        Console.WriteLine($"row {row.Data.Id} was clicked.");
+    }
+
+    public async Task OnChange(QueryModel<ArticleListModel> queryModel)
+    {
+        await GetArticles();
+    }
+}

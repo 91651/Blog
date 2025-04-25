@@ -1,0 +1,272 @@
+﻿@using System.Text.Json
+@using Blog.Client.Data
+@using JSInterop
+@using Lazy.SlideCaptcha.Core.Validator
+
+
+@inject IJSRuntime JSRuntime
+@inject HttpClient HTTP
+@inject IJSInteropModule _jsInterop
+
+@* https://github.com/pojianbing/LazySlideCaptcha
+https://gitee.com/LongbowEnterprise/SliderCaptcha
+https://juejin.cn/post/7309761475526475810
+https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fcgfeel%2Freact-rotate-captcha *@
+
+<div class="slide-captcha" style="z-index: 999;">
+    <div class="captcha-modal">
+        <div class="captcha-wrap">
+            <div class="captcha">
+                <div class="captcha__main" style="@ImgWrapperStyle">
+                    <img @ref="EleBackground" src="@Src" class="captcha_background" alt="background" />
+                    <img @ref="EleSlider" src="@SliderSrc" class="captcha_slider @(IsOk ? "goFirst" : "") @(IsKeep ? "goKeep" : "")" style="@($"left:{SliderLeft}px;")" alt="slider" />
+                    @if (ShowVerifyTip)
+                    {
+                        <div class="captcha_message">
+                            <div class="captcha_message__icon">
+                                @if (IsPassing)
+                                {
+                                    <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                                        <g stroke="#fff" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22.776 4.073A13.2 13.2 0 0 0 14 .75C6.682.75.75 6.682.75 14S6.682 27.25 14 27.25 27.25 21.318 27.25 14c0-.284-.009-.566-.027-.845"></path>
+                                            <path d="M7 12.5l7 7 13-13"></path>
+                                        </g>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                                        <g stroke="#fff" stroke-width="1.5" fill="none" fill-rule="evenodd">
+                                            <circle cx="14" cy="14" r="13.25"></circle>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.75 8.75l10.5 10.5M19.25 8.75l-10.5 10.5"></path>
+                                        </g>
+                                    </svg>
+                                }
+                            </div>
+                            <div class="captcha_message__text">@(IsPassing ? SuccessTip : FailTip)</div>
+                        </div>
+                    }
+                    @if (ShowGenerateLoading)
+                    {
+                        <div class="captcha_message loadding">
+                            <div class="captcha_message__icon captcha_message__icon--loadding"></div>
+                            <div class="captcha_message__text">加载中...</div>
+                        </div>
+                    }
+                    @if (ShowVerifyLoading)
+                    {
+                        <div class="captcha_message">
+                            <div class="captcha_message__icon captcha_message__icon--loadding"></div>
+                            <div class="captcha_message__text"></div>
+                        </div>
+                    }
+                </div>
+                <div class="captcha__bar" style="@($"width: {Width}px; height: {BarHeight}px; line-height: {BarHeight}px; background: {Background}; border-radius: {(Circle ? (BarHeight / 2) + "px" : Radius)}; --textColor: #333; --width: {Math.Floor((decimal)Width / 2)}px; --pwidth: {-Math.Floor((decimal)Width / 2)}px;")">
+                    <div class="captcha_progress_bar @(IsOk ? "goFirst2" : "")" style="@($"background: {ProgressBarBg}; height: {BarHeight}px; border-radius: {(Circle ? (BarHeight / 2) + "px 0 0 " + (BarHeight / 2) + "px" : Radius)}; width:{ProgressBarWidth}px;")"></div>
+                    <div class="captcha_progress_bar__text" style="@TextStyle">@Text</div>
+                    <div class="captcha_handler @(IsOk ? "goFirst" : "")" style=@($"width: {BarHeight}px; height: {BarHeight - 2}px; background: white; margin: 1px; left:{HandlerLeft}px") @onmousedown="MouseDragStart" @onmousemove="MouseDragMoving" @onmouseup="MouseDragFinish" @ontouchstart="TouchDragStart" @ontouchmove="TouchDragMoving" @ontouchmove:preventDefault @ontouchmove:stopPropagation @ontouchend="TouchDragFinish">
+                        <svg style="@($"width: {HandlerIconWidth}px; height: {HandlerIconHeight}px;")" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="819">
+                            <path d="M500.864 545.728a47.744 47.744 0 0 0 6.72-48.896 24.704 24.704 0 0 0-4.48-8.384L240.256 193.088a34.24 34.24 0 0 0-28.608-17.408 34.24 34.24 0 0 0-25.856 12.864 46.592 46.592 0 0 0 0 59.52l238.08 264.512-238.08 264.512a46.592 46.592 0 0 0-1.088 59.52 32 32 0 0 0 50.56 0l265.6-290.88z" p-id="820"></path>
+                            <path d="M523.84 248.064l236.992 264.512-238.08 264.512a46.592 46.592 0 0 0 0 59.52 32 32 0 0 0 50.56 0l265.6-292.608a47.744 47.744 0 0 0 6.72-48.832 24.704 24.704 0 0 0-4.48-8.448L578.304 191.36a34.24 34.24 0 0 0-55.552-2.816 46.592 46.592 0 0 0 1.088 59.52z" p-id="821"></path>
+                        </svg>
+                    </div>
+                </div>
+                @if (ShowRefresh)
+                {
+                    <div class="captcha__actions">
+                        <a class="captcha__action" @onclick="Refresh">
+                            <svg fill="#505050" width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10,4 C12.0559549,4 13.9131832,5.04358655 15.0015086,6.68322231 L15,5.5 C15,5.22385763 15.2238576,5 15.5,5 C15.7761424,5 16,5.22385763 16,5.5 L16,8.5 C16,8.77614237 15.7761424,9 15.5,9 L12.5,9 C12.2238576,9 12,8.77614237 12,8.5 C12,8.22385763 12.2238576,8 12.5,8 L14.5842317,8.00000341 C13.7999308,6.20218044 12.0143541,5 10,5 C7.23857625,5 5,7.23857625 5,10 C5,12.7614237 7.23857625,15 10,15 C11.749756,15 13.3431487,14.0944653 14.2500463,12.6352662 C14.3958113,12.4007302 14.7041063,12.328767 14.9386423,12.4745321 C15.1731784,12.6202971 15.2451415,12.9285921 15.0993765,13.1631281 C14.0118542,14.9129524 12.0990688,16 10,16 C6.6862915,16 4,13.3137085 4,10 C4,6.6862915 6.6862915,4 10,4 Z" fill-rule="nonzero"></path>
+                            </svg>
+                            <span class="captcha__action__text">刷新</span>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="captcha-mask"></div>
+</div>
+
+
+@code {
+    [Parameter] public required Func<SlideTrack, Task> OnFinish { get; set; }
+    [Parameter] public required Func<Task> OnRefresh { get; set; }
+    [Parameter] public int Width { get; set; } = 340;
+    [Parameter] public int Height { get; set; } = 212;
+    [Parameter] public int BarHeight { get; set; } = 40;
+    [Parameter] public int HandlerIconWidth { get; set; } = 16;
+    [Parameter] public int HandlerIconHeight { get; set; } = 16;
+    [Parameter] public string Background { get; set; } = "#eee";
+    [Parameter] public bool Circle { get; set; } = false;
+    [Parameter] public string Radius { get; set; } = "4px";
+    [Parameter] public string Text { get; set; } = "按住滑块拖动";
+    [Parameter] public string ProgressBarBg { get; set; } = "#76c61d";
+    [Parameter] public string SuccessTip { get; set; } = "验证通过，超过80%用户";
+    [Parameter] public string FailTip { get; set; } = "验证未通过，拖动滑块将悬浮图像正确合并";
+    [Parameter] public bool ShowRefresh { get; set; } = false;
+
+    private ElementReference EleBackground;
+    private ElementReference EleSlider;
+
+    private bool IsMoving { get; set; } = false;
+    private int X { get; set; }
+    private int Y { get; set; }
+    private bool IsOk { get; set; }
+    private bool IsKeep { get; set; } = false;
+    private bool IsPassing { get; set; } = false;
+    private bool IsFinish { get; set; } = false;
+    private List<Track> Tracks { get; set; } = new List<Track>();
+    private DateTime StartSlidingTime { get; set; }
+    private bool ShowVerifyTip { get; set; } = false;
+    private bool ShowVerifyLoading { get; set; } = false;
+    private bool ShowGenerateLoading { get; set; } = false;
+    private string Src { get; set; } = default!;
+    private string SliderSrc { get; set; } = default!;
+
+    private int HandlerLeft = 0;
+    private int ProgressBarWidth = 0;
+    private int SliderLeft = 0;
+
+
+    private string ImgWrapperStyle => $"width: {Width}px; height: {Height}px; position: relative; overflow: hidden;";
+    private string TextStyle => $"height: {BarHeight}px; width: {Width}px;";
+
+
+    public void StartRequestGenerate()
+    {
+        Reset();
+        ShowGenerateLoading = true;
+    }
+
+    public void EndRequestGenerate(string src, string sliderSrc)
+    {
+        ShowGenerateLoading = false;
+        Src = src;
+        SliderSrc = sliderSrc;
+    }
+
+    public void StartRequestVerify()
+    {
+        ShowVerifyLoading = true;
+    }
+
+    public void EndRequestVerify(bool isPassing)
+    {
+        IsPassing = isPassing;
+        ShowVerifyLoading = false;
+        ShowVerifyTip = true;
+    }
+
+    private void Reset()
+    {
+        X = 0;
+        Y = 0;
+        Tracks.Clear();
+        IsMoving = false;
+        IsFinish = false;
+        ShowGenerateLoading = false;
+        ShowVerifyLoading = false;
+        ShowVerifyTip = false;
+        IsPassing = false;
+        ProgressBarWidth = 0;
+        SliderLeft = 0;
+        HandlerLeft = 0;
+    }
+
+
+    private void MouseDragStart(MouseEventArgs e)
+    {
+        HandleDragStart((int)e.ClientX, (int)e.ClientY);
+    }
+
+    private void MouseDragMoving(MouseEventArgs e)
+    {
+        HandleDragMoving((int)e.ClientX, (int)e.ClientY);
+    }
+
+    private void MouseDragFinish(MouseEventArgs e)
+    {
+        HandleDragFinish();
+    }
+
+    private void TouchDragStart(TouchEventArgs e)
+    {
+        HandleDragStart((int)e.Touches[0].PageX, (int)e.Touches[0].PageY);
+    }
+
+    private void TouchDragMoving(TouchEventArgs e)
+    {
+        HandleDragMoving((int)e.Touches[0].PageX, (int)e.Touches[0].PageY);
+    }
+
+    private void TouchDragFinish(TouchEventArgs e)
+    {
+         HandleDragFinish();
+    }
+
+
+    private void HandleDragStart(int x, int y)
+    {
+        if (!IsPassing && !string.IsNullOrWhiteSpace(Src) && !string.IsNullOrWhiteSpace(SliderSrc) && !IsFinish)
+        {
+            IsMoving = true;
+            StartSlidingTime = DateTime.Now;
+            X = x;
+            Y = y;
+        }
+    }
+
+    private void HandleDragMoving(int x, int y)
+    {
+        if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
+        {
+            var _x = x - X;
+            var _y = y - Y;
+
+            if (_x > 0)
+            {
+                HandlerLeft = _x;
+                ProgressBarWidth = _x + BarHeight / 2;
+                SliderLeft = _x;
+            }
+
+            Tracks.Add(new Track { X = _x, Y = _y, T = (DateTime.Now - StartSlidingTime).Milliseconds});
+        }
+    }
+
+    private async void HandleDragFinish()
+    {
+        if (IsMoving && !IsPassing && !string.IsNullOrEmpty(Src) && !string.IsNullOrEmpty(SliderSrc) && !IsFinish)
+        {
+            IsMoving = false;
+            IsFinish = true;
+            var background = await _jsInterop.GetElementInfo(EleBackground);
+            var slider = await _jsInterop.GetElementInfo(EleSlider);
+            var info = new SlideTrack
+            {
+                BackgroundImageWidth = (int)background.OffsetWidth,
+                BackgroundImageHeight = (int)background.OffsetHeight,
+                SliderImageWidth = (int)slider.OffsetWidth,
+                SliderImageHeight = (int)slider.OffsetHeight,
+                StartTime = StartSlidingTime,
+                EndTime = DateTime.Now,
+                Tracks = Tracks
+            };
+
+            await OnFinish.Invoke(info);
+            // Here, you should call the appropriate API to verify the position
+
+        }
+    }
+
+    private void Refresh()
+    {
+        Reset();
+        OnRefresh();
+    }
+
+    
+
+}

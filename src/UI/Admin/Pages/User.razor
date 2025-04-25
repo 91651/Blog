@@ -1,0 +1,211 @@
+﻿@page "/user"
+@attribute [Authorize]
+@using System.ComponentModel
+@using AntDesign.TableModels
+@using Blog.Admin.Data
+@using Blog.Model
+@using EFCore.DynamicLinq
+@using Microsoft.AspNetCore.Authorization
+
+@inject IAdminApiProvider API
+@inject MessageService _message
+@inject NavigationManager Navigation
+
+<PageTitle>用户管理</PageTitle>
+
+<div class="page-container">
+    <Card>
+        <GridRow Gutter="(16, 16)">
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">用户名称</label>
+                    <Input Placeholder="请输入用户名称" @bind-Value="@query.UserName" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">手机号</label>
+                    <Input Placeholder="手机号" @bind-Value="@query.PhoneNumber" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">邮箱</label>
+                    <Input Placeholder="请输入邮箱" @bind-Value="@query.Email" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label for="name">邮箱</label>
+                    <Input Placeholder="请输入邮箱" @bind-Value="@query.Email" />
+                </div>
+            </GridCol>
+            <Flex Justify="FlexJustify.FlexEnd" FlexCss="auto" Gap="FlexGap.Middle">
+                <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
+                <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
+                    搜索
+                </Button>
+            </Flex>
+        </GridRow>
+    </Card>
+    <br />
+    <Card Title=@("用户列表")>
+        <Extra>
+            <Space Size="SpaceSize.Middle">
+                <SpaceItem>
+                    <Button Danger Icon="@IconType.Outline.Plus" @onclick="() => Edit()">新增</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Search">刷新</Button>
+                </SpaceItem>
+            </Space>
+        </Extra>
+        <Body>
+            <Table TableLayout="fixed" TItem="UserModel" DataSource="users.Data" Total="users.Total" RemoteDataSource
+                   @bind-PageIndex="query.PageIndex"
+                   @bind-PageSize="query.PageSize"
+                   OnChange="OnChange" AutoHeight>
+                <PropertyColumn Property="c=>c.UserName" />
+                <PropertyColumn Property="c=>c.PhoneNumber" />
+                <PropertyColumn Property="c=>c.Email" />
+                <ActionColumn Title="操作" Width="180">
+                    <Space>
+                        <SpaceItem>
+                            <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
+                        </SpaceItem>
+
+                        <SpaceItem>
+                            <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                        </SpaceItem>
+                    </Space>
+                </ActionColumn>
+            </Table>
+
+        </Body>
+    </Card>
+
+    <Drawer Closable="true" @bind-Visible="isShowEditModal" Placement="DrawerPlacement.Right" Title="@("添加用户")" Width="360">
+        <Form @ref="@editForm" Layout="FormLayout.Vertical" Model="@user"
+              OnFinish="Submit">
+            <FormItem Label="用户名称" Required>
+                <Input @bind-Value="@context.UserName" />
+            </FormItem>
+            <FormItem Label="手机号">
+                <Input @bind-Value="@context.PhoneNumber" />
+            </FormItem>
+            <FormItem Label="邮箱">
+                <Input @bind-Value="@context.Email" />
+            </FormItem>
+            <FormItem Label="密码">
+                <Input @bind-Value="@context.Password" />
+                <p></p>
+                <Alert Type="@AlertType.Warning" ShowIcon="true" Message="输入密码，将更新为新密码" />
+            </FormItem>
+            <FormItem>
+                <Flex Justify="FlexJustify.FlexEnd" Align="FlexAlign.Center" Gap="FlexGap.Middle">
+                    <Button @onclick="() => isShowEditModal = false">取消</Button>
+                    <Button Danger Type="@ButtonType.Primary" HtmlType="submit">
+                        确认
+                    </Button>
+                </Flex>
+            </FormItem>
+        </Form>
+    </Drawer>
+</div>
+
+
+@code {
+    private UserQueryModel query = new();
+    private UserModel user = new ();
+    private PageResult<List<UserModel>> users = new();
+    private Form<UserModel> editForm = default!;
+    private bool isTableLoading = false;
+    private bool isShowEditModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUsers();
+    }
+
+    private async Task GetUsers()
+    {
+        isTableLoading = true;
+        var data = await API.GetUsersAsync(query);
+        if(data != null)
+        {
+            users = data;
+        }
+        isTableLoading = false;
+    }
+
+    private void Edit(UserModel? user = default)
+    {
+        this.user = new();
+        if (user != null)
+        {
+            this.user = user;
+        }
+        isShowEditModal = true;
+    }
+
+    private async Task Search()
+    {
+        await GetUsers();
+    }
+
+    private void Reset()
+    {
+        query = new();
+    }
+
+    public async Task OnChange(QueryModel<UserModel> queryModel)
+    {
+        await GetUsers();
+    }
+
+
+    private async Task Submit(EditContext editContext)
+    {
+        if (!string.IsNullOrWhiteSpace(user.Id))
+        {
+            var result = await API.UpdateUserAsync(user.Id, user);
+            if (result)
+            {
+                isShowEditModal = false;
+                await GetUsers();
+                _ = _message.Success("用户更新成功");
+                return;
+            }
+            _ = _message.Warn("用户更新失败");
+        }
+        else
+        {
+            var result = await API.AddUserAsync(user);
+            if (result)
+            {
+                isShowEditModal = false;
+                await GetUsers();
+                _ = _message.Success("用户添加成功");
+                return;
+            }
+            _ = _message.Warn("用户添加失败");
+        }
+    }
+
+    private void HandleOk(MouseEventArgs e)
+    {
+        editForm.Submit();
+    }
+
+    private async Task Del(string id)
+    {
+        var result = await API.DeleteUserAsync(id);
+        if (result)
+        {
+            await GetUsers();
+            _ = _message.Success("用户删除成功");
+            return;
+        }
+        _ = _message.Warn("用户删除失败");
+    }
+}

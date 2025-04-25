@@ -1,0 +1,213 @@
+﻿@page "/article/edit/{id}"
+@page "/article/edit"
+@attribute [Authorize]
+@using System.ComponentModel
+@using AntDesign.TableModels
+@using Microsoft.AspNetCore.Authorization
+@using System.Text.Json
+@using System.Dynamic
+@using System.Linq
+@using Vditor.Models
+@using Blog.Model
+@inject HttpClient Http
+@inject IJSRuntime _jsRuntime
+@inject MessageService _message
+@inject NavigationManager Navigation
+
+<link rel="stylesheet" href="@vditorCdn/dist/index.css" />
+
+<PageTitle>Index</PageTitle>
+
+<Card Hoverable>
+    <Form Model="@model"
+          OnFinish="OnFinish"
+          LabelColSpan="4"
+          WrapperColSpan="16">
+        <FormItem Label="标题">
+            <Input @bind-Value="@context.Title" />
+        </FormItem>
+        <FormItem Label="副标题">
+            <Input @bind-Value="@context.SubTitle" />
+        </FormItem>
+        <FormItem Label="简介">
+            <TextArea Rows="2" @bind-Value="@context.Summary"/>
+        </FormItem>
+        <FormItem Label="属性">
+            <Space Size=@(("20", "0"))>
+                <SpaceItem>
+                    <FormItem Label="栏目">
+                        <Cascader Options="@channels" ExpandTrigger="hover" @bind-Value="@context.ChannelId"></Cascader>
+                    </FormItem>
+                </SpaceItem>
+                <SpaceItem>
+                    <FormItem Label="来源">
+                        <AutoComplete Options="@(new string[]{"原创文章", "转载文章"})">
+                            <AutoCompleteInput Placeholder="原创文章" @bind-Value="@context.Author" />
+                        </AutoComplete>
+                    </FormItem>
+                </SpaceItem>
+                <SpaceItem>
+                    <FormItem Label="Markdown">
+                        <Switch @bind-Value="isMarkdown" OnChange="()=>{context.Editor = isMarkdown ? 1 : 2 ; }" />
+                    </FormItem>
+                </SpaceItem>
+            </Space>
+        </FormItem>
+        <FormItem Label="内容">
+            @markdown
+        </FormItem>
+        <FormItem WrapperColOffset="4" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                提交
+            </Button>
+        </FormItem>
+    </Form>
+</Card>
+
+@code {
+    [Parameter]
+    public string? id { get; set; }
+    public bool isMarkdown { get; set; } = true;
+    private ArticleModel model = new ArticleModel{ Editor = 1 };
+    private List<CascaderNode> channels = new();
+    private string vditorCdn = "/admin/lib/vditor@3.10.8";
+    protected override async Task OnInitializedAsync()
+    {
+        await GetChannels();
+        await LoadMarkdownEditor();
+        upload.Format = Format;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            await GetArticle();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            await LoadMarkdownEditor();
+        }
+    }
+
+    private async Task GetArticle()
+    {
+        var data = await Http.GetFromJsonAsync<ArticleModel>($"/api/admin/article/{id}");
+        if(data != null)
+        {
+            model = data;
+            isMarkdown = model.Editor == 1;
+        }
+    }
+
+    private async Task GetChannels()
+    {
+        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
+        if(data != null)
+        {
+            channels = data.Select(s =>
+            {
+                var children = data.Where(c => c.ParentId == s.Id);
+                if (children.Any())
+                {
+                    return new CascaderNode
+                        {
+                            Label = s.Title,
+                            Value = s.Id,
+                            Children = children.Select(ch => new CascaderNode
+                            {
+                                Label = ch.Title,
+                                Value = ch.Id
+                            })
+                        };
+                }
+                return new CascaderNode
+                    {
+                        Label = s.Title,
+                        Value = s.Id,
+                    };
+
+            }).Where(c => c.Children == null || c.Children.Any()).ToList();
+        }
+    }
+
+    RenderFragment markdown =
+    @<Template>
+    </Template>
+    ;
+
+    private Vditor.Models.Upload upload = new()
+    {
+        Url = "/api/admin/file",
+        WithCredentials = true
+    };
+    private string Format(object files, string responseText)
+    {
+        var resp = JsonSerializer.Deserialize<List<FileModel>>(responseText, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
+        model.Files = resp.Select(s => s.Id).ToArray();
+        var succMap = new Dictionary<string, object>();
+        foreach(var file in resp)
+        {
+            succMap[file.Name] = Path.Combine(file.Path, file.Name);
+        }
+        var vditor = new { data = new { succMap = succMap } };
+        var vditordata = JsonSerializer.Serialize(vditor);
+        return vditordata;
+    }
+
+    private async Task LoadMarkdownEditor()
+    {
+        var vditor = $"{vditorCdn}/dist/index.min.js";
+        var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
+        await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
+        await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
+        markdown =
+        @<Template>
+            <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" Cdn="@vditorCdn" @bind-Value="@model.MdContent" HtmlChanged="(string html) => {model.Content = html;}" />
+        </Template>;
+       // StateHasChanged();
+    }
+
+    private async Task OnFinish()
+    {
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            model.Id = id;
+            var resp = await Http.PutAsJsonAsync<ArticleModel>($"/api/admin/article/{id}", model);
+            if (resp.IsSuccessStatusCode)
+            {
+
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("文章更新成功");
+                    Navigation.NavigateTo("/admin/article");
+                    return;
+                }
+            }
+            await _message.Warn("文章更新失败");
+        }
+        else
+        {
+            var resp = await Http.PostAsJsonAsync<ArticleModel>("/api/admin/article", model);
+            if (resp.IsSuccessStatusCode)
+            {
+
+                var data = await resp.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    await _message.Success("文章添加成功");
+                    Navigation.NavigateTo("/admin/article");
+                    return;
+                }
+            }
+            await _message.Warn("文章添加失败");
+        }
+    }
+
+}
