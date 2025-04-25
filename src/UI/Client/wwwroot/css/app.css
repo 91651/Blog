@@ -136,7 +136,7 @@ body{cursor:default!important}
 .entry-thumb{padding-left:14px}
 }
 @media (max-width:640px){:root{--entryTitSize:14px}
-.down-icon,.down-img,.entry-content,.rtime{display:none}
+.down-icon,.down-img,.entry-content{display:none}
 .entry-info .infoLeft,.post-info .infoLeft{margin-right:10px!important}
 .down-detail .down-con{margin-left:0!important}
 .related-post ul li{width:100%!important}

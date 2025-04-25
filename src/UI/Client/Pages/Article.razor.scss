@@ -10,16 +10,31 @@
     }
 
     .post-info {
+        display: flex;
         color: var(--entryConColor);
         font-size: 14px
     }
 
     .post-info .infoLeft {
+        display: inline-flex;
+        align-items: center;
         margin-right: 20px
     }
 
     .post-info .iconfont {
         margin-right: 5px
+    }
+
+    .post-info .icon {
+        margin-right: 5px;
+        width: 16px;
+        height: 16px;
+        fill: var(--entryConColor)
+    }
+
+    .opQrcode {
+        display: inline-flex;
+        align-items: center;
     }
 
     #qrcode {
@@ -39,7 +54,7 @@
         align-items: center
     }
 
-    .opQrcode:hover~#qrcode {
+    .opQrcode:hover ~ #qrcode {
         visibility: visible;
         opacity: 1
     }
@@ -120,7 +135,7 @@
     }
 
     blockquote p {
-        margin-bottom: 10px!important
+        margin-bottom: 10px !important
     }
 
     .post-main blockquote {
@@ -139,7 +154,7 @@
         content: "\e61d";
         font-style: normal;
         font-size: 24px;
-        font-family: iconfont!important;
+        font-family: iconfont !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale
     }
@@ -195,7 +210,6 @@
         -webkit-transition: box-shadow .2s linear;
         transition: box-shadow .2s linear
     }
-
 }
 
 .post-main ::deep {
@@ -230,7 +244,7 @@
     color: var(--themeColor)
 }
 
-.notice{
+.notice {
     padding: 10px;
 }
 
@@ -312,7 +326,7 @@
     margin-left: 28px
 }
 
-.down-detail .down-con>strong {
+.down-detail .down-con > strong {
     display: inline-block;
     margin-bottom: 18px
 }
@@ -341,7 +355,7 @@
     margin-right: auto
 }
 
-.down-detail .down-img,.down-detail .down-img img {
+.down-detail .down-img, .down-detail .down-img img {
     width: 120px;
     height: 120px
 }

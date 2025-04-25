@@ -29,9 +29,32 @@
                         @article.Summary
                     </div>
                     <div class="entry-info">
-                        <span class="infoLeft"><i class="iconfont icon-book-read-line"></i>@article.ChannelName</span>
-                        <span class="rtime infoLeft"><i class="iconfont icon-calendar-2-line"></i>@($"{article.Created:yyyy年M月d日 HH:mm}")</span>
-                        <span><i class="iconfont icon-user-3-line"></i>@article.Author</span>
+                        <span class="info">
+                            <svg class="icon">
+                                <use xlink:href="#icon-book" />
+                            </svg>
+                            @article.ChannelName
+                        </span>
+                        <span class="info">
+                            <svg class="icon">
+                                <use xlink:href="#icon-calendar" />
+                            </svg>                        @($"{article.Created:yyyy年M月d日 HH:mm}")
+                        </span>
+                        <span class="info">
+                            <svg class="icon">
+                                <use xlink:href="#icon-user" />
+                            </svg>                        @article.Author
+                        </span>
+                        <span class="info">
+                            <svg class="icon">
+                                <use xlink:href="#icon-eye" />
+                            </svg>                        @article.Viewed
+                        </span>
+                        <span class="info">
+                            <svg class="icon">
+                                <use xlink:href="#icon-message" />
+                            </svg>                        @article.CommentCount
+                        </span>
                     </div>
                 </div>
                 <div class="entry-thumb">

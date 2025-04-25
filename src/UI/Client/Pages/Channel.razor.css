@@ -1,3 +1,15 @@
+.info {
+  margin: 0 20px 0 0;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+}
 
+.icon {
+  margin: 0 5px 0 0;
+  width: 14px;
+  height: 14px;
+  fill: var(--entryConColor);
+}
 
 /*# sourceMappingURL=Channel.razor.css.map */

@@ -7,14 +7,27 @@
   word-break: break-all;
 }
 .post-content ::deep .post-info {
+  display: flex;
   color: var(--entryConColor);
   font-size: 14px;
 }
 .post-content ::deep .post-info .infoLeft {
+  display: inline-flex;
+  align-items: center;
   margin-right: 20px;
 }
 .post-content ::deep .post-info .iconfont {
   margin-right: 5px;
+}
+.post-content ::deep .post-info .icon {
+  margin-right: 5px;
+  width: 16px;
+  height: 16px;
+  fill: var(--entryConColor);
+}
+.post-content ::deep .opQrcode {
+  display: inline-flex;
+  align-items: center;
 }
 .post-content ::deep #qrcode {
   position: absolute;
