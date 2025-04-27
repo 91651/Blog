@@ -4,14 +4,14 @@
 
 @using Blog.Model
 @using Blog.Client.Data
-@inject NavigationManager NavManager
+@inject NavigationManager _navigationManager
 @inject PersistentComponentState _componentState
 @inject IClientApiProvider _api
 
 <PageTitle>@channel?.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
     <meta name="description" content="@channel?.Title">
-    <link rel="canonical" href="@(new Uri(new Uri(NavManager.BaseUri), $"/c/{id}"))" />
+    <link rel="canonical" href="@(new Uri(new Uri(_navigationManager.BaseUri), $"/c/{id}"))" />
 </HeadContent>
 
 @if (articles.Any())
@@ -95,7 +95,7 @@ else
     public string? id { get; set; }
     private int page = 1;
     private ChannelModel channel = new();
-    private ArticleQueryModel query = new () { PageSize = 20 };
+    private ArticleQueryModel query = new() { PageSize = 20 };
     private List<ArticleListModel> articles = new ();
 
     protected override async Task OnParametersSetAsync()
@@ -104,31 +104,34 @@ else
         {
             return;
         }
-         _componentState.RegisterOnPersisting(PersistArticles);
-        if (_componentState.TryTakeFromJson<ChannelModel>(nameof(channel), out var channel_data) && channel_data != null)
+        _componentState.RegisterOnPersisting(PersistData);
+        if (_componentState.TryTakeFromJson<int>(nameof(page), out var _page))
         {
-            channel = channel_data;
+            page = _page;
+
+        }
+        if (_componentState.TryTakeFromJson<ChannelModel>(nameof(channel), out var _channel) && _channel != null)
+        {
+            channel = _channel;
 
         }
         else
         {
             channel = await _api.GetChannelAsync(id);
         }
-        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var articles_data) && articles_data != null)
+        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var _articles) && _articles != null)
         {
-            articles = articles_data;
+            articles = _articles;
         }
         else
         {
-            page = default;
-            articles.Clear();
-            query.ChannelId = id;
             await GetArticles();
         }
     }
 
-    private Task PersistArticles()
+    private Task PersistData()
     {
+        _componentState.PersistAsJson(nameof(page), page);
         _componentState.PersistAsJson(nameof(channel), channel);
         _componentState.PersistAsJson(nameof(articles), articles);
         return Task.CompletedTask;

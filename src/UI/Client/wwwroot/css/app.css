@@ -85,15 +85,9 @@ body{cursor:default!important}
 .footer-nav-list li{margin-right:16px}
 .link li:first-child,.site-footer li:last-child{margin-right:0}
 .Copyright{justify-content:space-between}
-#goTop{position:fixed;right:75px;bottom:150px;z-index:88;display:none;overflow:hidden;padding:10px;width:30px;height:30px;border-radius:3px;background:#333;color:var(--ButtonFontColor);text-align:center}
-#goTop i{font-size:26px;line-height:30px}
-#goTop em{display:none}
-#goTop:hover em{display:block;font-style:normal;font-size:12px;line-height:15px}
-#goTop:hover i{display:none}
 @media (max-width:1051px){:root{--entryImgWidth:calc((100vw - 58px)*0.382);--headSearchWidth:calc(100vw - 28px)}
 }
 @media (max-width:981px){:root{--entryConSize:12px;--entryTitSize:16px;--postH1Size:18px;--postH2Size:16px;--postH3Size:16px}
-#goTop{right:14px}
 }
 @media (max-width:912px){:root{--siteConMargin:30px;--hasThumbMargin:30px}
 .entry-title{margin:0 0 16px}

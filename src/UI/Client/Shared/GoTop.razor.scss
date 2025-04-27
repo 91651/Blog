@@ -1,6 +1,7 @@
 ﻿.hoverBg:hover {
     background: var(--themeColor) !important
 }
+
 .goTop {
     position: fixed;
     right: 75px;
@@ -15,11 +16,6 @@
     background: #333;
     color: var(--ButtonFontColor);
     text-align: center
-}
-
-.goTop i {
-    font-size: 26px;
-    line-height: 30px
 }
 
 .goTop em {
@@ -37,6 +33,11 @@
     display: none
 }
 
+.goTop .icon {
+    width: 26px;
+    height: 26px;
+    fill: var(--ButtonFontColor);
+}
 
 @media (max-width:981px) {
     .goTop {

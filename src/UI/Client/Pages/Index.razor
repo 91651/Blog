@@ -12,7 +12,7 @@
     <meta name="description" content="人生百态，爱我所爱！">
 </HeadContent>
 <section class="site-content container">
-    @foreach (var article in data.Articles)
+    @foreach (var article in articles)
     {
         <article class="hasThumb flex">
             <div class="article-content">
@@ -67,17 +67,23 @@
 </section>
 
 @code {
-    private ArticleQueryModel query = new() {  PageSize = 20 };
+    private int page = 1;
     private string loadMoreText = "阅读更多";
-    private (List<ArticleListModel> Articles, int Page) data = (new List<ArticleListModel>(), 1);
+    private ArticleQueryModel query = new() { PageSize = 20 };
+    private List<ArticleListModel> articles = new();
 
 
     protected override async Task OnInitializedAsync()
     {
-        _componentState.RegisterOnPersisting(PersistArticles);
-        if (_componentState.TryTakeFromJson<(List<ArticleListModel> articles, int page)>(nameof(data), out var _data) && _data != default)
+        _componentState.RegisterOnPersisting(PersistData);
+        if (_componentState.TryTakeFromJson<int>(nameof(page), out var _page))
         {
-            data = _data;
+            page = _page;
+
+        }
+        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var _articles) && _articles != null)
+        {
+            articles = _articles;
 
         }
         else
@@ -87,18 +93,19 @@
 
     }
 
-    private Task PersistArticles()
+    private Task PersistData()
     {
-        _componentState.PersistAsJson(nameof(data), data);
+        _componentState.PersistAsJson(nameof(page), page);
+        _componentState.PersistAsJson(nameof(articles), articles);
         return Task.CompletedTask;
     }
 
     private async Task GetArticles()
     {
-        query.PageIndex = data.Page++;
+        query.PageIndex = page++;
         var result = (await _api.GetArticlesAsync(query));
-        data.Articles.AddRange(result.Data);
-        if (data.Articles.Count >= result.Total)
+        articles.AddRange(result.Data);
+        if (articles.Count >= result.Total)
         {
             loadMoreText = "没有更多内容了！";
         }

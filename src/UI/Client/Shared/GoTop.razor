@@ -2,7 +2,13 @@
 
 @inject IJSRuntime JS
 
-<div class="hoverBg goTop" style="display: block;" @onclick="Top"><i class="iconfont icon-arrow-up-s-line"></i><em>回到顶部</em></div>
+<div class="hoverBg goTop" style="display: block;" @onclick="Top">
+    <i>
+        <svg class="icon">
+            <use xlink:href="#icon-arrow-up-s-line" />
+        </svg>
+    </i>
+    <em>回到顶部</em></div>
 
 @code {
     private async Task Top()
