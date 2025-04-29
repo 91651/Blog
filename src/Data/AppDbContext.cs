@@ -14,6 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : AppDbContext
     public DbSet<Channel> Channels { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<File> Files { get; set; }
+    public DbSet<UrlRewriteRule> UrlRewriteRules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

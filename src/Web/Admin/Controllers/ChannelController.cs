@@ -14,9 +14,9 @@ public class ChannelController : ControllerBase
 {
     private readonly IChannelService _channelService;
 
-    public ChannelController(IChannelService articleService)
+    public ChannelController(IChannelService channelService)
     {
-        _channelService = articleService;
+        _channelService = channelService;
     }
 
     [HttpPost]

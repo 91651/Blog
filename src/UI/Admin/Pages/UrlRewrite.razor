@@ -1,0 +1,214 @@
+﻿@page "/url-rewrite"
+@attribute [Authorize]
+@using System.ComponentModel
+@using AntDesign.TableModels
+@using Blog.Admin.Data
+@using Blog.Model
+@using EFCore.DynamicLinq
+@using Microsoft.AspNetCore.Authorization
+
+@inject IAdminApiProvider API
+@inject MessageService _message
+@inject NavigationManager Navigation
+
+<PageTitle>URL重定向</PageTitle>
+
+<div class="page-container">
+    <Card>
+        <GridRow Gutter="(16, 16)">
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label>源地址</label>
+                    <Input Placeholder="源地址" @bind-Value="@query.Regex" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label>目标地址</label>
+                    <Input Placeholder="目标地址" @bind-Value="@query.Replacement" />
+                </div>
+            </GridCol>
+            <GridCol Span="24" Md="12" Lg="6">
+                <div class="form-group">
+                    <label>状态码</label>
+                    <Select @bind-Value="@query.StatusCode"
+                            TItemValue="string"
+                            TItem="string">
+                        <SelectOptions>
+                            <SelectOption Value="@("301")" Label="Redirect (301)" />
+                            <SelectOption Value="@("302")" Label="Redirect (302)" />
+                        </SelectOptions>
+                    </Select>
+                </div>
+            </GridCol>
+            <Flex Justify="FlexJustify.FlexEnd" FlexCss="auto" Gap="FlexGap.Middle">
+                <Button Icon="@IconType.Outline.Reload" @onclick="Reset">重置</Button>
+                <Button Danger Icon="@IconType.Outline.Search" @onclick="Search">
+                    搜索
+                </Button>
+            </Flex>
+        </GridRow>
+    </Card>
+    <br />
+    <Card Title=@("角色列表")>
+        <Extra>
+            <Space Size="SpaceSize.Middle">
+                <SpaceItem>
+                    <Button Danger Icon="@IconType.Outline.Plus" @onclick="() => Edit()">新增</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Icon="@IconType.Outline.Reload" @onclick="Search">刷新</Button>
+                </SpaceItem>
+            </Space>
+        </Extra>
+        <Body>
+            <Table TableLayout="fixed" TItem="UrlRewriteRuleModel" DataSource="rules.Data" Total="rules.Total" RemoteDataSource
+                   @bind-PageIndex="query.PageIndex"
+                   @bind-PageSize="query.PageSize"
+                   OnChange="OnChange" AutoHeight>
+                <PropertyColumn Property="c=>c.Regex" />
+                <PropertyColumn Property="c => c.Replacement" />
+                <PropertyColumn Property="c => c.StatusCode" />
+                <ActionColumn Title="操作" Width="180">
+                    <Space>
+                        <SpaceItem>
+                            <Button Type="@ButtonType.Link" Icon="@IconType.Outline.Edit" Size="@ButtonSize.Small" @onclick="() => Edit(context)">编辑</Button>
+                        </SpaceItem>
+
+                        <SpaceItem>
+                            <Button Danger Type="@ButtonType.Link" Icon="@IconType.Outline.Delete" Size="@ButtonSize.Small" @onclick="() => Del(context.Id)">删除</Button>
+                        </SpaceItem>
+                    </Space>
+                </ActionColumn>
+            </Table>
+
+        </Body>
+    </Card>
+
+    <Drawer Closable="true" @bind-Visible="isShowEditModal" Placement="DrawerPlacement.Right" Title="@("编辑规则")" Width="360">
+        <Form @ref="@editForm" Layout="FormLayout.Vertical" Model="@rule"
+              OnFinish="Submit">
+            <FormItem Label="源地址" Required>
+                <Input @bind-Value="@context.Regex" />
+            </FormItem>
+            <FormItem Label="目标地址" Required>
+                <Input @bind-Value="@context.Replacement" />
+            </FormItem>
+            <FormItem Label="状态码" Required>
+                <Select @bind-Value="@context.StatusCode"
+                        TItemValue="string"
+                        TItem="string">
+                    <SelectOptions>
+                        <SelectOption Value="@("301")" Label="Redirect (301)" />
+                        <SelectOption Value="@("302")" Label="Redirect (302)" />
+                    </SelectOptions>
+                </Select>
+            </FormItem>
+            <FormItem>
+                <Flex Justify="FlexJustify.FlexEnd" Align="FlexAlign.Center" Gap="FlexGap.Middle">
+                    <Button @onclick="() => isShowEditModal = false">取消</Button>
+                    <Button Danger Type="@ButtonType.Primary" HtmlType="submit">
+                        确认
+                    </Button>
+                </Flex>
+            </FormItem>
+        </Form>
+    </Drawer>
+</div>
+
+
+@code {
+    private UrlRewriteRuleQueryModel query = new();
+    private UrlRewriteRuleModel rule = new();
+    private PageResult<List<UrlRewriteRuleModel>> rules = new();
+    private Form<UrlRewriteRuleModel> editForm = default!;
+    private bool isTableLoading = false;
+    private bool isShowEditModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUrlRewriteRules();
+    }
+
+    private async Task GetUrlRewriteRules()
+    {
+        isTableLoading = true;
+        var data = await API.GetUrlRewriteRulesAsync(query);
+        if(data != null)
+        {
+            rules = data;
+        }
+        isTableLoading = false;
+    }
+
+    private void Edit(UrlRewriteRuleModel? rule = default)
+    {
+        this.rule = new();
+        if (rule != null)
+        {
+            this.rule = rule;
+        }
+        isShowEditModal = true;
+    }
+
+    private async Task Search()
+    {
+        await GetUrlRewriteRules();
+    }
+
+    private void Reset()
+    {
+        query = new();
+    }
+
+    public async Task OnChange(QueryModel<UrlRewriteRuleModel> queryModel)
+    {
+        await GetUrlRewriteRules();
+    }
+
+
+    private async Task Submit(EditContext editContext)
+    {
+        if (!string.IsNullOrWhiteSpace(rule.Id))
+        {
+            var result = await API.UpdateUrlRewriteRuleAsync(rule.Id, rule);
+            if (result)
+            {
+                isShowEditModal = false;
+                await GetUrlRewriteRules();
+                _ = _message.Success("规则添加成功");
+                return;
+            }
+            _ = _message.Warn("规则更新失败");
+        }
+        else
+        {
+            var result = await API.AddUrlRewriteRuleAsync(rule);
+            if (result)
+            {
+                isShowEditModal = false;
+                await GetUrlRewriteRules();
+                _ = _message.Success("规则添加成功");
+                return;
+            }
+            _ = _message.Warn("规则添加失败");
+        }
+    }
+
+    private void HandleOk(MouseEventArgs e)
+    {
+        editForm.Submit();
+    }
+
+    private async Task Del(string id)
+    {
+        var result = await API.DeleteRoleAsync(id);
+        if (result)
+        {
+            await GetUrlRewriteRules();
+            _ = _message.Success("角色删除成功");
+            return;
+        }
+        _ = _message.Warn("角色删除失败");
+    }
+}

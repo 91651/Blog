@@ -1,0 +1,15 @@
+.page-container .form-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.page-container .form-group label {
+  flex: 0 0 20%;
+  text-align: end;
+  white-space: nowrap;
+}
+.page-container ::deep .ant-table .ant-table-body {
+  max-height: 420px;
+}
+
+/*# sourceMappingURL=UrlRewrite.razor.css.map */

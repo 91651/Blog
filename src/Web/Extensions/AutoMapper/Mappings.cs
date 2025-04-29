@@ -27,6 +27,7 @@ namespace Blog.Web.Extensions.AutoMapper
             CreateMap<File, FileModel>().ReverseMap();
             CreateMap<User, UserModel>().ReverseMap();
             CreateMap<Role, RoleModel>().ReverseMap();
+            CreateMap<UrlRewriteRule, UrlRewriteRuleModel>().ReverseMap();
         }
     }
 }

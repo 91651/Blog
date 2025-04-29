@@ -23,7 +23,7 @@ public class RoleService : IRoleService
         Expression<Func<Role, bool>> ex = t => true;
         if (!string.IsNullOrWhiteSpace(model.Name))
         {
-            ex = t => t.Id.Contains(model.Name);
+            ex = t => t.Name.Contains(model.Name);
         }
         var data = await _db.Roles.Where(ex).ToDataSourceResultAsync(model);
         return new PageResult<List<RoleModel>>

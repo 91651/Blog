@@ -98,6 +98,7 @@ else
 }
 app.UseInitDb();
 app.UseHttpsRedirection();
+app.UseUrlRewrite();
 app.UseRewriter(new RewriteOptions().AddRedirectToNonWww());
 app.UseRewriter(new RewriteOptions().AddRewrite(@"^.+/_content/(.*)", "_content/$1", skipRemainingRules: true));
 app.UseBlazorFrameworkFiles("/admin");

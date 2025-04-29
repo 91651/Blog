@@ -43,4 +43,23 @@ public interface IAdminApiProvider
     Task<bool> DeleteUserAsync(string id);
 
     #endregion User Api
+
+    #region UrlRewriteRule Api
+
+    [Get("/api/admin/urlrewriterule/{id}")]
+    Task<ArticleModel> GetUrlRewriteRuleAsync(string id);
+
+    [Get("/api/admin/urlrewriterule")]
+    Task<PageResult<List<UrlRewriteRuleModel>>> GetUrlRewriteRulesAsync([Query] UrlRewriteRuleQueryModel query);
+
+    [Post("/api/admin/urlrewriterule")]
+    Task<bool> AddUrlRewriteRuleAsync(UrlRewriteRuleModel model);
+
+    [Put("/api/admin/urlrewriterule/{id}")]
+    Task<bool> UpdateUrlRewriteRuleAsync(string id, UrlRewriteRuleModel model);
+
+    [Delete("/api/admin/urlrewriterule/{id}")]
+    Task<bool> DeleteUrlRewriteRuleAsync(string id);
+
+    #endregion UrlRewriteRule Api
 }
