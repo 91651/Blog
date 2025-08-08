@@ -55,6 +55,7 @@ public class ArticleController : ControllerBase
     [HttpPost("query")]
     public Task<PageResult<List<ArticleListModel>>> GetArticles(ArticleQueryModel model)
     {
+        var a = Request.HttpContext.Request.Path;
         return _articleService.GetArticlesAsync(model);
     }
 }
