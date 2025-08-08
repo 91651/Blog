@@ -18,7 +18,7 @@ public interface IAdminApiProvider
     [Get("/api/admin/article/{id}")]
     Task<ArticleModel> GetArticleAsync(string id);
 
-    [Get("/api/admin/article/query")]
+    [Get("/api/admin/article")]
     Task<PageResult<List<ArticleListModel>>> GetArticlesAsync([Query] ArticleQueryModel query);
 
     [Post("/api/admin/article")]

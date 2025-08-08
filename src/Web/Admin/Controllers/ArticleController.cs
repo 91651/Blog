@@ -53,7 +53,7 @@ public class ArticleController : ControllerBase
     }
 
     [HttpGet]
-    public Task<PageResult<List<ArticleListModel>>> GetArticles(ArticleQueryModel model)
+    public Task<PageResult<List<ArticleListModel>>> GetArticles([FromQuery] ArticleQueryModel model)
     {
         return _articleService.GetArticlesAsync(model);
     }
