@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin"), AllowAnonymous]
-    public async Task<ActionResult<bool>> SignIn(SignInModel model)
+    public async Task<ActionResult<bool>> UserSignIn(SignInModel model)
     {
         var user = await _userManager.FindByNameAsync(model.Name);
         if (user == null)
@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signout")]
-    public async Task SignOut()
+    public async Task UserSignOut()
     {
         await _signInManager.SignOutAsync();
     }

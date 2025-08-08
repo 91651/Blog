@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <meta no-prolayout-css no-antblazor-js no-antblazor-css />
+    <LinkPreload />
     <link rel="stylesheet" href="@Assets["css/app.css"]" />
     <link rel="stylesheet" href="@Assets["css/iconfont.css"]" />
     <link rel="stylesheet" href="@(typeof(App).Assembly.GetName().Name).styles.css" />
@@ -16,8 +17,8 @@
 
 <body>
     <Routes />
-
-    <script src="_framework/blazor.web.js" autostart="false"></script>
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
     <script>
         Blazor.start({
             ssr: { disableDomPreservation: true }

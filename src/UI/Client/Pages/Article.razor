@@ -13,7 +13,7 @@
 <PageTitle>@article.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
     <meta name="description" content="@article.Summary">
-    <link rel="canonical" href="@(new Uri(new Uri(NavManager.BaseUri), $"/p/{id}"))" />
+    <link rel="canonical" href="@(new Uri(new Uri(NavManager.BaseUri), $"/p/{Id}"))" />
     <link href="/lib/highlight.js@11.10.0/monokai-sublime.min.css" rel="stylesheet" />
 </HeadContent>
 
@@ -48,7 +48,7 @@
                     @article.Viewed
                 </span>
                 <span class="opQrcode"><i class="iconfont icon-qr-code-line"></i>手机阅读</span>
-                <div id="qrcode" class="flex" title="@(new Uri(new Uri(NavManager.BaseUri), $"/p/{id}"))"><canvas width="128" height="128" style="display: none;"></canvas><img alt="Scan me!" src="data:image/png;base64,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" style="display: block;"></div>
+                <div id="qrcode" class="flex" title="@(new Uri(new Uri(NavManager.BaseUri), $"/p/{Id}"))"><canvas width="128" height="128" style="display: none;"></canvas><img alt="Scan me!" src="data:image/png;base64,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" style="display: block;"></div>
             </div>
         </div>
         <div class="post-main">
@@ -76,7 +76,7 @@
             </a>
         </div>
     </div>
-    <Comments OwnerId="@id">
+    <Comments OwnerId="@Id">
     </Comments>
 </div>
 
@@ -91,7 +91,8 @@
 
 @code {
     [Parameter]
-    public string id { get; set; }
+    public required string Id { get; set; }
+
     private ArticleModel article = new();
     private ArticleModel prevArticle = new();
     private ArticleModel nextArticle = new();
@@ -107,13 +108,13 @@
         }
         else
         {
-            article = await _api.GetArticleAsync(id);
+            article = await _api.GetArticleAsync(Id);
         }
 
-        await _api.UpdateArticleViewedAsync(id);
+        await _api.UpdateArticleViewedAsync(Id);
         var channelId = article.ChannelId;
-        prevArticle = await _api.GetPrevArticleAsync(id);
-        nextArticle = await _api.GetNextArticleAsync(id);
+        prevArticle = await _api.GetPrevArticleAsync(Id);
+        nextArticle = await _api.GetNextArticleAsync(Id);
 
     }
 

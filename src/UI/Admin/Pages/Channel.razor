@@ -1,13 +1,16 @@
 ﻿@page "/channel"
 @attribute [Authorize]
+
 @using System.ComponentModel
 @using AntDesign.TableModels
+@using Blog.Admin.Data
 @using Blog.Model
 @using EFCore.DynamicLinq
 @using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
-@inject MessageService _message
+
+@inject MessageService Message
 @inject NavigationManager Navigation
+@inject IAdminApiProvider Api
 
 <PageTitle>Index</PageTitle>
 
@@ -101,15 +104,16 @@
 
     private async Task GetChannels()
     {
-        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
-        if(data != null)
+        var result = await Api.GetChannelsAsync();
+        if (result != null)
         {
-            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+            channels = result.Select(c => new ChannelTreeModel { Channel = c, Children = result.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
         }
     }
 
     private void Edit(ChannelModel? channel = default)
     {
+        this.channel = new();
         if (channel != null)
         {
             this.channel = channel;
@@ -120,56 +124,42 @@
     private async Task EditState(ChannelModel channel, int state)
     {
         channel.State = state;
-        var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
-            if (resp.IsSuccessStatusCode)
-            {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目更新成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
-            }
-            await _message.Warn("栏目更新失败");
+        var result = await Api.UpdateChannelAsync(channel.Id, channel);
+        if (result)
+        {
+            await Message.SuccessAsync("栏目更新成功");
+            isShowEditModal = false;
+            await GetChannels();
+            return;
+        }
+        await Message.WarnAsync("栏目更新失败");
     }
 
     private async Task Submit(EditContext editContext)
     {
         if (!string.IsNullOrWhiteSpace(channel.Id))
         {
-            var resp = await Http.PutAsJsonAsync<ChannelModel>($"/api/admin/channel/{channel.Id}", channel);
-            if (resp.IsSuccessStatusCode)
+            var result = await Api.UpdateChannelAsync(channel.Id, channel);
+            if (result)
             {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目更新成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
+                await Message.SuccessAsync("栏目更新成功");
+                isShowEditModal = false;
+                await GetChannels();
+                return;
             }
-            await _message.Warn("栏目更新失败");
+            await Message.WarnAsync("栏目更新失败");
         }
         else
         {
-            var resp = await Http.PostAsJsonAsync<ChannelModel>("/api/admin/channel", channel);
-            if (resp.IsSuccessStatusCode)
+            var result = await Api.AddChannelAsync(channel);
+            if (!string.IsNullOrWhiteSpace(result))
             {
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("栏目添加成功");
-                    isShowEditModal = false;
-                    await GetChannels();
-                    return;
-                }
+                await Message.SuccessAsync("栏目添加成功");
+                isShowEditModal = false;
+                await GetChannels();
+                return;
             }
-            await _message.Warn("栏目添加失败");
+            await Message.WarnAsync("栏目添加失败");
         }
     }
 
@@ -180,13 +170,13 @@
 
     private async Task Del(string id)
     {
-        var resp = await Http.DeleteAsync($"/api/admin/channel/{id}");
-        if (resp.IsSuccessStatusCode)
+        var result = await Api.DeleteChannelAsync(id);
+        if (result)
         {
-            await _message.Success("栏目删除成功");
+            await Message.SuccessAsync("栏目删除成功");
             await GetChannels();
             return;
         }
-        await _message.Warn("栏目删除失败");
+        await Message.WarnAsync("栏目删除失败");
     }
 }

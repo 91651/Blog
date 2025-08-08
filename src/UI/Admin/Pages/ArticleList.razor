@@ -1,13 +1,16 @@
 ﻿@page "/article"
 @attribute [Authorize]
+
 @using System.ComponentModel
 @using AntDesign.TableModels
+@using Blog.Admin.Data
 @using Blog.Model
 @using EFCore.DynamicLinq
 @using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
-@inject MessageService _message
+
+@inject MessageService Message
 @inject NavigationManager Navigation
+@inject IAdminApiProvider Api
 
 <PageTitle>Index</PageTitle>
 
@@ -89,7 +92,7 @@
 
 @code {
     private ArticleQueryModel query = new ();
-    private PageResult<List<ArticleListModel>>? data = new();
+    private PageResult<List<ArticleListModel>> data = new();
     private List<ChannelTreeModel> channels = new();
 
     protected override async Task OnInitializedAsync()
@@ -100,19 +103,19 @@
 
     private async Task GetArticles()
     {
-        var resp = await Http.PostAsJsonAsync<ArticleQueryModel>("/api/admin/article/query", query);
-        if(resp != null)
+        var result = await Api.GetArticlesAsync(query);
+        if (result != null)
         {
-            data = await resp.Content.ReadFromJsonAsync<PageResult<List<ArticleListModel>>>();
+            data = result;
         }
     }
 
     private async Task GetChannels()
     {
-        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
-        if(data != null)
+        var result = await Api.GetChannelsAsync();
+        if (result != null)
         {
-            channels = data.Select(c => new ChannelTreeModel { Channel = c, Children = data.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
+            channels = result.Select(c => new ChannelTreeModel { Channel = c, Children = result.Where(ch => ch.ParentId == c.Id).Select(ch => new ChannelTreeModel { Channel = ch }).ToArray() }).Where(c => string.IsNullOrWhiteSpace(c.Channel.ParentId)).ToList();
         }
     }
 
@@ -128,14 +131,14 @@
 
     private async Task Del(string id)
     {
-        var resp = await Http.DeleteAsync($"/api/admin/article/{id}");
-        if (resp.IsSuccessStatusCode)
+        var result = await Api.DeleteArticleAsync(id);
+        if (result)
         {
-            await _message.Success("文章删除成功");
+            await Message.SuccessAsync("文章删除成功");
             await GetArticles();
             return;
         }
-        await _message.Warn("文章删除失败");
+        await Message.WarnAsync("文章删除失败");
     }
 
     void OnRowClick(RowData<ArticleListModel> row)

@@ -6,6 +6,51 @@ namespace Blog.Admin.Data;
 
 public interface IAdminApiProvider
 {
+    #region Auth Api
+
+    [Get("/api/admin/auth/claims")]
+    Task<IApiResponse<IDictionary<string, string>>> GetClaimsAsync();
+
+    #endregion Auth Api
+
+    #region Article Api
+
+    [Get("/api/admin/article/{id}")]
+    Task<ArticleModel> GetArticleAsync(string id);
+
+    [Get("/api/admin/article/query")]
+    Task<PageResult<List<ArticleListModel>>> GetArticlesAsync([Query] ArticleQueryModel query);
+
+    [Post("/api/admin/article")]
+    Task<string> AddArticleAsync(ArticleModel model);
+
+    [Put("/api/admin/article/{id}")]
+    Task<bool> UpdateArticleAsync(string id, ArticleModel model);
+
+    [Delete("/api/admin/article/{id}")]
+    Task<bool> DeleteArticleAsync(string id);
+
+    #endregion Article Api
+
+    #region Channel Api
+
+    [Get("/api/admin/channel/{id}")]
+    Task<ChannelModel> GetChannelAsync(string id);
+
+    [Get("/api/admin/channel")]
+    Task<List<ChannelModel>> GetChannelsAsync();
+
+    [Post("/api/admin/channel")]
+    Task<string> AddChannelAsync(ChannelModel model);
+
+    [Put("/api/admin/channel/{id}")]
+    Task<bool> UpdateChannelAsync(string id, ChannelModel model);
+
+    [Delete("/api/admin/channel/{id}")]
+    Task<bool> DeleteChannelAsync(string id);
+
+    #endregion Channel Api
+
     #region Role Api
 
     [Get("/api/admin/role/{id}")]

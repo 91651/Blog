@@ -10,7 +10,7 @@ namespace Blog.Web.Extensions
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
-                var dbContext = serviceScope.ServiceProvider.GetService<AppDbContext>();
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 if (dbContext.Database.EnsureCreated())
                 {

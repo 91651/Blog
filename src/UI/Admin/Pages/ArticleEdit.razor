@@ -1,18 +1,21 @@
 ﻿@page "/article/edit/{id}"
 @page "/article/edit"
 @attribute [Authorize]
+
 @using System.ComponentModel
 @using AntDesign.TableModels
+@using Blog.Admin.Data
 @using Microsoft.AspNetCore.Authorization
 @using System.Text.Json
 @using System.Dynamic
 @using System.Linq
 @using Vditor.Models
 @using Blog.Model
-@inject HttpClient Http
-@inject IJSRuntime _jsRuntime
-@inject MessageService _message
+
+@inject IJSRuntime JSRuntime
+@inject MessageService Message
 @inject NavigationManager Navigation
+@inject IAdminApiProvider Api
 
 <link rel="stylesheet" href="@vditorCdn/dist/index.css" />
 
@@ -66,8 +69,9 @@
 
 @code {
     [Parameter]
-    public string? id { get; set; }
-    public bool isMarkdown { get; set; } = true;
+    public string? Id { get; set; }
+
+    public bool isMarkdown = true;
     private ArticleModel model = new ArticleModel{ Editor = 1 };
     private List<CascaderNode> channels = new();
     private string vditorCdn = "/admin/lib/vditor@3.10.8";
@@ -80,9 +84,9 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!string.IsNullOrWhiteSpace(id))
+        if (!string.IsNullOrWhiteSpace(Id))
         {
-            await GetArticle();
+            await GetArticle(Id);
         }
     }
 
@@ -95,24 +99,24 @@
         }
     }
 
-    private async Task GetArticle()
+    private async Task GetArticle(string id)
     {
-        var data = await Http.GetFromJsonAsync<ArticleModel>($"/api/admin/article/{id}");
-        if(data != null)
+        var result = await Api.GetArticleAsync(id);
+        if (result != null)
         {
-            model = data;
+            model = result;
             isMarkdown = model.Editor == 1;
         }
     }
 
     private async Task GetChannels()
     {
-        var data = await Http.GetFromJsonAsync<List<ChannelModel>>("/api/admin/channel");
-        if(data != null)
+        var result = await Api.GetChannelsAsync();
+        if (result != null)
         {
-            channels = data.Select(s =>
+            channels = result.Select(s =>
             {
-                var children = data.Where(c => c.ParentId == s.Id);
+                var children = result.Where(c => c.ParentId == s.Id);
                 if (children.Any())
                 {
                     return new CascaderNode
@@ -149,6 +153,10 @@
     private string Format(object files, string responseText)
     {
         var resp = JsonSerializer.Deserialize<List<FileModel>>(responseText, new JsonSerializerOptions{ PropertyNameCaseInsensitive = true });
+        if(resp == null)
+        {
+            return default!;
+        }
         model.Files = resp.Select(s => s.Id).ToArray();
         var succMap = new Dictionary<string, object>();
         foreach(var file in resp)
@@ -164,8 +172,8 @@
     {
         var vditor = $"{vditorCdn}/dist/index.min.js";
         var vditorBlazor = "/_content/Vditor/vditor-blazor.js";
-        await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
-        await _jsRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
+        await JSRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditor);
+        await JSRuntime.InvokeVoidAsync("BlazorApp.loadJSWithWaiting", vditorBlazor);
         markdown =
         @<Template>
             <Vditor.Editor Mode="wysiwyg" Height='400' Upload="upload" Cdn="@vditorCdn" @bind-Value="@model.MdContent" HtmlChanged="(string html) => {model.Content = html;}" />
@@ -175,38 +183,28 @@
 
     private async Task OnFinish()
     {
-        if (!string.IsNullOrWhiteSpace(id))
+        if (!string.IsNullOrWhiteSpace(model.Id))
         {
-            model.Id = id;
-            var resp = await Http.PutAsJsonAsync<ArticleModel>($"/api/admin/article/{id}", model);
-            if (resp.IsSuccessStatusCode)
+            var result = await Api.UpdateArticleAsync(model.Id, model);
+            if (result)
             {
-
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("文章更新成功");
-                    Navigation.NavigateTo("/admin/article");
-                    return;
-                }
+                await Message.SuccessAsync("文章更新成功");
+                Navigation.NavigateTo("/admin/article");
+                return;
             }
-            await _message.Warn("文章更新失败");
+            await Message.WarnAsync("文章更新失败");
         }
         else
         {
-            var resp = await Http.PostAsJsonAsync<ArticleModel>("/api/admin/article", model);
-            if (resp.IsSuccessStatusCode)
+            var result = await Api.AddArticleAsync(model);
+            if (!string.IsNullOrWhiteSpace(result))
             {
 
-                var data = await resp.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(data))
-                {
-                    await _message.Success("文章添加成功");
-                    Navigation.NavigateTo("/admin/article");
-                    return;
-                }
+                await Message.SuccessAsync("文章添加成功");
+                Navigation.NavigateTo("/admin/article");
+                return;
             }
-            await _message.Warn("文章添加失败");
+            await Message.WarnAsync("文章添加失败");
         }
     }
 

@@ -52,7 +52,7 @@ public class ArticleController : ControllerBase
         return _articleService.GetArticleAsync(id);
     }
 
-    [HttpPost("query")]
+    [HttpGet]
     public Task<PageResult<List<ArticleListModel>>> GetArticles(ArticleQueryModel model)
     {
         return _articleService.GetArticlesAsync(model);

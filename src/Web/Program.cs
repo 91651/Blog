@@ -102,7 +102,7 @@ app.UseRewriter(new RewriteOptions().AddRedirectToNonWww());
 app.UseRewriter(new RewriteOptions().AddRewrite(@"^.+/_content/(.*)", "_content/$1", skipRemainingRules: true));
 app.UseBlazorFrameworkFiles("/admin");
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.GetFullPath(configuration["AppSettings:StaticContentPath"])).FullName) });
+app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.GetFullPath(configuration["AppSettings:StaticContentPath"]!)).FullName) });
 app.UseRouting();
 app.UseCors();
 app.UseAuthentication();

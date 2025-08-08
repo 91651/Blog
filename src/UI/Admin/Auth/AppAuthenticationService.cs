@@ -1,6 +1,5 @@
-﻿using System.Net.Http.Json;
-using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Security.Claims;
+using Blog.Admin.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Blog.Admin.Auth;
@@ -52,15 +51,10 @@ public class AppAuthenticationService : AuthenticationStateProvider
     private async Task<IEnumerable<KeyValuePair<string, string>>> GetCurrentUser()
     {
         using var scope = _serviceProvider.CreateScope();
-        var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
-        var resp = await httpClient.GetAsync("/api/admin/auth/claims");
-        if (resp.IsSuccessStatusCode)
-        {
-            var options = new JsonSerializerOptions();
-            var data = await resp.Content.ReadFromJsonAsync<IDictionary<string, string>>();
-            return data;
-        }
-        return Enumerable.Empty<KeyValuePair<string, string>>();
+        var Api = scope.ServiceProvider.GetRequiredService<IAdminApiProvider>();
+        var resp = await Api.GetClaimsAsync();
+        var claims = resp.Content ?? Enumerable.Empty<KeyValuePair<string, string>>();
+        return claims;
     }
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync() => GetAuthenticationStateIdentityAsync();
