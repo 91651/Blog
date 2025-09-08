@@ -9,9 +9,9 @@
   <ItemGroup>
     <PackageReference Include="BC.Microsoft.DependencyInjection.Plus" Version="1.0.3" />
     <PackageReference Include="Lazy.SlideCaptcha.Core" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-preview.6.25358.103" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0-preview.6.25358.103" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-preview.6.25358.103" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-preview.7.25380.108" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.5.0" />
     <PackageReference Include="X.Web.Sitemap" Version="2.10.5" />
   </ItemGroup>
