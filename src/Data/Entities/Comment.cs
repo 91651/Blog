@@ -6,7 +6,7 @@ public class Comment
 {
     [Key]
     [MaxLength(40)]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; } = Guid.CreateVersion7().ToString();
 
     [MaxLength(40)]
     public string ParentId { get; set; }

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Refit;
+using Telemetry.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -22,7 +23,11 @@ var configuration = builder.Configuration;
 var services = builder.Services;
 
 services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
-services.AddDbContext<AppDbContext>(option => option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]));
+services.AddDbContext<AppDbContext>(option =>
+{
+    option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]);
+    option.UseTelemetry();
+});
 services.AddIdentity<User, Role>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 services.Configure<IdentityOptions>(options =>
@@ -56,6 +61,7 @@ services.AddControllersWithViews(opt =>
     opt.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
 });
 services.AddDistributedMemoryCache();
+services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();

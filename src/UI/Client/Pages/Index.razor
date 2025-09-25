@@ -4,7 +4,6 @@
 @using Blog.Model
 @using Blog.Client.Data
 
-@inject PersistentComponentState _componentState
 @inject IClientApiProvider _api
 
 <PageTitle>遇见时光-1023.org.cn | 博客首页 | 学习技术、记录生活</PageTitle>
@@ -72,9 +71,6 @@
     [PersistentState]
     public required List<ArticleListModel> Articles { get; set; }
 
-    [PersistentState]
-    public string State { get; set; }
-
     private ArticleQueryModel query = new() { PageSize = 20 };
     private string loadMoreText = "阅读更多";
 
@@ -82,7 +78,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        State ??= default;
         Articles ??= new();
         await GetArticles();
 
@@ -90,7 +85,7 @@
 
     private async Task GetArticles()
     {
-        query.PageIndex = Page++;
+        query.PageIndex = ++Page;
         var result = (await _api.GetArticlesAsync(query));
         Articles.AddRange(result.Data);
         if (Articles.Count >= result.Total)

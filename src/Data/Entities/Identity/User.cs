@@ -6,6 +6,6 @@ public class User : IdentityUser
 {
     public User()
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.CreateVersion7().ToString();
     }
 }

@@ -9,6 +9,7 @@
   <Folder Name="/Framework/">
     <Project Path="src/Framework/EFCore/EFCore.csproj" />
     <Project Path="src/Framework/JsInterop/JsInterop.csproj" />
+    <Project Path="src/Framework/Telemetry/Telemetry.csproj" Id="7597246a-328f-4e2b-ad13-42daef944082" />
     <Project Path="src/Framework/Util/Util.csproj" />
     <Project Path="src/Framework/Vditor/Vditor.csproj" />
   </Folder>

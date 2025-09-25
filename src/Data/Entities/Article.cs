@@ -10,7 +10,7 @@ public class Article
 {
     [Key]
     [MaxLength(40)]
-    public string Id { get; set; } = Guid.NewGuid().ToString(10);
+    public string Id { get; set; } = Guid.CreateVersion7().ToString(10);
 
     [MaxLength(255)]
     public string Title { get; set; }

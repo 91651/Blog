@@ -9,15 +9,20 @@
   <ItemGroup>
     <PackageReference Include="BC.Microsoft.DependencyInjection.Plus" Version="1.0.3" />
     <PackageReference Include="Lazy.SlideCaptcha.Core" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="NSwag.AspNetCore" Version="14.5.0" />
-    <PackageReference Include="X.Web.Sitemap" Version="2.10.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0-rc.1.25451.107">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NSwag.AspNetCore" Version="14.6.0" />
+    <PackageReference Include="X.Web.Sitemap" Version="2.10.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Service\Blog.Service.csproj" />
+    <ProjectReference Include="..\Framework\Telemetry\Telemetry.csproj" />
     <ProjectReference Include="..\UI\Admin\Blog.Admin.csproj" />
     <ProjectReference Include="..\UI\Client\Blog.Client.csproj" />
   </ItemGroup>

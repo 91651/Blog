@@ -6,6 +6,6 @@ public class Role : IdentityRole
 {
     public Role()
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.CreateVersion7().ToString();
     }
 }

@@ -5,25 +5,24 @@
 @using Blog.Model
 @using Blog.Client.Data
 @inject NavigationManager _navigationManager
-@inject PersistentComponentState _componentState
 @inject IClientApiProvider _api
 
-<PageTitle>@channel?.Title | 遇见时光-1023.org.cn</PageTitle>
+<PageTitle>@CurrentChannel?.Title | 遇见时光-1023.org.cn</PageTitle>
 <HeadContent>
-    <meta name="description" content="@channel?.Title">
-    <link rel="canonical" href="@(new Uri(new Uri(_navigationManager.BaseUri), $"/c/{id}"))" />
+    <meta name="description" content="@CurrentChannel?.Title">
+    <link rel="canonical" href="@(new Uri(new Uri(_navigationManager.BaseUri), $"/c/{Id}"))" />
 </HeadContent>
 
-@if (articles.Any())
+@if (Articles.Any())
 {
     <section class="term-bar">
         <div class="container">
             <span>当前分类</span>
-            <span class="term-illustrate">@channel.Title</span>
+            <span class="term-illustrate">@CurrentChannel.Title</span>
         </div>
     </section>
     <section class="site-content container">
-        @foreach (var article in articles)
+        @foreach (var article in Articles)
         {
             <article class="hasThumb flex">
                 <div class="article-content">
@@ -92,56 +91,30 @@ else
 
 @code {
     [Parameter]
-    public string? id { get; set; }
-    private int page = 1;
-    private ChannelModel channel = new();
+    public string? Id { get; set; }
+    [PersistentState]
+    public int Page { get; set; }
+    [PersistentState]
+    public required ChannelModel CurrentChannel { get; set; }
+    public required List<ArticleListModel> Articles { get; set; }
     private ArticleQueryModel query = new() { PageSize = 20 };
-    private List<ArticleListModel> articles = new ();
 
     protected override async Task OnParametersSetAsync()
     {
-        if (string.IsNullOrWhiteSpace(id))
+        if (string.IsNullOrWhiteSpace(Id))
         {
             return;
         }
-        _componentState.RegisterOnPersisting(PersistData);
-        if (_componentState.TryTakeFromJson<int>(nameof(page), out var _page))
-        {
-            page = _page;
-
-        }
-        if (_componentState.TryTakeFromJson<ChannelModel>(nameof(channel), out var _channel) && _channel != null)
-        {
-            channel = _channel;
-
-        }
-        else
-        {
-            channel = await _api.GetChannelAsync(id);
-        }
-        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var _articles) && _articles != null)
-        {
-            articles = _articles;
-        }
-        else
-        {
-            await GetArticles();
-        }
-    }
-
-    private Task PersistData()
-    {
-        _componentState.PersistAsJson(nameof(page), page);
-        _componentState.PersistAsJson(nameof(channel), channel);
-        _componentState.PersistAsJson(nameof(articles), articles);
-        return Task.CompletedTask;
+        CurrentChannel ??= await _api.GetChannelAsync(Id);
+        Articles ??= new();
+        await GetArticles();
     }
 
     private async Task GetArticles()
     {
-        query.ChannelId = id;
-        query.PageIndex = page++;
+        query.ChannelId = Id;
+        query.PageIndex = ++Page;
         var data = (await _api.GetArticlesAsync(query)).Data;
-        articles.AddRange(data);
+        Articles.AddRange(data);
     }
 }

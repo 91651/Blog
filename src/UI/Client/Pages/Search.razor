@@ -5,21 +5,20 @@
 @using Blog.Model
 @using Blog.Client.Data
 @inject NavigationManager _navigationManager
-@inject PersistentComponentState _componentState
 @inject IClientApiProvider _api
 
 <PageTitle>搜索结果 | 遇见时光-1023.org.cn</PageTitle>
 
-@if (total > 0)
+@if (Total > 0)
 {
     <section class="term-bar">
         <div class="container">
             <span>搜索结果</span>
-            <span class="term-illustrate">“@q” 搜到 @total 篇文章</span>
+            <span class="term-illustrate">“@q” 搜到 @Total 篇文章</span>
         </div>
     </section>
     <section class="site-content container">
-        @foreach (var article in articles)
+        @foreach (var article in Articles)
         {
             <article class="hasThumb flex">
                 <div class="article-content">
@@ -69,7 +68,7 @@
             </article>
         }
         <div class="pagenavi flex">
-            <a class="load-more" @onclick="GetArticles">@(articles.Count != total ? "加载更多搜索结果":"已经加载全部搜索内容")</a>
+            <a class="load-more" @onclick="GetArticles">@(Articles.Count != Total ? "加载更多搜索结果" : "已经加载全部搜索内容")</a>
         </div>
     </section>
 }
@@ -86,55 +85,34 @@ else
 }
 
 @code {
+    [PersistentState]
+    public int Page { get; set; }
+    [PersistentState]
+    public int Total { get; set; }
+    [PersistentState]
+    public required List<ArticleListModel> Articles { get; set; }
     public string? q;
-    private int page = 1;
-    private int total = 0;
     private ArticleQueryModel query = new() { PageSize = 20 };
-    private List<ArticleListModel> articles = new();
+    
 
 
     protected override async Task OnInitializedAsync()
     {
+        Articles ??= new();
         var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(nameof(q), out var p))
         {
             q = p.First();
         }
-        _componentState.RegisterOnPersisting(PersistData);
-        if (_componentState.TryTakeFromJson<int>(nameof(page), out var _page))
-        {
-            page = _page;
-
-        }
-        if (_componentState.TryTakeFromJson<int>(nameof(total), out var _total))
-        {
-            total = _total;
-
-        }
-        if (_componentState.TryTakeFromJson<List<ArticleListModel>>(nameof(articles), out var _articles) && _articles != null)
-        {
-            articles = _articles;
-        }
-        else
-        {
-            await GetArticles();
-        }
-    }
-
-    private Task PersistData()
-    {
-        _componentState.PersistAsJson(nameof(page), page);
-        _componentState.PersistAsJson(nameof(total), total);
-        _componentState.PersistAsJson(nameof(articles), articles);
-        return Task.CompletedTask;
+        await GetArticles();
     }
 
     private async Task GetArticles()
     {
         query.Keyword = q?.Trim();
-        query.PageIndex = page++;
+        query.PageIndex = ++Page;
         var data = (await _api.GetArticlesAsync(query));
-        total = data.Total;
-        articles.AddRange(data.Data);
+        Total = data.Total;
+        Articles.AddRange(data.Data);
     }
 }
