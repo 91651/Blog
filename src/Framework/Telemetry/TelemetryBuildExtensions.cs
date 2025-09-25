@@ -19,6 +19,11 @@ public static class TelemetryBuildExtensions
         {
             b.AddAspNetCoreInstrumentation(options =>
             {
+                options.EnrichWithHttpRequest = (activity, request) =>
+                {
+                    var ip = request.Headers["X-Forwarded-For"].FirstOrDefault() ?? request.HttpContext.Connection.RemoteIpAddress?.ToString();
+                    activity.SetTag("http.client_ip", ip);
+                };
                 options.EnrichWithHttpResponse = (activity, request) =>
                 {
                     var endpoint = request.HttpContext.GetEndpoint();
@@ -26,20 +31,8 @@ public static class TelemetryBuildExtensions
                     {
                         activity.SetTag("is.page_request", true);
                     }
-                    var ip = request.Headers["X-Forwarded-For"].FirstOrDefault() ?? request.HttpContext.Connection.RemoteIpAddress?.ToString();
-                    activity.SetTag("http.client_ip", ip);
                 };
-                options.EnrichWithHttpRequest = (activity, request) =>
-                {
-                    var endpoint = request.HttpContext.GetEndpoint();
-                    if (endpoint != null)
-                    {
-                        activity.SetTag("is.page_request", true);
-                    }
-                    var ip = request.Headers["X-Forwarded-For"].FirstOrDefault() ?? request.HttpContext.Connection.RemoteIpAddress?.ToString();
-                    activity.SetTag("http.client_ip", ip);
-                };
-            }).AddConsoleExporter().AddProcessor(sp => new BatchActivityExportProcessor(new EfCoreExporter(
+            }).AddProcessor(sp => new BatchActivityExportProcessor(new EfCoreExporter(
                          sp.GetRequiredService<IServiceScopeFactory>())));
         });
 

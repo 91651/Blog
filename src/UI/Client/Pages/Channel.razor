@@ -96,6 +96,7 @@ else
     public int Page { get; set; }
     [PersistentState]
     public required ChannelModel CurrentChannel { get; set; }
+    [PersistentState]
     public required List<ArticleListModel> Articles { get; set; }
     private ArticleQueryModel query = new() { PageSize = 20 };
 
@@ -105,8 +106,9 @@ else
         {
             return;
         }
-        CurrentChannel ??= await _api.GetChannelAsync(Id);
         Articles ??= new();
+        CurrentChannel ??= new();
+        CurrentChannel = await _api.GetChannelAsync(Id);
         await GetArticles();
     }
 
