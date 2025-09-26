@@ -106,10 +106,16 @@ else
         {
             return;
         }
-        Articles ??= new();
-        CurrentChannel ??= new();
-        CurrentChannel = await _api.GetChannelAsync(Id);
-        await GetArticles();
+        if (CurrentChannel is null)
+        {
+            CurrentChannel ??= new();
+            CurrentChannel = await _api.GetChannelAsync(Id);
+        }
+        if (Articles is null)
+        {
+            Articles ??= new();
+            await GetArticles();
+        }
     }
 
     private async Task GetArticles()

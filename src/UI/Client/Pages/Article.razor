@@ -99,9 +99,11 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        CurrentArticle ??= new();
-        CurrentArticle = await _api.GetArticleAsync(Id);
-
+        if (CurrentArticle is null)
+        {
+            CurrentArticle ??= new();
+            CurrentArticle = await _api.GetArticleAsync(Id);
+        }
         await _api.UpdateArticleViewedAsync(Id);
         prevArticle = await _api.GetPrevArticleAsync(Id);
         nextArticle = await _api.GetNextArticleAsync(Id);

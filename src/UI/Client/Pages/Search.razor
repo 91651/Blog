@@ -98,13 +98,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Articles ??= new();
         var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(nameof(q), out var p))
         {
             q = p.First();
         }
-        await GetArticles();
+        if (Articles is null)
+        {
+            Articles ??= new();
+            await GetArticles();
+        }
     }
 
     private async Task GetArticles()

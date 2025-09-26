@@ -78,9 +78,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Articles ??= new();
-        await GetArticles();
-
+        if (Articles is null)
+        {
+            Articles ??= new();
+            await GetArticles();
+        }
     }
 
     private async Task GetArticles()
