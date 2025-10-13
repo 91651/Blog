@@ -17,15 +17,6 @@ public class EfCoreExporter : BaseExporter<Activity>
 
     public override ExportResult Export(in Batch<Activity> batch)
     {
-        UserTraceExport(batch);
-        return ExportResult.Success;
-    }
-
-    private async void UserTraceExport(Batch<Activity> batch)
-    {
-        using var scope = _scopeFactory.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ITelemetryEntityFrameworkCoreContext>();
-
         List<UserTrace> list = new();
         foreach (var activity in batch)
         {
@@ -50,6 +41,12 @@ public class EfCoreExporter : BaseExporter<Activity>
                 list.Add(t);
             }
         }
-        await dbContext.AddUserTracesAsync(list);
+        if (list.Count > 0)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ITelemetryEntityFrameworkCoreContext>();
+            dbContext.AddUserTracesAsync(list);
+        }
+        return ExportResult.Failure;
     }
 }
