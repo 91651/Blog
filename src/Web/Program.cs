@@ -61,7 +61,7 @@ services.AddControllersWithViews(opt =>
     opt.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
 });
 services.AddDistributedMemoryCache();
-services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
+// services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddRazorPages();
