@@ -56,21 +56,19 @@ services.ConfigureApplicationCookie(o =>
     };
 });
 services.AddMemoryCache();
-services.AddControllersWithViews(opt =>
+services.AddControllers(options =>
 {
-    opt.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
+    options.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
 });
 services.AddDistributedMemoryCache();
 services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
-services.AddRazorPages();
-services.AddServerSideBlazor();
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
-services.AddAuthentication().AddCookie();
-services.AddEndpointsApiExplorer();
 services.AddRouting(options => options.LowercaseUrls = true);
+services.AddEndpointsApiExplorer();
 services.AddOpenApiDocument();
+services.AddAuthentication().AddCookie();
 services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(origin => true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScopedFromAssembly(nameof(Blog.Service), o => o.Matching = true);
@@ -93,6 +91,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseDeveloperExceptionPage();
     app.UseWebAssemblyDebugging();
     app.UseOpenApi();
     app.UseSwaggerUi();
@@ -116,7 +115,7 @@ app.UseAuthorization();
 app.UseAntiforgery();
 app.MapControllers();
 app.MapFallbackToFile("admin/{*path:nonfile}", "admin/index.html");
-
+app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

@@ -47,6 +47,6 @@ public class EfCoreExporter : BaseExporter<Activity>
             var dbContext = scope.ServiceProvider.GetRequiredService<ITelemetryEntityFrameworkCoreContext>();
             dbContext.AddUserTracesAsync(list);
         }
-        return ExportResult.Failure;
+        return ExportResult.Success;
     }
 }
