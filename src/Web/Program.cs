@@ -22,7 +22,7 @@ var configuration = builder.Configuration;
 // Add services to the container.
 var services = builder.Services;
 
-services.AddRazorComponents().AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
+services.AddRazorComponents().AddInteractiveServerComponents().AddHubOptions(options => options.EnableDetailedErrors = true).AddInteractiveWebAssemblyComponents();
 services.AddDbContext<AppDbContext>(option =>
 {
     option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]);
@@ -61,7 +61,7 @@ services.AddControllers(options =>
     options.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
 });
 services.AddDistributedMemoryCache();
-services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
+// services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
@@ -73,7 +73,7 @@ services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOri
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScopedFromAssembly(nameof(Blog.Service), o => o.Matching = true);
 
-builder.Services.AddSlideCaptcha(builder.Configuration);
+services.AddSlideCaptcha(builder.Configuration);
 
 services.AddRefitClient<IClientApiProvider>().ConfigureHttpClient((sp, c) =>
 {
