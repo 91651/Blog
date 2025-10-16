@@ -22,13 +22,13 @@ jobs:
           include-prerelease: true
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ./publish/${{ github.run_number }}
+        run: dotnet publish -c Release -o ./publish/${{ github.sha }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: blog-app
-          path: ./publish/${{ github.run_number }}
+          path: ./publish/${{ github.sha }}
 
   deploy:
     runs-on: windows-latest
