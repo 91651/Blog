@@ -13,7 +13,7 @@
     <link rel="canonical" href="@(new Uri(new Uri(_navigationManager.BaseUri), $"/c/{Id}"))" />
 </HeadContent>
 
-@if (Articles.Any())
+@if (Articles != null)
 {
     <section class="term-bar">
         <div class="container">
