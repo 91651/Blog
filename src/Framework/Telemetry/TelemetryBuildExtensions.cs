@@ -27,7 +27,7 @@ public static class TelemetryBuildExtensions
                 options.EnrichWithHttpResponse = (activity, request) =>
                 {
                     var endpoint = request.HttpContext.GetEndpoint();
-                    if (endpoint is not null && endpoint.Metadata.Any(m => m is ComponentTypeMetadata))
+                    if (endpoint?.Metadata.OfType<ComponentTypeMetadata>().Any() ?? false)
                     {
                         activity.SetTag("is.page_request", true);
                     }

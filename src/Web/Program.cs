@@ -61,7 +61,7 @@ services.AddControllers(options =>
     options.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
 });
 services.AddDistributedMemoryCache();
-// services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
+services.AddOpenTelemetryWithEFCoreExporter<AppDbContext>();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
@@ -70,19 +70,17 @@ services.AddEndpointsApiExplorer();
 services.AddOpenApiDocument();
 services.AddAuthentication().AddCookie();
 services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(origin => true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
+builder.Services.AddResponseCompression();
+
 services.AddAutoMapper(options => options.AddProfile<Mappings>());
 services.AddScopedFromAssembly(nameof(Blog.Service), o => o.Matching = true);
-
 services.AddSlideCaptcha(builder.Configuration);
-
 services.AddRefitClient<IClientApiProvider>().ConfigureHttpClient((sp, c) =>
 {
-    var server = sp.GetRequiredService<IServer>();
-    var addressFeature = server.Features.Get<IServerAddressesFeature>();
-    var baseAddress = addressFeature.Addresses.Last();
+    var addressFeature = sp.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>();
+    var baseAddress = addressFeature!.Addresses.Last();
     c.BaseAddress = new Uri(baseAddress);
 });
-
 services.AddClientServices();
 
 var app = builder.Build();
@@ -105,6 +103,7 @@ app.UseInitDb();
 app.UseHttpsRedirection();
 app.UseRewriter(new RewriteOptions().AddRedirectToNonWww());
 app.UseRewriter(new RewriteOptions().AddRewrite(@"^.+/_content/(.*)", "_content/$1", skipRemainingRules: true));
+app.UseResponseCompression();
 app.UseBlazorFrameworkFiles("/admin");
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions { RequestPath = "/static", FileProvider = new PhysicalFileProvider(Directory.CreateDirectory(Path.GetFullPath(configuration["AppSettings:StaticContentPath"]!)).FullName) });
