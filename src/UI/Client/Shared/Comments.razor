@@ -87,7 +87,7 @@
         if (result)
         {
             replyId = default;
-            comment = new ();
+            comment = new() { Author = "Hi" };
             await GetComments();
             StateHasChanged();
         }
