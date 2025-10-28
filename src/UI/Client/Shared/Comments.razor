@@ -30,9 +30,9 @@
     private CommentModel comment = new CommentModel() { Author = "Hi" };
     private string? replyId;
     private CommentModel replyComment = new CommentModel();
-    public RenderFragment captcha = default!;
-    public bool IsShowCaptcha = false;
-    public string requestId = default!;
+    private RenderFragment captcha = default!;
+    private bool IsShowCaptcha = false;
+    private string requestId = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,17 +54,17 @@
         StateHasChanged();
     }
 
-    private async void SubmitComment(CommentModel comment, string? pid)
+    private async void SubmitComment(CommentModel _comment, string? pid)
     {
         Captcha _captcha = default!;
-        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnRefresh="()=> GenerateCaptchaAsync(_captcha)" OnFinish="(SlideTrack captchaCode) => CaptchaFinish(_captcha, comment, pid, captchaCode)" />;
+        captcha = @<Captcha @ref="_captcha" ShowRefresh="true" OnRefresh="() => GenerateCaptchaAsync(_captcha)" OnFinish="(SlideTrack captchaCode) => CaptchaFinish(_captcha, _comment, pid, captchaCode)" />;
         IsShowCaptcha = true;
         await Task.Yield();
         await GenerateCaptchaAsync(_captcha);
     }
 
 
-    private async Task CaptchaFinish(Captcha _captcha, CommentModel comment, string? pid, SlideTrack slideTrack)
+    private async Task CaptchaFinish(Captcha _captcha, CommentModel _comment, string? pid, SlideTrack slideTrack)
     {
         _captcha.StartRequestVerify();
         var resp = await _api.VerifyCaptchaAsync<SlideTrack, ValidateResult>(requestId, slideTrack);
@@ -81,22 +81,22 @@
         IsShowCaptcha = false;
         StateHasChanged();
 
-        comment.OwnerId = OwnerId;
-        comment.ParentId = pid;
-        var result = await _api.AddCommentAsync(comment, requestId);
+        _comment.OwnerId = OwnerId;
+        _comment.ParentId = pid;
+        var result = await _api.AddCommentAsync(_comment, requestId);
         if (result)
         {
             replyId = default;
-            comment = new CommentModel();
+            comment = new ();
             await GetComments();
             StateHasChanged();
         }
     }
 
-    private void ReplyComment(CommentModel comment)
+    private void ReplyComment(string rid)
     {
-        replyComment = new CommentModel();
-        replyId = comment.Id;
+        replyComment = new ();
+        replyId = rid;
     }
 
 
@@ -104,7 +104,7 @@
         @<div>
             @foreach (var item in DataSource)
             {
-                <Comment Avatar="@(item.Author)" Author="@item.Author" Content="@item.Content" Actions="@(new []{replyAction(item)})">
+                <Comment Avatar="@(item.Author)" Author="@item.Author" Content="@item.Content" Actions="@(new []{replyAction(item.Id)})">
                     <DatetimeTemplate>
                         @dateTime(item.Created)
                     </DatetimeTemplate>
@@ -121,7 +121,7 @@
             }
         </div>;
 
-    RenderFragment replyAction(CommentModel comment) => @<span @onclick="() => ReplyComment(comment)">回复</span>;
+    RenderFragment replyAction(string rid) => @<span @onclick="() => ReplyComment(rid)">回复</span>;
 
     RenderFragment GetEditor(CommentModel model, string? pid = null)
     {

@@ -109,13 +109,7 @@
     public string Placement { get; set; } = "left";
 
     private bool RightAvatar => Placement?.Equals("right", StringComparison.InvariantCultureIgnoreCase) == true;
-    private string[] AvatarColors = { "#f56a00", "#7265e6", "#ffbf00", "#00a2ae" };
-
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
+    private readonly string[] AvatarColors = { "#f56a00", "#7265e6", "#ffbf00", "#00a2ae" };
 
     private string GetBackgroundColor(string? name)
     {
