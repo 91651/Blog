@@ -72,7 +72,8 @@ body{cursor:default!important}
     padding: 15px;
     text-align: center;
     font-size: 15px;
-    display: block
+    display: block;
+	cursor: pointer;
 }
 .load-more:hover {
     background:var(--themeColor);color:var(--ButtonFontColor)

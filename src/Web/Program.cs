@@ -22,7 +22,11 @@ var configuration = builder.Configuration;
 // Add services to the container.
 var services = builder.Services;
 
-services.AddRazorComponents().AddInteractiveServerComponents().AddHubOptions(options => options.EnableDetailedErrors = true).AddInteractiveWebAssemblyComponents();
+services.AddRazorComponents().AddInteractiveServerComponents().AddHubOptions(options =>
+{
+    options.EnableDetailedErrors = true;
+    options.MaximumReceiveMessageSize = 256 * 1024;
+}).AddInteractiveWebAssemblyComponents();
 services.AddDbContext<AppDbContext>(option =>
 {
     option.UseSqlite(configuration["ConnectionStrings:SqliteConnection"]);
