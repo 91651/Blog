@@ -15,10 +15,18 @@ public static class TelemetryBuildExtensions
         {
             throw new ArgumentNullException(nameof(services));
         }
-        services.AddOpenTelemetry().WithTracing(b =>
+        services.AddOpenTelemetry().WithTracing(c =>
         {
-            b.AddAspNetCoreInstrumentation(options =>
+            c.AddAspNetCoreInstrumentation(options =>
             {
+                options.Filter = httpContext =>
+                {
+                    if (!HttpMethods.IsGet(httpContext.Request.Method))
+                        return false;
+                    if (httpContext.WebSockets?.IsWebSocketRequest == true)
+                        return false;
+                    return true;
+                };
                 options.EnrichWithHttpRequest = (activity, request) =>
                 {
                     var ip = request.Headers["X-Forwarded-For"].FirstOrDefault() ?? request.HttpContext.Connection.RemoteIpAddress?.ToString();
