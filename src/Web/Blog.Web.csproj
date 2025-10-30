@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	<Nullable>enable</Nullable>
 	<BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+	<WasmFingerprintAssets>false</WasmFingerprintAssets>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,10 +23,6 @@
     <ProjectReference Include="..\Framework\Telemetry\Telemetry.csproj" />
     <ProjectReference Include="..\UI\Admin\Blog.Admin.csproj" />
     <ProjectReference Include="..\UI\Client\Blog.Client.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Layout\" />
   </ItemGroup>
 
 </Project>
