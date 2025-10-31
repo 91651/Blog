@@ -1,5 +1,5 @@
 .container {
-  margin: 130px auto;
+  margin: 60px auto;
   width: 100%;
   padding-right: 14px;
   padding-left: 14px;
@@ -83,6 +83,14 @@ button:not(:disabled), [type=button]:not(:disabled) {
   color: #364a63;
 }
 
+.h6 {
+  margin-bottom: 0.5rem;
+  font-family: Nunito, sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #364a63;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -132,6 +140,10 @@ button:not(:disabled), [type=button]:not(:disabled) {
 }
 .border {
   border: 1px solid #dbdfea !important;
+}
+
+.text-info {
+  color: #09c2de !important;
 }
 
 .form-control::-ms-expand {
@@ -199,6 +211,16 @@ select.form-control:focus::-ms-value {
 .btn-outline-primary {
   color: #6576ff;
   border-color: #6576ff;
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: #6576ff;
+  border-color: #6576ff;
+}
+
+.btn-outline-primary:focus, .btn-outline-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(101, 118, 255, 0.5);
 }
 
 .btn-outline-secondary {
@@ -389,6 +411,7 @@ svg {
 .btn .icon {
   font-size: 1.4em;
   line-height: inherit;
+  fill: #6576ff;
 }
 
 .btn-block {
@@ -497,30 +520,6 @@ label {
   cursor: pointer;
 }
 
-.ni {
-  font-family: "Nioicon" !important;
-  speak: never;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.ni-plus:before {
-  content: "\eb44";
-}
-
-.ni-minus:before {
-  content: "\eafa";
-}
-
-.ni-info:before {
-  content: "\eaa9";
-}
-
 body {
   min-width: 320px;
 }
@@ -573,12 +572,6 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   border-bottom-left-radius: 0;
 }
 
-.number-minus {
-  left: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
 .card-preview {
   box-shadow: 6px 5px 40px rgba(30, 48, 75, 0.08);
 }
@@ -592,6 +585,25 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   text-overflow: ellipsis;
   overflow: hidden;
   box-shadow: 0 3px 12px 1px rgba(43, 55, 72, 0.15) !important;
+}
+
+.net-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+
+.net-info .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.p-0 {
+  padding: 0;
 }
 
 /*# sourceMappingURL=SpeedTest.razor.css.map */
