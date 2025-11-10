@@ -135,7 +135,7 @@
                 background-color: var(--tb--white);
                 position: relative;
             ">
-                <textarea placeholder="良言一句三冬暖，恶语伤人六月寒。" @bind="@model.Content" required style="
+                <textarea placeholder="良言一句三冬暖，恶语伤人六月寒。" @bind="@model.Content" required minlength="5" maxlength="1000" oninvalid="this.setCustomValidity('您的评论一定会很有意思(长度5-1000个字符)')" oninput="this.setCustomValidity('')" style="
             width: 100%;
             resize: none;
             overflow-x: hidden;
@@ -157,14 +157,14 @@
                             昵称
                         </button>
 
-                        <input placeholder="昵称(必填)" @bind="@model.Author" required class="user-input">
+                        <input placeholder="昵称(必填)" @bind="@model.Author" required minlength="2" maxlength="20" oninvalid="this.setCustomValidity('请输入昵称(长度2-20个字符)')" oninput="this.setCustomValidity('')" class="user-input">
                     </div>
                     <div class="email">
                         <button type="button" class="email-label">
                             邮箱
                         </button>
 
-                        <input placeholder="邮箱(必填)" @bind="@model.Email" type="email" required class="email-input">
+                        <input placeholder="邮箱(必填)" @bind="@model.Email" type="email" required oninvalid="this.setCustomValidity('请输入正确的邮箱')" oninput="this.setCustomValidity('')" class="email-input">
                     </div>
                     <div style="display:flex;">
                         <button type="submit" class="submit-button">
