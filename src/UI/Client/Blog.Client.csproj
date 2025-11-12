@@ -11,12 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="AspNetCore.SassCompiler" Version="1.93.2" />
+	<PackageReference Include="AspNetCore.SassCompiler" Version="1.94.0" />
 	<PackageReference Include="Jiuban" Version="3.10.23" />
 	<PackageReference Include="Lazy.SlideCaptcha.Core" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0-rc.2.25502.107" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0-rc.2.25502.107" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.0-rc.2.25502.107" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.0" />
 	<PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
 	<PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.0.1" />
   </ItemGroup>
