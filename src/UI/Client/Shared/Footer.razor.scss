@@ -14,7 +14,7 @@
 
     .footer-content {
         display: flex;
-        flex-wrap:wrap;
+        flex-wrap: wrap;
         padding: 23px 20px 18px;
         line-height: 200%;
         padding-bottom: 15px;
@@ -49,10 +49,38 @@
 
             .share {
                 .share-icon {
+                    position: relative;
                     margin-left: 18px;
                     padding: 7px;
                     display: inline-flex;
                     cursor: pointer;
+
+                    .qrcode {
+                        position: absolute;
+                        left: 50%;
+                        bottom: 100%;
+                        transform: translateX(-50%);
+                        margin-bottom: 8px;
+                        background: #fff;
+                        padding: 6px;
+                        border-radius: 6px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,.15);
+                        opacity: 0;
+                        visibility: hidden;
+                        transition: all .2s ease;
+                        z-index: 1000;
+
+                        img {
+                            width: 128px;
+                            height: 128px;
+                            display: block;
+                        }
+                    }
+
+                    &:hover .qrcode, :checked ~ .qrcode {
+                        opacity: 1;
+                        visibility: visible;
+                    }
                 }
             }
         }
