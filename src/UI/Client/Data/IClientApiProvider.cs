@@ -57,8 +57,8 @@ public interface IClientApiProvider
 
     #region Default Api
 
-    [Get("/api/stats/{tz}")]
-    Task<StatsModel> GetSiteStats(string tz);
+    [Get("/api/stats")]
+    Task<StatsModel> GetSiteStats([Query] string tz);
 
     [Get("/api/ping")]
     Task<Stream> Ping(CancellationToken cancellationToken);

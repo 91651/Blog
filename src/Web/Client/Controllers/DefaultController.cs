@@ -15,7 +15,7 @@ namespace Blog.Web.Client.Controllers;
 public class DefaultController(AppDbContext _db, IChannelService channelService, IArticleService articleService) : ControllerBase
 {
 
-    [HttpGet("/api/stats/{tz}")]
+    [HttpGet("/api/stats")]
     public async Task<StatsModel> GetSiteStats(string tz)
     {
         var timeZone = TimeZoneInfo.TryFindSystemTimeZoneById(tz, out var tzInfo) ? tzInfo : TimeZoneInfo.Utc;
