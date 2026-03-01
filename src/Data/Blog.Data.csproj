@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Framework\EFCore\EFCore.csproj" />
+    <ProjectReference Include="..\Framework\Telemetry\Telemetry.csproj" />
     <ProjectReference Include="..\Framework\Util\Util.csproj" />
   </ItemGroup>
 

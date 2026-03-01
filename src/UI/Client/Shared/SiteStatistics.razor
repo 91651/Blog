@@ -1,0 +1,52 @@
+﻿@using System.Runtime.InteropServices
+@using Blog.Client.Data
+@using System.Net.ServerSentEvents
+@using System.Text
+@rendermode InteractiveAuto
+@inject IClientApiProvider _api
+<div>
+    <span>运行环境: <b>@Runtime</b></span>
+    <span>今日浏览量: <b>@ViewCount</b></span>
+    <span>网络延迟: <b>@Latency ms</b></span>
+</div>
+
+@code{
+    private string Runtime => RuntimeInformation.RuntimeIdentifier;
+    private string TZ => TimeZoneInfo.Local.Id;
+    private CancellationTokenSource? _cts;
+    private int ViewCount { get; set; }
+    private long Latency { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStatistics();
+        _cts = new CancellationTokenSource();
+        _ = Ping(_cts.Token);
+    }
+
+    private async Task GetStatistics()
+    {
+        var statistics = await _api.GetSiteStats(TZ);
+        ViewCount = statistics.ViewCount;
+    }
+
+    private async Task Ping(CancellationToken token)
+    {
+        using var stream = await _api.Ping(token);
+        var parser = SseParser.Create(stream, (eventType, bytes) =>
+        {
+            return Encoding.UTF8.GetString(bytes);
+        });
+
+        await foreach (var item in parser.EnumerateAsync(token))
+        {
+            var latency = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - long.Parse(item.Data);
+            await InvokeAsync(() =>
+            {
+                Latency = latency;
+                StateHasChanged();
+            });
+        }
+    }
+}

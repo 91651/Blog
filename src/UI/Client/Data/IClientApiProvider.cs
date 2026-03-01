@@ -54,4 +54,14 @@ public interface IClientApiProvider
     Task<TResponse> VerifyCaptchaAsync<TRequst, TResponse>([Query] string id, TRequst track);
 
     #endregion Captcha Api
+
+    #region Default Api
+
+    [Get("/api/stats/{tz}")]
+    Task<StatsModel> GetSiteStats(string tz);
+
+    [Get("/api/ping")]
+    Task<Stream> Ping(CancellationToken cancellationToken);
+
+    #endregion Default Api
 }

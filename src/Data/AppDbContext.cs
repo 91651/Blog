@@ -4,6 +4,7 @@ using EFCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Telemetry.EntityFrameworkCore.Entity;
 using File = Blog.Data.Entities.File;
 
 namespace Blog.Data;
@@ -14,6 +15,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : AppDbContext
     public DbSet<Channel> Channels { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<File> Files { get; set; }
+    public DbSet<UserTrace> UserTraces { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
