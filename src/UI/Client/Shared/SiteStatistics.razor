@@ -34,12 +34,7 @@
     private async Task Ping(CancellationToken token)
     {
         using var stream = await _api.Ping(token);
-        var parser = SseParser.Create(stream, (eventType, bytes) =>
-        {
-            return Encoding.UTF8.GetString(bytes);
-        });
-
-        await foreach (var item in parser.EnumerateAsync(token))
+        await foreach (var item in SseParser.Create(stream).EnumerateAsync(token))
         {
             var latency = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - long.Parse(item.Data);
             await InvokeAsync(() =>

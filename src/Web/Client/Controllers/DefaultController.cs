@@ -1,8 +1,10 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 using AntDesign;
 using Blog.Data;
 using Blog.Model;
 using Blog.Service;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using X.Web.Sitemap;
 using X.Web.Sitemap.Extensions;
@@ -27,30 +29,18 @@ public class DefaultController(AppDbContext _db, IChannelService channelService,
     }
 
     [HttpGet("/api/ping")]
-    public async Task<IActionResult> Ping(CancellationToken cancellationToken = default)
+    public ServerSentEventsResult<long> Ping(CancellationToken cancellationToken = default)
     {
-        Response.ContentType = "text/event-stream";
-        Response.Headers.Append("Cache-Control", "no-cache");
-        Response.Headers.Append("Connection", "keep-alive");
-        Response.Headers.Append("X-Accel-Buffering", "no");
-        while (true)
+        async IAsyncEnumerable<long> GetPing([EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            try
+            while (!cancellationToken.IsCancellationRequested)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-                await Response.WriteAsync($"data: {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}\n\n", cancellationToken);
-                await Response.Body.FlushAsync(cancellationToken);
+                var utcNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                yield return utcNow;
                 await Task.Delay(2000, cancellationToken);
             }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
         }
-        return Ok();
+        return TypedResults.ServerSentEvents(GetPing(cancellationToken), eventType: "ping");
     }
 
     [HttpGet("/sitemap.xml")]
